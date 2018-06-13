@@ -5,7 +5,7 @@ from flask import Flask
 yamlFile = open('app.yaml')
 config = yaml.load(yamlFile)
 
-debug = True if debug == 'True' else False
+debug = True if config['app']['debug'] == 'True' else False
 
 
 app = Flask(__name__)
