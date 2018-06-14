@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
+import sys
 import yaml
 import logging
-from api import app
 from tornado.wsgi import WSGIContainer
 from tornado.httpserver import HTTPServer
 from tornado.ioloop import IOLoop
 
+appid = sys.argv[1]
 
-yamlFile = open('service.yaml')
-config = yaml.load(yamlFile)
+loadInstance = __import__(appid)
 
 # 初始化日志格式
 logging.basicConfig(
@@ -17,7 +17,21 @@ logging.basicConfig(
     datefmt='%Y-%d-%m %H:%M:%S'
 )
 
-if __name__ == '__main__':
-    http_server = HTTPServer(WSGIContainer(app))
-    http_server.listen(config['server']['listen'])
+def refLoadYaml(filename):
+    yamlFile = open(filename)
+    config = yaml.load(yamlFile)
+    return config
+
+def main():
+    
+    filename = '%s.yaml' % appid
+    config = refLoadYaml(filename)
+    port = config['app']['listen']
+    http_server = HTTPServer(WSGIContainer(loadInstance.app))
+    http_server.listen(port)
+    logging.info('[%s] start, listen [%s]' % (appid,port))
     IOLoop.instance().start()
+
+
+if __name__ == '__main__':
+    main()

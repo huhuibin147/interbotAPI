@@ -1,4 +1,2 @@
 server:
-  name: server_api_1
-  version: v0.1
-  listen: 9001
+  name: API_SERVER

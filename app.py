@@ -5,8 +5,6 @@ from flask import Flask
 yamlFile = open('app.yaml')
 config = yaml.load(yamlFile)
 
-debug = True if config['app']['debug'] == 'True' else False
-
 
 app = Flask(__name__)
 
@@ -17,4 +15,4 @@ def testApi():
 
 
 if __name__ == '__main__':
-    app.run(debug=debug)
+    app.run()
