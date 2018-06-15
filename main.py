@@ -6,6 +6,10 @@ from tornado.wsgi import WSGIContainer
 from tornado.httpserver import HTTPServer
 from tornado.ioloop import IOLoop
 
+if len(sys.argv) < 2:
+    print('usage: {python3 main.py app}')
+    exit()
+
 appid = sys.argv[1]
 
 loadInstance = __import__(appid)
