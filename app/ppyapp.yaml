@@ -1,0 +1,5 @@
+app:
+  name: osuApi
+  version: v0.1
+  listen: 10003
+  comment: osu数据对接api

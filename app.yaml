@@ -1,5 +1,0 @@
-app:
-  debug: True
-  name: api_1
-  version: v0.1
-  listen: 10001

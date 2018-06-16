@@ -4,8 +4,9 @@ import json
 import logging
 from flask import Flask
 from flask import request
+from msgCenterLib import msgHandler
 
-yamlFile = open('app.yaml')
+yamlFile = open('./app/msgCenter.yaml')
 config = yaml.load(yamlFile)
 
 
@@ -13,11 +14,13 @@ app = Flask(__name__)
 
 
 @app.route('/msg', methods=['POST'])
-def testApi():
+def msgApi():
     context = request.form.get("context")
+    context = json.loads(context)
     logging.info('recive:%s' % context)
-    logging.info('msg:%s' % json.loads(context))
-    return 'this is a api test'
+    mh = msgHandler.msgHandler(context)
+    ret = mh.auto()
+    return ret
 
 
 if __name__ == '__main__':

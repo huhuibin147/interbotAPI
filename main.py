@@ -6,6 +6,8 @@ from tornado.wsgi import WSGIContainer
 from tornado.httpserver import HTTPServer
 from tornado.ioloop import IOLoop
 
+sys.path.append('./app')
+
 if len(sys.argv) < 2:
     print('usage: {python3 main.py app}')
     exit()
@@ -22,12 +24,11 @@ logging.basicConfig(
 )
 
 def refLoadYaml(filename):
-    yamlFile = open(filename)
+    yamlFile = open('./app/%s' % filename)
     config = yaml.load(yamlFile)
     return config
 
 def main():
-    
     filename = '%s.yaml' % appid
     config = refLoadYaml(filename)
     port = config['app']['listen']
