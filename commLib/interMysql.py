@@ -83,7 +83,7 @@ class Connect(object):
 def getConfig(node):
     if not node:
         return config
-    yamlFile = open('./commLib/mysql.yaml')
+    yamlFile = open('./commLib/mysql.yaml', encoding='utf8')
     _conf = yaml.load(yamlFile)
     config.update(_conf.get(node, {}))
     return config

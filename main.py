@@ -24,7 +24,7 @@ logging.basicConfig(
 )
 
 def refLoadYaml(filename):
-    yamlFile = open('./app/%s' % filename)
+    yamlFile = open('./app/%s' % filename, encoding='utf8')
     config = yaml.load(yamlFile)
     return config
 

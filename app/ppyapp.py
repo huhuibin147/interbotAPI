@@ -6,7 +6,7 @@ from flask import Flask
 from flask import request
 from msgCenterLib import msgHandler
 
-yamlFile = open('./app/ppyapp.yaml')
+yamlFile = open('./app/ppyapp.yaml', encoding='utf8')
 config = yaml.load(yamlFile)
 
 
