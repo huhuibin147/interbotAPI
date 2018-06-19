@@ -6,9 +6,8 @@ from flask import Flask
 from flask import request
 from msgCenterLib import msgHandler
 
-yamlFile = open('./app/msgCenter.yaml', encoding='utf8')
-config = yaml.load(yamlFile)
-yamlFile.close()
+with open('./app/msgCenter.yaml', encoding='utf8') as f:
+    config = yaml.load(f)
 
 
 app = Flask(__name__)

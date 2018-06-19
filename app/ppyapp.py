@@ -6,9 +6,8 @@ from flask import Flask
 from flask import request
 from msgCenterLib import msgHandler
 
-yamlFile = open('./app/ppyapp.yaml', encoding='utf8')
-config = yaml.load(yamlFile)
-yamlFile.close()
+with open('./app/ppyapp.yaml', encoding='utf8') as f:
+    config = yaml.load(f)
 
 
 app = Flask(__name__)
@@ -21,4 +20,3 @@ def bpApi():
 
 if __name__ == '__main__':
     app.run()
-
