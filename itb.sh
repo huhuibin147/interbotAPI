@@ -20,7 +20,6 @@ restart(){
 }
 
 checklogdir(){
-    echo "$appdir/var/log"
     if [ ! -d "$appdir/var/log" ];then
         mkdir -p $appdir/var/log
     fi

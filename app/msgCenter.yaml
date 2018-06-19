@@ -1,5 +1,13 @@
-app:
+msgCenter:
   name: msgCenterApi
   version: v0.1
   listen: 10001
   comment: 消息处理api
+  model: msgCenter
+
+msgCenter2:
+  name: msgCenterApi
+  version: v0.1
+  listen: 10004
+  comment: 消息处理api
+  model: msgCenter
