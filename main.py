@@ -20,7 +20,7 @@ loadInstance = __import__(appid)
 logging.basicConfig(
     level=logging.INFO,
     format="[%(levelname).4s][%(asctime)s][%(name)s] %(message)s",
-    datefmt='%Y-%d-%m %H:%M:%S'
+    datefmt='%Y-%m-%d %H:%M:%S'
 )
 
 def refLoadYaml(filename):
