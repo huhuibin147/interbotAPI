@@ -29,6 +29,7 @@ def refLoadYaml(filename):
     filename = p.sub('', filename)
     yamlFile = open('./app/%s' % filename, encoding='utf8')
     config = yaml.load(yamlFile)
+    yamlFile.close()
     return config
 
 def loading():
@@ -43,7 +44,7 @@ def main():
     loading()
     http_server = HTTPServer(WSGIContainer(loadInstance.app))
     http_server.listen(port)
-    logging.info('[%s] start, listen [%s]' % (appid,port))
+    logging.info('[%s] start, listen [%s]' % (appid, port))
     IOLoop.instance().start()
 
 

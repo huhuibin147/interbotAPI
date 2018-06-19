@@ -8,6 +8,7 @@ from msgCenterLib import msgHandler
 
 yamlFile = open('./app/ppyapp.yaml', encoding='utf8')
 config = yaml.load(yamlFile)
+yamlFile.close()
 
 
 app = Flask(__name__)
