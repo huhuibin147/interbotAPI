@@ -38,13 +38,21 @@ class msgHandler():
                     api = res['url']
                 )
 
-        iargs = {}
+        iargs = self.extractArgs(msg, cmd)
         res = requests.post(apiUrl, data={"iargs": json.dumps(iargs)})
         if res.status_code == 200 and res.text:
             return res.text
         logging.info('调用[%s]异常' % apiUrl)
         return ''
         
+    def extractArgs(self, msg, cmd):
+        """参数提取"""
+        args = []
+        effmsg = msg[msg.find(cmd):]
+        l = effmsg.split(' ')
+        if len(l) > 1:
+            args = l[1:]
+        return args
 
     def autoReply(self, msg):
         """自动回复，非特殊指令性"""

@@ -1,4 +1,4 @@
-ppyapp:
+ppyapp1:
   name: osuApi
   version: v0.1
   listen: 10003
