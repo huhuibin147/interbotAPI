@@ -16,10 +16,10 @@ app = Flask(__name__)
 def userInfoApi():
     return 'userinfoAPI test'
 
-@app.route('/argstest', methods=['POST'])
-def userInfoApi():
-	iargs = request.form.get("iargs")
-	args = json.loads(iargs)
+@app.route('/args', methods=['POST'])
+def argsApi():
+    iargs = request.form.get("iargs")
+    args = json.loads(iargs)
     logging.info('recive args:%s' % args)
     return iargs
 
