@@ -22,7 +22,7 @@ class msgHandler():
     def autoApi(self, msg):
         """api检测，自动调用"""
         cmd = self.extractCmd(msg)
-        res = self.getCmdRef(msg)
+        res = self.getCmdRef(cmd)
         if not res:
             return ''
 
@@ -67,11 +67,13 @@ class msgHandler():
 
     def extractCmd(self, msg):
         """命令提取"""
+        retcmd = None
         p = re.compile('!\w+')
         cmds = p.findall(msg)
         if cmds:
-            return cmds[0]
-        return None
+            retcmd = cmds[0]
+        logging.info('提取的cmd[%s]', retcmd)
+        return retcmd
 
     def filterCN(self, content):
         """过滤中文"""

@@ -20,7 +20,7 @@ if len(sys.argv) < 2:
 # 初始化日志格式
 logging.basicConfig(
     level=logging.INFO,
-    format="[%(levelname).4s][%(asctime)s][%(name)s] %(message)s",
+    format="[%(asctime)s][%(levelname).4s][%(name)s] %(message)s",
     datefmt='%Y-%m-%d %H:%M:%S'
 )
 
