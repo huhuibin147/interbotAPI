@@ -57,14 +57,20 @@ class msgHandler():
         return returnstr
 
     def extractArgs(self, msg, cmd):
-        """参数提取"""
+        """参数提取
+        Retruns:
+            第一个约定, -me, 把qq带在第一位
+        """
         args = []
-        msg = self.filterOptions(msg)
-        effmsg = msg[msg.find(cmd):]
+        msgf = self.filterOptions(msg)
+        effmsg = msgf[msgf.find(cmd):]
         l = effmsg.split(' ')
         if len(l) > 1:
             args = l[1:]
         args = list(filter(lambda x: x != '', args))
+        # 参数植入
+        if '-me' in msg:
+            args.insert(0, self.context['user_id'])
         return args
 
     def extractOptions(self, msg):
