@@ -39,20 +39,44 @@ class msgHandler():
                 )
 
         iargs = self.extractArgs(msg, cmd)
+        opts = self.extractOptions(msg)
         res = requests.post(apiUrl, data={"iargs": json.dumps(iargs)})
         if res.status_code == 200 and res.text:
-            return res.text
+            return self.returnHandler(res.text, opts, self.context)
         logging.info('调用[%s]异常' % apiUrl)
         return ''
         
+    def returnHandler(self, res, opts, context):
+        """转发封装 带上选项"""
+        returnstr = ''
+        if '-at' in opts:
+            qq = context['user_id']
+            returnstr = '[CQ:at,qq=%s] %s' % (qq, res)
+        else:
+            returnstr = res
+        return returnstr
+
     def extractArgs(self, msg, cmd):
         """参数提取"""
         args = []
+        msg = self.filterOptions(msg)
         effmsg = msg[msg.find(cmd):]
         l = effmsg.split(' ')
         if len(l) > 1:
             args = l[1:]
+        args = list(filter(lambda x: x != '', args))
         return args
+
+    def extractOptions(self, msg):
+        """选项提取"""
+        p = re.compile('-\w+')
+        opts = p.findall(msg)
+        logging.info('提取的opts:%s', opts)
+        return opts
+
+    def filterOptions(self, msg):
+        """选项过滤"""
+        return re.sub('-\w+', '', msg)
 
     def autoReply(self, msg):
         """自动回复，非特殊指令性"""
