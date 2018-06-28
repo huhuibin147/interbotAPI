@@ -4,7 +4,7 @@ import json
 import logging
 from flask import Flask
 from flask import request
-from msgCenterLib import msgHandler
+from baseappLib import baseHandler
 
 with open('./app/baseapp.yaml', encoding='utf8') as f:
     config = yaml.load(f)
@@ -14,7 +14,14 @@ app = Flask(__name__)
 
 @app.route('/uinfo', methods=['POST'])
 def userInfoApi():
-    return 'userinfoAPI test'
+    iargs = request.form.get("iargs")
+    args = json.loads(iargs)
+    logging.info('recive args:%s' % args)
+    if len(args) != 1:
+        return '缺少参数 error:1001'
+    ins = baseHandler.baseHandler()
+    rts = ins.getUserBindInfo(ins.autokvqq(args[0]))
+    return json.dumps(rts)
 
 @app.route('/args', methods=['POST'])
 def argsApi():

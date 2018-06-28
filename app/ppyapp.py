@@ -4,7 +4,6 @@ import json
 import logging
 from flask import Flask
 from flask import request
-from msgCenterLib import msgHandler
 
 with open('./app/ppyapp.yaml', encoding='utf8') as f:
     config = yaml.load(f)
