@@ -14,13 +14,12 @@ app = Flask(__name__)
 
 @app.route('/uinfo', methods=['POST'])
 def userInfoApi():
-    iargs = request.form.get("iargs")
-    args = json.loads(iargs)
-    logging.info('recive args:%s' % args)
-    if len(args) != 1:
-        return '缺少参数 error:1001'
+    qq = request.form.get("qqid")
+    groupid = request.form.get("groupid")
+    logging.info('recive qqid:%s' % qq)
+    logging.info('recive groupid:%s' % groupid)
     ins = baseHandler.baseHandler()
-    rts = ins.getUserBindInfo(ins.autokvqq(args[0]))
+    rts = ins.getUserBindInfo({"qq":qq, "groupid": groupid})
     return json.dumps(rts)
 
 @app.route('/args', methods=['POST'])
