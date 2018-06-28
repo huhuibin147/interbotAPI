@@ -40,7 +40,14 @@ class msgHandler():
 
         iargs = self.extractArgs(msg, cmd)
         opts = self.extractOptions(msg)
-        res = requests.post(apiUrl, data={"iargs": json.dumps(iargs)})
+        res = requests.post(
+            apiUrl, 
+            data = {
+                "iargs": json.dumps(iargs),
+                "qqid": self.context['user_id'],
+                "groupid": self.context['group_id']
+            }
+        )
         if res.status_code == 200 and res.text:
             return self.returnHandler(res.text, opts, self.context)
         logging.info('调用[%s]异常' % apiUrl)
@@ -59,7 +66,7 @@ class msgHandler():
     def extractArgs(self, msg, cmd):
         """参数提取
         Retruns:
-            第一个约定, -me, 把qq带在第一位
+            x
         """
         args = []
         msgf = self.filterOptions(msg)
@@ -68,9 +75,6 @@ class msgHandler():
         if len(l) > 1:
             args = l[1:]
         args = list(filter(lambda x: x != '', args))
-        # 参数植入
-        if '-me' in msg:
-            args.insert(0, self.context['user_id'])
         return args
 
     def extractOptions(self, msg):
