@@ -15,17 +15,13 @@ def deco(**kw):
 
         @functools.wraps(func) 
         def _newfunc(*args, **kwargs):
-            # 公用参数
-            iargs = request.form.get("iargs")
-            iargs = json.loads(iargs) if iargs else ''
-            qq = request.form.get("qqid")
-            groupid = request.form.get("groupid")
-            logging.info('recive qqid:%s|groupid:%s|iargs:%s', qq, groupid, iargs)
 
             # 参数嵌入
-            kwargs['iargs'] = iargs
-            kwargs['qq'] = qq
-            kwargs['groupid'] = groupid
+            kwargs.update(request.form.to_dict())
+            if 'iargs' in kwargs:
+                kwargs['iargs'] = json.loads(kwargs['iargs'])
+
+            logging.info('recive kwargs:%s', kwargs)
 
             # 方法主体
             rs = func(*args, **kwargs)
