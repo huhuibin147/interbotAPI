@@ -5,6 +5,7 @@ import logging
 from flask import Flask
 from flask import request
 from botappLib import botHandler
+from commLib import appTools
 
 with open('./app/botapp.yaml', encoding='utf8') as f:
     config = yaml.load(f)
@@ -13,11 +14,9 @@ app = Flask(__name__)
 
 
 @app.route('/rctpp', methods=['POST'])
-def rctpp():
-    qq = request.form.get("qqid")
-    groupid = request.form.get("groupid")
-    logging.info('recive qqid:%s' % qq)
-    logging.info('recive groupid:%s' % groupid)
+@appTools.deco()
+def rctpp(**kw):
+    logging.info(kw['qq'])
     return 'rctpp'
 
 
