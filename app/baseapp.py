@@ -17,7 +17,7 @@ app = Flask(__name__)
 @appTools.deco()
 def userInfoApi(**kw):
     ins = baseHandler.baseHandler()
-    rts = ins.getUserBindInfo({"qq":kw['qq'], "groupid": kw['groupid']})
+    rts = ins.getUserBindInfo({"qq":kw['qqid'], "groupid": kw['groupid']})
     return json.dumps(rts)
 
 

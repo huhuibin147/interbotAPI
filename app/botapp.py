@@ -16,7 +16,7 @@ app = Flask(__name__)
 @app.route('/rctpp', methods=['POST'])
 @appTools.deco()
 def rctpp(**kw):
-    logging.info(kw['qq'])
+    logging.info(kw['qqid'])
     return 'rctpp'
 
 
