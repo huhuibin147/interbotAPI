@@ -69,7 +69,10 @@ class msgHandler():
             x
         """
         args = []
-        msgf = self.filterOptions(msg)
+        if '-r' not in msg:
+            msgf = self.filterOptions(msg)
+        else:
+            msgf = msg.replace('-r', '')
         effmsg = msgf[msgf.find(cmd):]
         l = effmsg.split(' ')
         if len(l) > 1:

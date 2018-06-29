@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import os
 import yaml
 import json
 import logging
@@ -27,6 +28,15 @@ def recent(**kw):
     ret = pyh.getRecent(uid, mode, limit)
     return json.dumps(ret)
 
+@app.route('/oppai', methods=['POST'])
+@appTools.deco()
+def oppai(**kw):
+    bid = kw['iargs'][0]
+    ret = os.popen('curl https://osu.ppy.sh/osu/%s | /root/oppai/./oppai -' % bid)
+    return ret.read()
+
+
+os.system('curl https://osu.ppy.sh/osu/37658 | /root/oppai/./oppai -')
 
 if __name__ == '__main__':
     app.run()
