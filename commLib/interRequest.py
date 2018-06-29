@@ -4,7 +4,9 @@ import json
 import logging
 
 class interReq():
-    def __init__(self, url=None, params=None, timeout=5):
+
+
+    def __init__(self, timeout=5):
         self.headers = {
             'accept' : 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
             'accept-encoding' : 'gzip, deflate, br',
@@ -13,32 +15,20 @@ class interReq():
             'upgrade-insecure-requests' :  '1',
             'user-agent' : 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36'
         } 
-        self.url = url
-        self.params = params
         self.timeout = timeout
 
 
-    def post(self, url=None, params=None):
-        url = url if url else self.url
-        params = params if params else self.params
+    def post(self, url, params=None):
         res = requests.post(url=url, data=params, timeout=self.timeout, headers=self.headers)
-        try:
-            ret = json.loads(res.text)
-        except:
-            ret = res.text
         return ret
 
-    def get(self, url=None):
-        url = url if url else self.url
+    def get(self, url):
         res = requests.get(url=url, timeout=self.timeout, headers=self.headers) 
-        try:
-            ret = json.loads(res.text)
-        except:
-            ret = res.text
         return ret
 
-    def down_image(self, iname, url=None, path=None):
-        url = url if url else self.url
+
+    def down_image(self, iname, url, path=None):
+        # 此方法暂留  未修改
         if not url:
             return 0
         ir = requests.get(url=url)
