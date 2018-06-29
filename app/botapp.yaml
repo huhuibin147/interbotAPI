@@ -1,0 +1,6 @@
+botapp1:
+  name: botApi
+  version: v0.1
+  listen: 10005
+  comment: 功能api
+  model: botapp

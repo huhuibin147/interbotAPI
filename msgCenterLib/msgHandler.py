@@ -9,7 +9,6 @@ class msgHandler():
 
     def __init__(self, context):
         self.context = context
-        self.localhost = '127.0.0.1'
 
     def auto(self):
         msg = self.context['message']
@@ -26,17 +25,10 @@ class msgHandler():
         if not res:
             return ''
 
-        if 'http' not in res['location']:
-            apiUrl = 'http://{host}/{location}{api}'.format(
-                    host = self.localhost,
-                    location = res['location'],
-                    api = res['url']
-                )
-        else:
-            apiUrl = '{location}{api}'.format(
-                    location = res['location'],
-                    api = res['url']
-                )
+        apiUrl = '{location}{api}'.format(
+                location = res['location'],
+                api = res['url']
+            )
 
         iargs = self.extractArgs(msg, cmd)
         opts = self.extractOptions(msg)
