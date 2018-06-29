@@ -25,13 +25,21 @@ class msgHandler():
         if not res:
             return ''
 
+        # 帮助选项
+        if '-h' in msg:
+            return res['reply']
+
         apiUrl = '{location}{api}'.format(
                 location = res['location'],
                 api = res['url']
             )
 
+        # 参数提取
         iargs = self.extractArgs(msg, cmd)
+        # 选项提取
         opts = self.extractOptions(msg)
+
+        # 调用核心 
         res = requests.post(
             apiUrl, 
             data = {
