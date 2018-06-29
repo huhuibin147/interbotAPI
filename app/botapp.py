@@ -14,6 +14,10 @@ app = Flask(__name__)
 
 @app.route('/rctpp', methods=['POST'])
 def rctpp():
+    qq = request.form.get("qqid")
+    groupid = request.form.get("groupid")
+    logging.info('recive qqid:%s' % qq)
+    logging.info('recive groupid:%s' % groupid)
     return 'rctpp'
 
 
