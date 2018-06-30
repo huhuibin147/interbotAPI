@@ -3,6 +3,8 @@ import logging
 
 class botHandler():
 
-    def __init__(self, context):
+
+    def __init__(self):
         pass
+    
     
