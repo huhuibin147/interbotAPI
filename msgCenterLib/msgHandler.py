@@ -82,14 +82,14 @@ class msgHandler():
 
     def extractOptions(self, msg):
         """选项提取"""
-        p = re.compile('-\w+')
+        p = re.compile(r'-\w+')
         opts = p.findall(msg)
         logging.info('提取的opts:%s', opts)
         return opts
 
     def filterOptions(self, msg):
         """选项过滤"""
-        return re.sub('-\w+', '', msg)
+        return re.sub(r'-\w+', '', msg)
 
     def autoReply(self, msg):
         """自动回复，非特殊指令性"""
@@ -105,7 +105,7 @@ class msgHandler():
     def extractCmd(self, msg):
         """命令提取"""
         retcmd = None
-        p = re.compile('!\w+')
+        p = re.compile(r'!\w+')
         cmds = p.findall(msg)
         if cmds:
             retcmd = cmds[0]
