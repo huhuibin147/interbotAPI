@@ -17,8 +17,18 @@ app = Flask(__name__)
 @app.route('/rctpp', methods=['POST'])
 @appTools.deco()
 def rctpp(**kw):
-    logging.info(kw['qqid'])
-    return 'rctpp'
+    # todo 加入未绑定传id情况
+    b = botHandler.botHandler()
+    osuinfo = b.getOsuInfo({"qqid":kw['qqid'], "groupid": kw['groupid']})
+    logging.info(osuinfo)
+    if osuinfo[0]:
+        osuid = osuinfo[0]['osuid']
+        recinfo = b.getRecInfo({"osuid": osuid, "limit": "1"})
+        if not recinfo:
+            recinfo = "please play game!"
+    else:
+        recinfo = "u don't bind!"
+    return json.dumps(recinfo)
 
 @app.route('/rec', methods=['POST'])
 @appTools.deco()

@@ -36,7 +36,6 @@ def oppai(**kw):
     return ret.read()
 
 
-os.system('curl https://osu.ppy.sh/osu/37658 | /root/oppai/./oppai -')
 
 if __name__ == '__main__':
     app.run()
