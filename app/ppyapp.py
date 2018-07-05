@@ -36,7 +36,12 @@ def oppai(**kw):
     ret = os.popen('curl https://osu.ppy.sh/osu/%s | /root/oppai/./oppai - %s' % (bid, extend))
     return json.dumps(ret.read())
 
-
+@app.route('/osufile', methods=['POST'])
+@appTools.deco()
+def osufile(**kw):
+    bid = kw['bid']
+    ret = os.popen('curl https://osu.ppy.sh/osu/%s' % bid)
+    return json.dumps(ret)
 
 if __name__ == '__main__':
     app.run()
