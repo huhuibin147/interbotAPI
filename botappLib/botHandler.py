@@ -26,5 +26,13 @@ class botHandler():
         return json.loads(ret)
 
 
+    def getOppaiInfo(self, bid, extend=''):
+        """取oppai结果,后续可以缓存在本地,定期清理
+        Args:
+            bid
+            extend 附加条件  参考git
+        """
+        ret = cmdRouter.invoke('!oppai', {"bid": bid, "extend": extend})
+        return json.loads(ret)
 
 

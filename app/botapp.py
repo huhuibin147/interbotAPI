@@ -27,6 +27,12 @@ def rctpp(**kw):
         if not recinfo:
             recinfo = "please play game!"
         else:
+            # oppai查询
+            bid = recinfo[0]['beatmap_id']
+            extend = '+HDHR'  # 做判断
+            r = b.getOppaiInfo(bid, extend)
+            logging.info('r:%s', r)
+            
             recinfo = json.dumps(recinfo)
     else:
         recinfo = "u don't bind!"
