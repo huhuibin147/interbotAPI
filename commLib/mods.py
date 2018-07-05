@@ -26,6 +26,7 @@ mod_list={
 def getMod(num=16504):
     '''NC出现的话删除DT，PF出现的话删除SD'''
     mods = []
+    num = int(num)
     i=1
     while num:
         if num&0x1:

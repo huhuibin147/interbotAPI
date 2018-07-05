@@ -24,19 +24,32 @@ def rctpp(**kw):
     if osuinfo:
         osuid = osuinfo[0]['osuid']
         recinfo = b.getRecInfo({"osuid": osuid, "limit": "1"})
+        logging.info(recinfo)
         if not recinfo:
-            recinfo = "please play game!"
+            res = "please play game!"
         else:
-            # oppai查询
+            # rec计算
             bid = recinfo[0]['beatmap_id']
-            extend = '+HDHR'  # 做判断
-            r = b.getOppaiInfo(bid, extend)
-            logging.info('r:%s', r)
-            
-            recinfo = json.dumps(recinfo)
+            rinfo = b.exRecInfo(recinfo[0])
+            extend = b.convert2oppaiArgs(**rinfo) 
+            oppainfo = b.oppai(bid, extend)
+            ret = b.formatRctpp(oppainfo, recinfo[0]['rank'])
+
+            # fc计算
+            fcacc = b.calFcacc(recinfo[0])
+            extendFc = b.convert2oppaiArgs(rinfo['mods'], fcacc)
+            oppainfoFc = b.oppai(bid, extendFc)
+            ppFc = b.oppai2pp(oppainfoFc)
+
+            # ac计算
+            extendAc = b.convert2oppaiArgs(rinfo['mods'])
+            oppainfoAc = b.oppai(bid, extendAc)
+            ppAc = b.oppai2pp(oppainfoAc)
+            bidurl = 'https://osu.ppy.sh/b/%s' % bid
+            res = "%s | fc: %s | ss: %s\n%s" % (ret, ppFc, ppAc, bidurl)
     else:
-        recinfo = "u don't bind!"
-    return recinfo
+        res = "u don't bind!"
+    return res
 
 @app.route('/rec', methods=['POST'])
 @appTools.deco()
