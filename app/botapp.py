@@ -26,9 +26,11 @@ def rctpp(**kw):
         recinfo = b.getRecInfo({"osuid": osuid, "limit": "1"})
         if not recinfo:
             recinfo = "please play game!"
+        else:
+            recinfo = json.dumps(recinfo)
     else:
         recinfo = "u don't bind!"
-    return json.dumps(recinfo)
+    return recinfo
 
 @app.route('/rec', methods=['POST'])
 @appTools.deco()
