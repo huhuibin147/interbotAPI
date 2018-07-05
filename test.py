@@ -11,8 +11,8 @@ msg = '!2rctpp'
 if len(sys.argv) > 1:
     msg = sys.argv[1]
 
-context = {'anonymous': None, 'font': 75020424, 'group_id': 514661057, 'message': msg, 'message_id': 72849, 'message_type': 'group', 'post_type'
-: 'message', 'raw_message': msg, 'self_id': 2680306741, 'sub_type': 'normal', 'time': 1530099122, 'user_id': 405622418}
+context = {'anonymous': None, 'font': 75020424, 'group_id': 614892339, 'message': msg, 'message_id': 72849, 'message_type': 'group', 'post_type'
+: 'message', 'raw_message': msg, 'self_id': 2680306741, 'sub_type': 'normal', 'time': 1530099122, 'user_id': 2426950993}
 
 res = requests.post(centerURL, data={"context": json.dumps(context)})
 

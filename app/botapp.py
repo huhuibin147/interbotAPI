@@ -21,7 +21,7 @@ def rctpp(**kw):
     b = botHandler.botHandler()
     osuinfo = b.getOsuInfo({"qqid":kw['qqid'], "groupid": kw['groupid']})
     logging.info(osuinfo)
-    if osuinfo[0]:
+    if osuinfo:
         osuid = osuinfo[0]['osuid']
         recinfo = b.getRecInfo({"osuid": osuid, "limit": "1"})
         if not recinfo:
