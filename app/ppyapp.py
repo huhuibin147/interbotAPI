@@ -32,7 +32,8 @@ def recent(**kw):
 @appTools.deco()
 def oppai(**kw):
     bid = kw['iargs'][0]
-    ret = os.popen('curl https://osu.ppy.sh/osu/%s | /root/oppai/./oppai -' % bid)
+    extend = kw.get('extend', '')
+    ret = os.popen('curl https://osu.ppy.sh/osu/%s | /root/oppai/./oppai - %s' % (bid, extend))
     return ret.read()
 
 
