@@ -26,7 +26,7 @@ def rctpp(**kw):
         recinfo = b.getRecInfo({"osuid": osuid, "limit": "1"})
         logging.info(recinfo)
         if not recinfo:
-            res = "well come to osu!"
+            res = "别复读好马!"
         else:
             # rec计算
             bid = recinfo[0]['beatmap_id']
@@ -47,14 +47,6 @@ def rctpp(**kw):
     else:
         res = "你倒是绑定啊.jpg"
     return res
-
-@app.route('/rec', methods=['POST'])
-@appTools.deco()
-def recent(**kw):
-    uid = kw['iargs'][0]
-    url = "http://interbot.top/osuppy/recent"
-    res = requests.post(url, data={"osuid": uid, "limit": "1"})
-    return res.text
 
 
 if __name__ == '__main__':

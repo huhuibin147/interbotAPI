@@ -5,6 +5,7 @@ import logging
 from flask import Flask
 from flask import request
 from baseappLib import baseHandler
+from commLib import cmdRouter
 from commLib import appTools
 
 with open('./app/baseapp.yaml', encoding='utf8') as f:
@@ -19,6 +20,17 @@ def userInfoApi(**kw):
     ins = baseHandler.baseHandler()
     rts = ins.getUserBindInfo({"qq":kw['qqid'], "groupid": kw['groupid']})
     return json.dumps(rts)
+
+
+@app.route('/setid', methods=['POST'])
+@appTools.deco()
+def bindUserInfo(**kw):
+    ins = baseHandler.baseHandler()
+    if kw.get('iargs'):
+        osuid = kw['iargs'][0]
+    else:
+        osuid = kw.get('osuid', '')
+    return osuid
 
 
 @app.route('/args', methods=['POST'])
