@@ -5,7 +5,6 @@ import logging
 from flask import Flask
 from flask import request
 from baseappLib import baseHandler
-from commLib import cmdRouter
 from commLib import appTools
 
 with open('./app/baseapp.yaml', encoding='utf8') as f:
@@ -26,11 +25,19 @@ def userInfoApi(**kw):
 @appTools.deco()
 def bindUserInfo(**kw):
     ins = baseHandler.baseHandler()
-    if kw.get('iargs'):
-        osuid = kw['iargs'][0]
+    osuid = kw['iargs'][0] if kw.get('iargs') else kw.get('osuid', '')
+    r = ins.bindOsuUser(osuid, kw['qqid'], kw['groupid'])
+    if r > 0:
+        rs = '绑定成功!'
+    elif r == 0:
+        rs = '重复绑定!'
+    elif r == -1:
+        rs = '系统异常!'
+    elif r == -2:
+        rs = '网络异常!'
     else:
-        osuid = kw.get('osuid', '')
-    return osuid
+        rs = '未知错误!'
+    return rs
 
 
 @app.route('/args', methods=['POST'])

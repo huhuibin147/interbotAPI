@@ -114,15 +114,16 @@ class botHandler():
         acc = mods.get_acc(rec['count300'], rec['count100'], rec['count50'], 0)
         return acc
 
-    def formatRctpp2(self, ojson, rank, acc, ppfc, ppss, bid):
+    def formatRctpp2(self, ojson, rank, acc, ppfc, ppss, bid, fcacc):
         """格式化rctpp输出"""
         outp = '{artist} - {title} [{version}] \n'
         outp += 'Beatmap by {creator} \n'
         outp += '[ar{ar} cs{cs} od{od} hp{hp}]\n\n'
         outp += 'stars: {stars}* | {mods_str} \n'
-        outp += 'aim: 0.47 | speed: 0.43 | accuracy: 0\n\n'
-        outp += '{combo}x/{max_combo}x | {acc}% | {rank} \n'
-        outp += 'pp: {pp}pp | fc: {ppfc}pp | ss: {ppss}pp\n'
+        outp += '{combo}x/{max_combo}x | {acc}% | {rank} \n\n'
+        outp += '{acc}%: {pp}pp\n'
+        outp += '{fcacc}%: {ppfc}pp\n'
+        outp += '100.0%: {ppss}pp\n'
         outp += 'https://osu.ppy.sh/b/{bid}'
 
         out = outp.format(
@@ -143,7 +144,8 @@ class botHandler():
             rank = rank,
             ppfc = round(ppfc, 2),
             ppss = round(ppss, 2),
-            bid = bid
+            bid = bid,
+            fcacc = fcacc
         )
 
         return out

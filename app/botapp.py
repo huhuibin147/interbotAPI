@@ -43,7 +43,7 @@ def rctpp(**kw):
             extendSs = b.convert2oppaiArgs(rinfo['mods'])
             ojsonSs = b.oppai2json(bid, extendSs)
 
-            res = b.formatRctpp2(ojson, recinfo[0]['rank'], rinfo['acc'], ojsonFc['pp'], ojsonSs['pp'], bid)
+            res = b.formatRctpp2(ojson, recinfo[0]['rank'], rinfo['acc'], ojsonFc['pp'], ojsonSs['pp'], bid, fcacc)
     else:
         res = "你倒是绑定啊.jpg"
     return res
