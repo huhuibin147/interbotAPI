@@ -11,6 +11,7 @@ class msgHandler():
         self.context = context
 
     def auto(self):
+        """消息处理"""
         msg = self.context['message']
         msg = msg.replace('！', '!')
         if '!' in msg:
@@ -18,12 +19,50 @@ class msgHandler():
         else:
             return self.autoReply(msg)
 
+    def checkPermission(self, cmd):
+        """权限控制
+        Type:
+            ptype 1-无限制 2-白 3-黑
+        Return:
+            state, remark
+            -1 限制
+            1  通过
+        """
+        permissionRs = self.getPermission(cmd)
+        if not permissionRs:
+            return -1, '未设置权限,无法使用!'
+
+        for permission in permissionRs:
+            ptype = permission['ptype']
+            groupid = permission['groupid']
+            gtype = permission['gtype']
+
+            if ptype == 1:
+                pass
+            elif ptype == 2:
+                s, r = self.checkWhitePermission(groupid, gtype)
+                if s < 0:
+                    return s, r
+            elif ptype == 3:
+                s, r =  self.checkBalckPermission(groupid, gtype)
+                if s < 0:
+                    return s, r
+            else:
+                return -1, '未知类型错误'
+
+        return 1, '无限制'
+
     def autoApi(self, msg):
         """api检测，自动调用"""
         cmd = self.extractCmd(msg)
         res = self.getCmdRef(cmd)
         if not res:
             return ''
+
+        # 权限控制
+        s, r = self.checkPermission(cmd)
+        if s < 0:
+            return r
 
         # 帮助选项
         if '-h' in msg:
@@ -99,7 +138,11 @@ class msgHandler():
         if len(msg) == len(fmsg):
             res = self.getCmdRef(fmsg)
             if res:
-                retmsg = res['reply']
+                state, remark = self.checkPermission(fmsg)
+                if state > 0:
+                    retmsg = res['reply']
+                else:
+                    retmsg = remark
         return retmsg
 
     def extractCmd(self, msg):
@@ -129,3 +172,62 @@ class msgHandler():
         if not res:
             return ''
         return res[0]
+
+    def getPermission(self, cmd):
+        """权限查询"""
+        db = interMysql.Connect('osu2')
+        sql = '''
+            SELECT ptype, cmd, groupid, gtype
+            FROM permission WHERE cmd = %s
+        '''
+        res = db.query(sql, [cmd])
+        if not res:
+            return []
+        return res
+
+    def checkWhitePermission(self, groupid, gtype):
+        """白名单处理 存在放行
+        Type:
+            1-用户 2-群
+        """
+        db = interMysql.Connect('osu2')
+        sql = '''
+            SELECT gid, remark
+            FROM pmsGroup WHERE gid = %s
+            AND account = %s
+        '''
+        if gtype == 1:
+            account = self.context['user_id']
+        else:
+            account = self.context['group_id']
+        args = [groupid, account]
+        res = db.query(sql, args)
+        if not res:
+            logging.info('[%s]不在白名单范围内', account)
+            return -1, '权限限制,不在白名单范围内'
+
+        return 1, res[0]['remark']
+
+    def checkBalckPermission(self, groupid, gtype):
+        """黑名单处理 不存在放行
+        Type:
+            1-用户 2-群
+        """
+        db = interMysql.Connect('osu2')
+        sql = '''
+            SELECT gid, remark
+            FROM pmsGroup WHERE gid = %s
+            AND account = %s
+        '''
+        if gtype == 1:
+            account = self.context['user_id']
+        else:
+            account = self.context['group_id']
+        args = [groupid, account]
+        res = db.query(sql, args)
+        if not res:
+            return 1, '不在黑名单范围内'
+
+        return -1, '权限限制,在黑名单范围内'
+
+    
