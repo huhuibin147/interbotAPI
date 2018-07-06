@@ -26,29 +26,26 @@ def rctpp(**kw):
         recinfo = b.getRecInfo({"osuid": osuid, "limit": "1"})
         logging.info(recinfo)
         if not recinfo:
-            res = "please play game!"
+            res = "well come to osu!"
         else:
             # rec计算
             bid = recinfo[0]['beatmap_id']
             rinfo = b.exRecInfo(recinfo[0])
             extend = b.convert2oppaiArgs(**rinfo) 
-            oppainfo = b.oppai(bid, extend)
-            ret = b.formatRctpp(oppainfo, recinfo[0]['rank'])
+            ojson = b.oppai2json(bid, extend)
 
             # fc计算
             fcacc = b.calFcacc(recinfo[0])
             extendFc = b.convert2oppaiArgs(rinfo['mods'], fcacc)
-            oppainfoFc = b.oppai(bid, extendFc)
-            ppFc = b.oppai2pp(oppainfoFc)
+            ojsonFc = b.oppai2json(bid, extendFc)
 
             # ac计算
-            extendAc = b.convert2oppaiArgs(rinfo['mods'])
-            oppainfoAc = b.oppai(bid, extendAc)
-            ppAc = b.oppai2pp(oppainfoAc)
-            bidurl = 'https://osu.ppy.sh/b/%s' % bid
-            res = "%s | fc: %s | ss: %s\n%s" % (ret, ppFc, ppAc, bidurl)
+            extendSs = b.convert2oppaiArgs(rinfo['mods'])
+            ojsonSs = b.oppai2json(bid, extendSs)
+
+            res = b.formatRctpp2(ojson, recinfo[0]['rank'], rinfo['acc'], ojsonFc['pp'], ojsonSs['pp'], bid)
     else:
-        res = "u don't bind!"
+        res = "你倒是绑定啊.jpg"
     return res
 
 @app.route('/rec', methods=['POST'])

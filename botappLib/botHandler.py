@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
+import re
 import json
 import logging
 import traceback
@@ -63,6 +64,18 @@ class botHandler():
             logging.error(traceback.print_exc())
             return ''
 
+    def oppai2json(self, bid, extend=''):
+        """取oppai结果 json"""
+        try:
+            self.downOsufile(bid)
+            ret = os.popen('cat /data/osufile/%s.osu | /root/oppai/./oppai - %s -ojson' % (bid, extend))
+            logging.info('bid[%s],extend[%s]', bid, extend)
+            return json.loads(ret.read())
+        except:
+            logging.error(traceback.print_exc())
+            return {}
+        
+
     def downOsufile(self, bid):
         """down osu file"""
         f = '%s%s.osu' % (self.osufiledir, bid)
@@ -101,56 +114,37 @@ class botHandler():
         acc = mods.get_acc(rec['count300'], rec['count100'], rec['count50'], 0)
         return acc
 
-    def oppai2dict(self, oppairet):
-        """oppai text处理"""
-        r1 = oppairet.split('\n')
-        t = r1[11:]
-        logging.info(oppairet)
-        newdict = {
-            "title": t[0][:t[0].find('+')] if t[0].find('+') else t[0], # 去除尾部mod
-            "mod": t[0][t[0].find('+')+1:] if t[0].find('+') > 0 else 'none',
-            "odarcshp": t[1],
-            "combo": t[2],
-            "circles": t[3],
-            "miss": t[4],
-            "acc": t[5],
-            "scovev": t[6],
-            "stars": t[8],
-            "aimstar": t[9].split(',')[0],
-            "speedstar": t[9].split(',')[1][1:],
-            "aim": t[11],
-            "speed": t[12],
-            "accuracy": t[13],
-            "pp": t[18]
-        }
-        return newdict
-
-    def oppai2pp(self, oppairet):
-        """oppai pp提取"""
-        r1 = oppairet.split('\n')
-        t = r1[11:]
-        return t[18]
-
-
-    def formatRctpp(self, oppairet, rank):
+    def formatRctpp2(self, ojson, rank, acc, ppfc, ppss, bid):
         """格式化rctpp输出"""
-        oppdict = self.oppai2dict(oppairet)
-        ret = "{title}\n[{odarcshp}]\n\nstars:{stars} | {aimstar} | {speedstar}\n{aim} | {speed} | {accuracy}\n\n{combo} | {acc} | {mod} | {rank}\n{scovev}: {pp}".format(
-                title=oppdict['title'].replace('(', '\nBeatmap by ').replace(')', ''),
-                odarcshp=oppdict['odarcshp'],
-                combo=oppdict['combo'].replace(' combo', 'x'),
-                acc=oppdict['acc'],
-                mod=oppdict['mod'],
-                stars=oppdict['stars'].replace(' stars', '*'),
-                scovev=oppdict['scovev'].replace('score', ''),
-                pp=oppdict['pp'],
-                aimstar=oppdict['aimstar'].replace(' stars', '')+'*',
-                speedstar=oppdict['speedstar'].replace(' stars', '')+'*',
-                aim=oppdict['aim'],
-                accuracy=oppdict['accuracy'],
-                speed=oppdict['speed'],
-                rank=rank
-            )
-        return ret
+        outp = '{artist} - {title} [{version}] \n'
+        outp += 'Beatmap by {creator} \n'
+        outp += '[ar{ar} cs{cs} od{od} hp{hp}]\n\n'
+        outp += 'stars: {stars}* | {mods_str} \n'
+        outp += 'aim: 0.47 | speed: 0.43 | accuracy: 0\n\n'
+        outp += '{combo}x/{max_combo}x | {acc}% | {rank} \n'
+        outp += 'pp: {pp}pp | fc: {ppfc}pp | ss: {ppss}pp\n'
+        outp += 'https://osu.ppy.sh/b/{bid}'
 
+        out = outp.format(
+            artist = ojson['artist'],
+            title = ojson['title'],
+            version = ojson['version'],
+            creator = ojson['creator'],
+            ar = ojson['ar'],
+            cs = ojson['cs'],
+            od = ojson['od'],
+            hp = ojson['hp'],
+            stars = round(ojson['stars'], 2),
+            combo = ojson['combo'],
+            max_combo = ojson['max_combo'],
+            acc = round(acc, 2),
+            mods_str = ojson['mods_str'],
+            pp = round(ojson['pp'], 2),
+            rank = rank,
+            ppfc = round(ppfc, 2),
+            ppss = round(ppss, 2),
+            bid = bid
+        )
+
+        return out
 
