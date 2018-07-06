@@ -16,3 +16,8 @@ class ppyHandler():
         }
         logging.info(kw)
         return ppyAPI.apiRoute('recent', **kw)
+    
+    def getOsuUserInfo(self, uid):
+        kw = {'uid': uid}
+        logging.info(kw)
+        return ppyAPI.apiRoute('userinfo', **kw)

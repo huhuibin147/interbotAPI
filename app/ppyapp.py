@@ -18,6 +18,14 @@ app = Flask(__name__)
 def bpApi():
     return 'bp test'
 
+@app.route('/osuerinfo', methods=['POST'])
+@appTools.deco()
+def getOsuUserInfo(**kw):
+    uid = kw.get('osuid')
+    pyh = ppyHandler.ppyHandler()
+    ret = pyh.getOsuUserInfo(uid)
+    return json.dumps(ret)
+
 @app.route('/recent', methods=['POST'])
 @appTools.deco()
 def recent(**kw):

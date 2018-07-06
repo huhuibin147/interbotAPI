@@ -4,14 +4,14 @@ import json
 import requests
 
 
-centerURL = 'http://127.0.0.1:10005/'
+centerURL = 'http://127.0.0.1:10003/'
 
-cmd = 'rctpp'
+cmd = 'osuerinfo'
 
 if len(sys.argv) > 1:
     msg = sys.argv[1]
 
-data = {"qqid": "2426950993","groupid":"614892339"}
+data = {"qqid": "405622418","groupid":"614892339"}
 res = requests.post(centerURL+cmd, data=data)
 
 print(res.text)

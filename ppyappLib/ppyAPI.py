@@ -10,7 +10,8 @@ with open('./ppyappLib/ppy.yaml', encoding='utf8') as f:
 OSU_API_KEY = config['osuApiKey']
 
 ref = {
-    'recent': 'https://osu.ppy.sh/api/get_user_recent?k=%s&u={uid}&m={mode}&limit={limit}' % OSU_API_KEY
+    'recent': 'https://osu.ppy.sh/api/get_user_recent?k=%s&u={uid}&m={mode}&limit={limit}' % OSU_API_KEY,
+    'userinfo': 'https://osu.ppy.sh/api/get_user?k=%s&u={uid}' % OSU_API_KEY
 }
 
 
