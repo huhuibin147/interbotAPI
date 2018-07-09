@@ -17,7 +17,6 @@ app = Flask(__name__)
 @app.route('/rctpp', methods=['POST'])
 @appTools.deco()
 def rctpp(**kw):
-    # todo 加入未绑定传id情况
     b = botHandler.botHandler()
     osuinfo = b.getOsuInfo({"qqid":kw['qqid'], "groupid": kw['groupid']})
     logging.info(osuinfo)
@@ -43,7 +42,8 @@ def rctpp(**kw):
             extendSs = b.convert2oppaiArgs(rinfo['mods'])
             ojsonSs = b.oppai2json(bid, extendSs)
 
-            res = b.formatRctpp2(ojson, recinfo[0]['rank'], rinfo['acc'], ojsonFc['pp'], ojsonSs['pp'], bid, fcacc)
+            res = b.formatRctpp2(ojson, recinfo[0]['rank'], rinfo['acc'], 
+                ojsonFc['pp'], ojsonSs['pp'], bid, fcacc, recinfo[0]['countmiss'])
     else:
         res = "你倒是绑定啊.jpg"
     return res
