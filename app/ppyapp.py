@@ -15,6 +15,7 @@ with open('./app/ppyapp.yaml', encoding='utf8') as f:
 app = Flask(__name__)
 
 @app.route('/bp', methods=['POST'])
+@appTools.deco()
 def bpApi(**kw):
     uid = kw.get('osuid')
     mode = kw.get('mode', 0)
