@@ -30,7 +30,7 @@ class msgHandler():
         """
         permissionRs = self.getPermission(cmd)
         if not permissionRs:
-            return -1, '未设置权限,无法使用!'
+            return -1, '' #未设置权限,无法使用!
 
         for permission in permissionRs:
             ptype = permission['ptype']

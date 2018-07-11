@@ -9,7 +9,7 @@ from tornado.httpserver import HTTPServer
 from tornado.ioloop import IOLoop
 
 
-bot = CQHttp(api_root='http://127.0.0.1:5701/')
+bot = CQHttp(api_root='http://118.24.91.98:5700/')
 
 centerURL = 'http://118.24.91.98/center/msg'
 
