@@ -31,6 +31,14 @@ class botHandler():
         ret = cmdRouter.invoke('!rec', args)
         return json.loads(ret)
 
+    def getRecBp(self, args):
+        """取osu用户bp信息
+        Args:
+            osuid
+        """
+        ret = cmdRouter.invoke('!bp', args)
+        return json.loads(ret)
+
 
     def getOppaiInfo(self, bid, extend=''):
         """取oppai结果
