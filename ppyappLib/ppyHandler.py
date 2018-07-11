@@ -21,3 +21,12 @@ class ppyHandler():
         kw = {'uid': uid}
         logging.info(kw)
         return ppyAPI.apiRoute('userinfo', **kw)
+    
+    def getOsuUserBp(self, uid, mode=0, limit=10):
+        kw = {
+            'uid': uid,
+            'mode': mode,
+            'limit': limit
+        }
+        logging.info(kw)
+        return ppyAPI.apiRoute('bp', **kw)

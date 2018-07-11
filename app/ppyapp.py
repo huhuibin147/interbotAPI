@@ -15,8 +15,14 @@ with open('./app/ppyapp.yaml', encoding='utf8') as f:
 app = Flask(__name__)
 
 @app.route('/bp', methods=['POST'])
-def bpApi():
-    return 'bp test'
+def bpApi(**kw):
+    uid = kw.get('osuid')
+    mode = kw.get('mode', 0)
+    limit = kw.get('limit', 10)
+    pyh = ppyHandler.ppyHandler()
+    ret = pyh.getOsuUserBp(uid, mode, limit)
+    return json.dumps(ret)
+    
 
 @app.route('/osuerinfo', methods=['POST'])
 @appTools.deco()

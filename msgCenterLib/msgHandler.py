@@ -30,7 +30,8 @@ class msgHandler():
         """
         permissionRs = self.getPermission(cmd)
         if not permissionRs:
-            return -1, '' #未设置权限,无法使用!
+            logging.info('[%s]未设置权限,无法使用!', cmd)
+            return -1, '' 
 
         for permission in permissionRs:
             ptype = permission['ptype']
@@ -48,7 +49,8 @@ class msgHandler():
                 if s < 0:
                     return s, r
             else:
-                return -1, '未知类型错误'
+                logging.info('[%s]未知类型错误', cmd)
+                return -1, ''
 
         return 1, '无限制'
 
@@ -204,7 +206,7 @@ class msgHandler():
         res = db.query(sql, args)
         if not res:
             logging.info('[%s]不在白名单范围内', account)
-            return -1, '权限限制,不在白名单范围内'
+            return -1, ''
 
         return 1, res[0]['remark']
 
@@ -228,6 +230,7 @@ class msgHandler():
         if not res:
             return 1, '不在黑名单范围内'
 
-        return -1, '权限限制,在黑名单范围内'
+        logging.info('[%s]权限限制,在黑名单范围内', account)
+        return -1, ''
 
     
