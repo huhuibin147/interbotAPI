@@ -4,3 +4,10 @@ botapp1:
   listen: 10005
   comment: 功能api
   model: botapp
+
+botapp2:
+  name: botApi
+  version: v0.1
+  listen: 10006
+  comment: 功能api
+  model: botapp

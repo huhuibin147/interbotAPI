@@ -4,3 +4,10 @@ ppyapp1:
   listen: 10003
   comment: osu数据对接api
   model: ppyapp
+
+ppyapp2:
+  name: osuApi
+  version: v0.1
+  listen: 10007
+  comment: osu数据对接api
+  model: ppyapp
