@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import yaml
 import json
+import random
 import logging
 from flask import Flask
 from flask import request
@@ -44,6 +45,11 @@ def bindUserInfo(**kw):
 @appTools.deco()
 def argsApi(**kw):
     return json.dumps(kw['iargs'])
+
+@app.route('/roll', methods=['POST'])
+@appTools.deco()
+def roll(**kw):
+    return str(random.randint(0, 100))
 
 
 if __name__ == '__main__':

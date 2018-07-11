@@ -183,7 +183,7 @@ class botHandler():
                 else:
                     r = '1miss，pp飞了，心痛吗'
             elif miss < 10:
-                if stars < 6:
+                if stars < 5:
                     r = '%smiss，别玩了吧，你根本fc不了' % miss
                 else:
                     r = '%smiss，有点恐怖啊你' % miss
@@ -193,5 +193,6 @@ class botHandler():
                 else:
                     r = '%smiss，太菜了，不想评价' % miss
 
-        r = '%smiss，不敢评价了怕被打' % miss
+        if random.randint(0,100) < 70:
+            r = '%smiss，不敢评价了怕被打' % miss
         return r
