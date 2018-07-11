@@ -49,6 +49,26 @@ class botHandler():
         ret = cmdRouter.invoke('!osufile', {"bid": bid})
         return json.loads(ret)
 
+    def getRctppRes(self, recinfo):
+        # rec计算
+        bid = recinfo['beatmap_id']
+        rinfo = self.exRecInfo(recinfo)
+        extend = self.convert2oppaiArgs(**rinfo) 
+        ojson = self.oppai2json(bid, extend)
+
+        # fc计算
+        fcacc = self.calFcacc(recinfo)
+        extendFc = self.convert2oppaiArgs(rinfo['mods'], fcacc)
+        ojsonFc = self.oppai2json(bid, extendFc)
+
+        # ac计算
+        extendSs = self.convert2oppaiArgs(rinfo['mods'])
+        ojsonSs = self.oppai2json(bid, extendSs)
+
+        res = self.formatRctpp2(ojson, recinfo['rank'], rinfo['acc'], 
+            ojsonFc['pp'], ojsonSs['pp'], bid, fcacc, recinfo['countmiss'])
+
+        return res
 
     def oppai(self, bid, extend=''):
         """取oppai结果

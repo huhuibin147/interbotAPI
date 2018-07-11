@@ -27,23 +27,7 @@ def rctpp(**kw):
         if not recinfo:
             res = "别复读好马!"
         else:
-            # rec计算
-            bid = recinfo[0]['beatmap_id']
-            rinfo = b.exRecInfo(recinfo[0])
-            extend = b.convert2oppaiArgs(**rinfo) 
-            ojson = b.oppai2json(bid, extend)
-
-            # fc计算
-            fcacc = b.calFcacc(recinfo[0])
-            extendFc = b.convert2oppaiArgs(rinfo['mods'], fcacc)
-            ojsonFc = b.oppai2json(bid, extendFc)
-
-            # ac计算
-            extendSs = b.convert2oppaiArgs(rinfo['mods'])
-            ojsonSs = b.oppai2json(bid, extendSs)
-
-            res = b.formatRctpp2(ojson, recinfo[0]['rank'], rinfo['acc'], 
-                ojsonFc['pp'], ojsonSs['pp'], bid, fcacc, recinfo[0]['countmiss'])
+            res = b.getRctppRes(recinfo[0])
     else:
         res = "你倒是绑定啊.jpg"
     return res
