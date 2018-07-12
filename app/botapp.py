@@ -7,6 +7,7 @@ from flask import Flask
 from flask import request
 from botappLib import botHandler
 from commLib import appTools
+from commLib import interRedis
 
 with open('./app/botapp.yaml', encoding='utf8') as f:
     config = yaml.load(f)
@@ -35,19 +36,28 @@ def rctpp(**kw):
 @app.route('/mybp', methods=['POST'])
 @appTools.deco()
 def mybp(**kw):
-    limit = "1" if not kw['iargs'] else kw['iargs'][0]
-    if int(limit) < 0 or int(limit) > 100:
-        limit = "1"
+    x = "1" if not kw['iargs'] else kw['iargs'][0]
+    if int(x) < 0 or int(x) > 100:
+        x = "1"
     b = botHandler.botHandler()
     osuinfo = b.getOsuInfo({"qqid":kw['qqid'], "groupid": kw['groupid']})
     logging.info(osuinfo)
     if osuinfo:
         osuid = osuinfo[0]['osuid']
-        recinfo = b.getRecBp({"osuid": osuid, "limit": limit})
+
+        key = 'OSU2_USERBP:%s'
+        rds = interRedis.connect('osu2')
+        rdsRs = rds.get(key % osuid)
+        if not rdsRs:
+            recinfo = b.getRecBp({"osuid": osuid, "limit": "100"})
+            rds.setex(key % osuid, json.dumps(recinfo), 900)
+        else:
+            recinfo = json.loads(rdsRs)
+
         if not recinfo:
             res = "别复读好马!"
         else:
-            res = b.getRctppRes(recinfo[-1])
+            res = b.getRctppRes(recinfo[int(x)-1])
     else:
         res = "你倒是绑定啊.jpg"
     return res
