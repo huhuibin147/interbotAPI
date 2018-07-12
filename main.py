@@ -3,9 +3,9 @@ import sys
 import yaml
 import re
 import logging
-from tornado.wsgi import WSGIContainer
-from tornado.httpserver import HTTPServer
-from tornado.ioloop import IOLoop
+# from tornado.wsgi import WSGIContainer
+# from tornado.httpserver import HTTPServer
+# from tornado.ioloop import IOLoop
 
 sys.path.append('./app')
 appid = sys.argv[1]
@@ -41,10 +41,14 @@ def loading():
 
 def main():
     loading()
-    http_server = HTTPServer(WSGIContainer(loadInstance.app))
-    http_server.listen(port)
+    loadInstance.app.run(
+        port = port,
+        threaded = True
+    )
+    # http_server = HTTPServer(WSGIContainer(loadInstance.app))
+    # http_server.listen(port)
     logging.info('[%s] start, listen [%s]' % (appid, port))
-    IOLoop.instance().start()
+    # IOLoop.instance().start()
 
 
 
