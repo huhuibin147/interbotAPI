@@ -1,5 +1,6 @@
 # -*- coding:utf8 -*-
 import json
+import time
 import logging
 import functools
 from flask import request
@@ -15,6 +16,7 @@ def deco(**kw):
 
         @functools.wraps(func) 
         def _newfunc(*args, **kwargs):
+            st = time.time()
 
             # 参数嵌入
             kwargs.update(request.form.to_dict())
@@ -26,6 +28,7 @@ def deco(**kw):
             # 方法主体
             rs = func(*args, **kwargs)
 
+            logging.info('[%s]执行时间:%ss', func.__name__, round(time.time()-st, 2))
             return rs
 
         return _newfunc

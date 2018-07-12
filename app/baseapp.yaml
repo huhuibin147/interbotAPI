@@ -4,3 +4,9 @@ baseapp1:
   listen: 10002
   comment: 基础信息api
   model: baseapp
+baseapp2:
+  name: baseApi
+  version: v0.1
+  listen: 10007
+  comment: 基础信息api
+  model: baseapp

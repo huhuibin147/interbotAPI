@@ -44,7 +44,6 @@ def mybp(**kw):
     if osuinfo:
         osuid = osuinfo[0]['osuid']
         recinfo = b.getRecBp({"osuid": osuid, "limit": limit})
-        logging.info(recinfo)
         if not recinfo:
             res = "别复读好马!"
         else:
