@@ -4,6 +4,7 @@ import logging
 
 from commLib import cmdRouter
 from commLib import interMysql
+from commLib import interRedis
 
 class baseHandler():
 
@@ -72,3 +73,23 @@ class baseHandler():
             logging.error('用户[%s]插入/更新失败', qq, traceback.print_exc())
             conn.rollback()
             return -1
+
+    def recordRecMap(self, qqid, groupid):
+        """开启记录推荐消息标记
+        """
+        rds = interRedis.connect('osu2')
+        k = 'RECORD_MAP:{groupid}:{qqid}'.format(groupid=groupid, qqid=qqid)
+        if rds.exists(k):
+            return -1
+        rds.setex(k, 1, 3600)
+        return 1
+
+    def stopRecordRecMap(self, qqid, groupid):
+        """结束记录推荐消息标记，请求打包api
+        """
+        rds = interRedis.connect('osu2')
+        k = 'RECORD_MAP:{groupid}:{qqid}'.format(groupid=groupid, qqid=qqid)
+        rds.delete(k)
+        # 取图链拼装请求
+        
+        return ''

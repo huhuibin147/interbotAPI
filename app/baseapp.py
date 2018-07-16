@@ -54,8 +54,25 @@ def roll(**kw):
 @app.route('/startrcm', methods=['POST'])
 @appTools.deco()
 def recommendTags(**kw):
-    atqq = kw.get('atqq')
-    return atqq
+    qq = kw.get['atqq'] if kw.get('atqq') else kw['qqid']
+    groupid = kw['groupid']
+    ins = baseHandler.baseHandler()
+    r = ins.recordRecMap(qq, groupid)
+    rs = ''
+    if r == -1:
+        rs = '推荐功能执行中!'
+    elif r == 1:
+        rs = '开启推荐map功能,发送图链,结束后请使用!stoprcm'
+    return rs
+
+@app.route('/stoprcm', methods=['POST'])
+@appTools.deco()
+def remRecommendTags(**kw):
+    qq = kw.get['atqq'] if kw.get('atqq') else kw['qqid']
+    groupid = kw['groupid']
+    ins = baseHandler.baseHandler()
+    r = ins.recordRecMap(qq, groupid)
+    return '解除成功!'
 
 
 if __name__ == '__main__':
