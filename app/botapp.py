@@ -19,7 +19,8 @@ app = Flask(__name__)
 @appTools.deco()
 def rctpp(**kw):
     b = botHandler.botHandler()
-    osuinfo = b.getOsuInfo({"qqid":kw['qqid'], "groupid": kw['groupid']})
+    qqid = kw['qqid'] if not kw.get('atqq') else kw['atqq']
+    osuinfo = b.getOsuInfo({"qqid": qqid, "groupid": kw['groupid']})
     logging.info(osuinfo)
     if osuinfo:
         osuid = osuinfo[0]['osuid']
