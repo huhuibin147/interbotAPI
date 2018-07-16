@@ -15,7 +15,7 @@ class interRedis():
 
     def __init__(self, node):
         conf = getConfig(node)
-        self.rds = redis.Redis(conf['host'], conf['port'], conf['db'])
+        self.rds = redis.Redis(conf['host'], conf['port'], conf['db'], decode_responses=True)
 
     def getRds(self):
         return self.rds

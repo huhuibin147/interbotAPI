@@ -54,7 +54,7 @@ def roll(**kw):
 @app.route('/startrcm', methods=['POST'])
 @appTools.deco()
 def recommendTags(**kw):
-    qq = kw.get['atqq'] if kw.get('atqq') else kw['qqid']
+    qq = kw['atqq'] if kw.get('atqq') else kw['qqid']
     groupid = kw['groupid']
     ins = baseHandler.baseHandler()
     r = ins.recordRecMap(qq, groupid)
@@ -68,16 +68,16 @@ def recommendTags(**kw):
 @app.route('/stoprcm', methods=['POST'])
 @appTools.deco()
 def remRecommendTags(**kw):
-    qq = kw.get['atqq'] if kw.get('atqq') else kw['qqid']
+    qq = kw['atqq'] if kw.get('atqq') else kw['qqid']
     groupid = kw['groupid']
     ins = baseHandler.baseHandler()
     r = ins.stopRecordRecMap(qq, groupid)
-    return '解除成功!'
+    return str(r)
 
 @app.route('/rcmlist', methods=['POST'])
 @appTools.deco()
 def recommendList(**kw):
-    qq = kw.get['atqq'] if kw.get('atqq') else kw['qqid']
+    qq = kw['atqq'] if kw.get('atqq') else kw['qqid']
     groupid = kw['groupid']
     ins = baseHandler.baseHandler()
     r = ins.recordRecMapList(qq, groupid)

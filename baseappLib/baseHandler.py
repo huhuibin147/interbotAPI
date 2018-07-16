@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import json
 import logging
+import requests
 
 from commLib import cmdRouter
 from commLib import interMysql
@@ -89,10 +90,18 @@ class baseHandler():
         """
         rds = interRedis.connect('osu2')
         k = 'RECORD_MAP:{groupid}:{qqid}'.format(groupid=groupid, qqid=qqid)
-        rds.delete(k)
+        k2 = 'RECORD_MAPLIST:{groupid}:{qqid}'.format(groupid=groupid, qqid=qqid)
         # 取图链拼装请求
+        bids = rds.lrange(k2, 0, -1)
+        if not bids:
+            return -1
+        args = ','.join(bids)
+        rs = self.getMapTarDownLink(args)
+        if rs:
+            rds.delete(k)
+            rds.delete(k2)
         
-        return ''
+        return rs
 
     def recordRecMapList(self, qqid, groupid):
         """查询推荐列表
@@ -103,3 +112,14 @@ class baseHandler():
             return -1
         r = rds.lrange(k, 0, -1)
         return r
+
+    def getMapTarDownLink(self, args):
+        """打包下载，返回链接
+        """
+        url = 'http://interbot.club/osu3/downmap?bids=%s' % args
+        res = requests.get(url)
+        if res.status_code == 200:
+            return res.text
+        else:
+            logging.info('请求[%s]下载异常', url)
+        return ''
