@@ -93,3 +93,13 @@ class baseHandler():
         # 取图链拼装请求
         
         return ''
+
+    def recordRecMapList(self, qqid, groupid):
+        """查询推荐列表
+        """
+        rds = interRedis.connect('osu2')
+        k = 'RECORD_MAPLIST:{groupid}:{qqid}'.format(groupid=groupid, qqid=qqid)
+        if not rds.exists(k):
+            return -1
+        r = rds.lrange(k, 0, -1)
+        return r

@@ -71,8 +71,17 @@ def remRecommendTags(**kw):
     qq = kw.get['atqq'] if kw.get('atqq') else kw['qqid']
     groupid = kw['groupid']
     ins = baseHandler.baseHandler()
-    r = ins.recordRecMap(qq, groupid)
+    r = ins.stopRecordRecMap(qq, groupid)
     return '解除成功!'
+
+@app.route('/rcmlist', methods=['POST'])
+@appTools.deco()
+def recommendList(**kw):
+    qq = kw.get['atqq'] if kw.get('atqq') else kw['qqid']
+    groupid = kw['groupid']
+    ins = baseHandler.baseHandler()
+    r = ins.recordRecMapList(qq, groupid)
+    return str(r)
 
 
 if __name__ == '__main__':

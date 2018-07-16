@@ -35,16 +35,16 @@ class defindHandler():
             key1 记录 通行 incr实现
             key2 写 真实记录 list实现
         """
-        qqid = self.context['user_id'],
+        qqid = self.context['user_id']
         groupid = self.context['group_id']
-        rds = interRedis.connect('osu2')
+        rds = interRedis.connect('inter4')
         tagskey = 'RECORD_MAP:{groupid}:{qqid}'.format(groupid=groupid, qqid=qqid)
         if not rds.exists(tagskey):
             return ''
 
         logging.info('存在记录key,进行推荐记录')
         bids = self.recommendMapFilter(self.context['message'])
-        self.mapList2Redis(bids)
+        self.mapList2Redis(bids, groupid, qqid)
         return ''
 
     def recommendMapFilter(self, content):
@@ -55,8 +55,8 @@ class defindHandler():
         logging.info('提取bids:%s', bids)
         return bids
 
-    def mapList2Redis(self, bids)
-        rds = interRedis.connect('osu2')
+    def mapList2Redis(self, bids, groupid, qqid):
+        rds = interRedis.connect('inter4')
         key = 'RECORD_MAPLIST:{groupid}:{qqid}'.format(groupid=groupid, qqid=qqid)
         for bid in bids:
             rds.lpush(key, bid)
