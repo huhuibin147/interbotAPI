@@ -51,6 +51,12 @@ def argsApi(**kw):
 def roll(**kw):
     return str(random.randint(0, 100))
 
+@app.route('/startrcm', methods=['POST'])
+@appTools.deco()
+def recommendTags(**kw):
+    atqq = kw.get('atqq')
+    return atqq
+
 
 if __name__ == '__main__':
     app.run()
