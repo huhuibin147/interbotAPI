@@ -112,9 +112,10 @@ class msgHandler():
         """at提取"""
         p = re.compile('\[CQ:at,qq=(\d+)\]')
         qqs = p.findall(msg)
+        qq = ''
         if qqs:
             qq = qqs[0]
-            logging.info('提取的Atqq:%s', qq)
+        logging.info('提取的Atqq:%s', qq)
         return qq
 
 
