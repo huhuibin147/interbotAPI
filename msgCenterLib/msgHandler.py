@@ -91,6 +91,7 @@ class msgHandler():
         iargs = self.extractArgs(msg, cmd)
         # 选项提取
         opts = self.extractOptions(msg)
+        atqq = self.extractAtqqid(msg)
 
         # 调用核心 
         res = requests.post(
@@ -98,7 +99,8 @@ class msgHandler():
             data = {
                 "iargs": json.dumps(iargs),
                 "qqid": self.context['user_id'],
-                "groupid": self.context['group_id']
+                "groupid": self.context['group_id'],
+                "atqq": atqq
             }
         )
         if res.status_code == 200 and res.text:
@@ -106,6 +108,16 @@ class msgHandler():
         logging.info('调用[%s]异常' % apiUrl)
         return ''
         
+    def extractAtqqid(self, msg):
+        """at提取"""
+        p = re.compile('\[CQ:at,qq=(\d+)\]')
+        qqs = p.findall(msg)
+        if qqs:
+            qq = qqs[0]
+            logging.info('提取的Atqq:%s', qq)
+        return qq
+
+
     def returnHandler(self, res, opts, context):
         """转发封装 带上选项"""
         returnstr = ''
