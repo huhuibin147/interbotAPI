@@ -1,0 +1,6 @@
+apiapp1:
+  name: api
+  version: v0.1
+  listen: 10010
+  comment: 外部api
+  model: apiapp
