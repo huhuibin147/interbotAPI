@@ -35,7 +35,7 @@ def bindUserInfo(**kw):
     elif r == -1:
         rs = '系统异常!'
     elif r == -2:
-        rs = '网络异常!'
+        rs = '网络异常!(带空用下划线代替,带-请加-r,setid -r -x-'
     else:
         rs = '未知错误!'
     return rs

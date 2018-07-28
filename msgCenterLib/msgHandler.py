@@ -15,8 +15,8 @@ class msgHandler():
         """消息处理"""
 
         # 分发线程
-        t = threading.Thread(target=self.msgTransmit, args=(self.context, ))
-        t.start()
+        # t = threading.Thread(target=self.msgTransmit, args=(self.context, ))
+        # t.start()
 
         # 自动处理
         msg = self.context['message']
@@ -93,6 +93,10 @@ class msgHandler():
         opts = self.extractOptions(msg)
         atqq = self.extractAtqqid(msg)
 
+        # 配置回复选项
+        if res['at']:
+            opts.append('-at')
+
         # 调用核心 
         res = requests.post(
             apiUrl, 
@@ -124,7 +128,11 @@ class msgHandler():
         returnstr = ''
         if '-at' in opts:
             qq = context['user_id']
-            returnstr = '[CQ:at,qq=%s] %s' % (qq, res)
+            returnstr = ''
+            returnstr += '[CQ:at,qq=%s] ' % (qq)
+            if len(res) > 20:
+                returnstr += '\n'
+            returnstr += str(res)
         else:
             returnstr = res
         return returnstr
@@ -192,7 +200,7 @@ class msgHandler():
         """映射"""
         db = interMysql.Connect('osu2')
         sql = '''
-            SELECT cmd, url, location, reply
+            SELECT cmd, url, location, reply, at
             FROM cmdRef WHERE cmd = %s
         '''
         res = db.query(sql, [cmd])
