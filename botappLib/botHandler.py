@@ -204,7 +204,7 @@ class botHandler():
                     r = '您还是人马，0miss??'
         else:
             if ar > 9.7:
-                r = '太菜了，建议你开ez玩'
+                r = '%smiss，太菜了，dalou建议你开ez玩' % miss
             elif miss == 1:
                 if stars < 5:
                     r = '1miss，治治你的手抖吧'
