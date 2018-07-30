@@ -12,7 +12,8 @@ class defindHandler():
 
     def __init__(self, context):
         self.context = context
-        self.job = [self.recordRecommendMap]
+        self.job = [self.test]
+        # self.job = [self.recordRecommendMap]
 
     def main(self):
         """任务分配中心
@@ -62,3 +63,5 @@ class defindHandler():
             rds.lpush(key, bid)
         return
 
+    def test(self):
+        logging.info('defind test job suc')

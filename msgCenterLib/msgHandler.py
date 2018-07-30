@@ -15,8 +15,8 @@ class msgHandler():
         """消息处理"""
 
         # 分发线程
-        # t = threading.Thread(target=self.msgTransmit, args=(self.context, ))
-        # t.start()
+        t = threading.Thread(target=self.msgTransmit, args=(self.context, ))
+        t.start()
 
         # 自动处理
         msg = self.context['message']
