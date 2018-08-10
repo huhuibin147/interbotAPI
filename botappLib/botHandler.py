@@ -205,19 +205,22 @@ class botHandler():
                         'miss?不存在的!']
                     r = random.choice(l)
         else:
-            if ar > 9.7:
-                r = '%smiss，太菜了，dalou建议你开ez玩' % miss
-            elif miss == 1:
+            if miss == 1:
                 if stars < 5:
-                    r = '1miss，治治你的手抖吧'
+                    l = ['1miss，治治你的手抖吧',
+                        '再肛一肛，pp就到手了',
+                        '专业破梗大法上下颠倒hr']
+                    r = random.choice(l)
                 else:
                     l = ['1miss，pp飞了，心痛吗',
-                        '出售专治1Miss绝症药，5块/瓶']
+                        '出售专治1Miss绝症药，5块/瓶',
+                        '差点你就爆了一群爷爷了,1miss距离',
+                        '1miss惨案,默哀5分钟']
                     r = random.choice(l)
             elif miss < 10:
                 if stars < 5:
-                    l = ['%smiss，别玩了吧，你根本fc不了' % miss, 
-                        '%smiss，再糊糊可以就过去了' % miss]
+                    l = ['%smiss，你还没fc吗' % miss, 
+                        '%smiss，再糊糊可能就fc了' % miss]
                     r = random.choice(l)
                 elif stars < 7:
                     r = '%smiss，有点恐怖啊你' % miss
@@ -228,12 +231,14 @@ class botHandler():
                 if stars < 4:
                     r = '打个低星图，还能%smiss，删游戏吧' % miss
                 else:
-                    if miss > 50:
+                    if ar > 9.7:
+                        r = '%smiss，dalou建议你开ez玩' % miss
+                    elif miss > 50:
                         r = '%smiss，太菜了，不想评价' % miss
                     else:
                         r = '%smiss，不知道说啥，卖个广告吧' % miss
 
 
-        if random.randint(0,100) < 70:
+        if random.randint(0,100) < 20:
             r = '%smiss，广告位出租' % miss
         return r
