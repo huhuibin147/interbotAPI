@@ -83,6 +83,14 @@ def recommendList(**kw):
     r = ins.recordRecMapList(qq, groupid)
     return str(r)
 
+@app.route('/chat', methods=['POST'])
+@appTools.deco()
+def chat(**kw):
+    inputs = ' '.join(kw['iargs'])
+    ins = baseHandler.baseHandler()
+    r = ins.chat2bot(inputs)
+    return r
+
 
 if __name__ == '__main__':
     app.run()

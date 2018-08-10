@@ -6,6 +6,7 @@ import requests
 from commLib import cmdRouter
 from commLib import interMysql
 from commLib import interRedis
+from chatbotLib import testc
 
 class baseHandler():
 
@@ -123,3 +124,11 @@ class baseHandler():
         else:
             logging.info('请求[%s]下载异常', url)
         return ''
+
+    def chat2bot(self, inputs):
+        """对话系统
+        """
+        ans = testc.getAnswer(inputs) 
+        if ans.strip() == '':
+            ans = '本bot还没学会怎么回答这鬼问题!'
+        return ans
