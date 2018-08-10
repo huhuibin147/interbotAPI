@@ -197,11 +197,13 @@ class botHandler():
                 r = '感受滑条的魅力吧'
             else:
                 if acc == 100:
-                    r = 'kami sama，给您跪下了'
+                    r = '跟我一起喊爷爷!'
                 elif acc >= 99:
                     r = 'emmm恐怖,建议踢了'
                 else:
-                    r = '您还是人马，0miss??'
+                    l = ['您还是人马，0miss??',
+                        'miss?不存在的!']
+                    r = random.choice(l)
         else:
             if ar > 9.7:
                 r = '%smiss，太菜了，dalou建议你开ez玩' % miss
@@ -209,18 +211,29 @@ class botHandler():
                 if stars < 5:
                     r = '1miss，治治你的手抖吧'
                 else:
-                    r = '1miss，pp飞了，心痛吗'
+                    l = ['1miss，pp飞了，心痛吗',
+                        '出售专治1Miss绝症药，5块/瓶']
+                    r = random.choice(l)
             elif miss < 10:
                 if stars < 5:
-                    r = '%smiss，别玩了吧，你根本fc不了' % miss
-                else:
+                    l = ['%smiss，别玩了吧，你根本fc不了' % miss, 
+                        '%smiss，再糊糊可以就过去了' % miss]
+                    r = random.choice(l)
+                elif stars < 7:
                     r = '%smiss，有点恐怖啊你' % miss
+                else:
+                    r = '%smiss，你是什么怪物' % miss
+
             else:
                 if stars < 4:
                     r = '打个低星图，还能%smiss，删游戏吧' % miss
                 else:
-                    r = '%smiss，太菜了，不想评价' % miss
+                    if miss > 50:
+                        r = '%smiss，太菜了，不想评价' % miss
+                    else:
+                        r = '%smiss，不知道说啥，卖个广告吧' % miss
+
 
         if random.randint(0,100) < 70:
-            r = '%smiss，不敢评价了怕被打' % miss
+            r = '%smiss，广告位出租' % miss
         return r
