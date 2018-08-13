@@ -27,7 +27,7 @@ def rctpp(**kw):
         recinfo = b.getRecInfo({"osuid": osuid, "limit": "1"})
         logging.info(recinfo)
         if not recinfo:
-            res = "别复读好马!"
+            res = "没有最近游戏记录,绑定用户为%s" % osuinfo[0]['osuname']
         else:
             res = b.getRctppRes(recinfo[0])
     else:
