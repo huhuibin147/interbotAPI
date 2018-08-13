@@ -64,6 +64,15 @@ def mybp(**kw):
     return res
 
 
+@app.route('/tt', methods=['POST'])
+@appTools.deco()
+def tt(**kw):
+    b = botHandler.botHandler()
+    rs = b.getOsuBeatMapInfo(bid=kw['iargs'][0])
+    logging.info(rs)
+    return ''
+
+
 if __name__ == '__main__':
     app.run()
     

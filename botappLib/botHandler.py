@@ -8,6 +8,7 @@ import traceback
 from io import TextIOWrapper
 from commLib import cmdRouter
 from commLib import mods
+from commLib import interMysql
 
 class botHandler():
 
@@ -55,6 +56,14 @@ class botHandler():
             bid
         """
         ret = cmdRouter.invoke('!osufile', {"bid": bid})
+        return json.loads(ret)
+
+    def getOsuBeatMap(self, bid):
+        """取osu beatmap信息
+        Args:
+            bid
+        """
+        ret = cmdRouter.invoke('!beatmap', {"bid": bid})
         return json.loads(ret)
 
     def getRctppRes(self, recinfo):
@@ -143,11 +152,19 @@ class botHandler():
         acc = mods.get_acc(rec['count300'], rec['count100'], rec['count50'], 0)
         return acc
 
+    def factBpm(self, rawbpm, modstr):
+        bpm = rawbpm
+        if 'DT' in modstr or 'NC' in modstr:
+            bpm = rawbpm * 1.5
+        elif 'HT' in modstr:
+            bpm = rawbpm / 0.75
+        return round(bpm)
+
     def formatRctpp2(self, ojson, rank, acc, ppfc, ppss, bid, fcacc, miss):
         """格式化rctpp输出"""
         outp = '{artist} - {title} [{version}] \n'
         outp += 'Beatmap by {creator} \n'
-        outp += '[ar{ar} cs{cs} od{od} hp{hp}]\n\n'
+        outp += '[ar{ar} cs{cs} od{od} hp{hp}  bpm{bpm}]\n\n'
         outp += 'stars: {stars}* | {mods_str} \n'
         outp += '{combo}x/{max_combo}x | {acc}% | {rank} \n\n'
         outp += '{acc}%: {pp}pp\n'
@@ -159,11 +176,14 @@ class botHandler():
         missStr = self.missReply(miss, acc, ojson['ar'], 
             ojson['combo'], ojson['max_combo'], ojson['stars'])
 
+        mapInfo = self.getOsuBeatMapInfo(bid)
+        bpm = self.factBpm(float(mapInfo['bpm']), ojson['mods_str'])
+ 
         out = outp.format(
-            artist = ojson['artist'],
-            title = ojson['title'],
-            version = ojson['version'],
-            creator = ojson['creator'],
+            artist = mapInfo['artist'],
+            title = mapInfo['title'],
+            version = mapInfo['version'],
+            creator = mapInfo['creator'],
             ar = ojson['ar'],
             cs = ojson['cs'],
             od = ojson['od'],
@@ -180,7 +200,8 @@ class botHandler():
             bid = bid,
             fcacc = fcacc,
             miss = miss,
-            missStr = missStr
+            missStr = missStr,
+            bpm = bpm
         )
 
         return out
@@ -207,9 +228,9 @@ class botHandler():
         else:
             if miss == 1:
                 if stars < 5:
-                    l = ['1miss，治治你的手抖吧',
-                        '再肛一肛，pp就到手了',
-                        '专业破梗大法上下颠倒hr']
+                    l = ['1miss,治治你的手抖吧',
+                        '1miss,再肛一肛，pp就到手了',
+                        '专业破梗1miss大法上下颠倒hr']
                     r = random.choice(l)
                 else:
                     l = ['1miss，pp飞了，心痛吗',
@@ -242,3 +263,58 @@ class botHandler():
         if random.randint(0,100) < 20:
             r = '%smiss，广告位出租' % miss
         return r
+
+    def osuBeatmapInfoFromDb(self, bid):
+        db = interMysql.Connect('osu')
+        sql = '''
+            SELECT mapjson 
+            FROM beatmap WHERE bid = %s
+        '''
+        rs = db.query(sql, [bid])
+        if not rs:
+            return {}
+        else:
+            mapInfo = rs[0]
+            return json.loads(mapInfo['mapjson'])
+
+    def map2db(self, args):
+        try:
+            db = interMysql.Connect('osu')
+            sql = '''
+                INSERT into beatmap(bid, source, artist, title, 
+                    version, creator, stars, addtime, mapjson) 
+                VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s)
+            '''
+            ret = db.executeMany(sql, args)
+            db.commit()
+            logging.info('map入库记录[%s]', ret)
+            return ret
+        except:
+            db.rollback()
+            logging.error(traceback.print_exc())
+
+    def getOsuBeatMapInfo(self, bid):
+        """取map信息，从库中取，取不到再取api
+        Returns:
+            dict 数据格式以ppy为准
+        """
+        dbMapInfo = self.osuBeatmapInfoFromDb(bid)
+        if not dbMapInfo:
+            dbMapInfo = self.getOsuBeatMap(bid)
+            if dbMapInfo:
+                dbMapInfo = dbMapInfo[0]
+                insertArgs = [[
+                    dbMapInfo["beatmap_id"], 
+                    dbMapInfo['source'], 
+                    dbMapInfo['artist'], 
+                    dbMapInfo['title'], 
+                    dbMapInfo['version'], 
+                    dbMapInfo['creator'], 
+                    dbMapInfo['difficultyrating'],
+                    dbMapInfo['last_update'],
+                    json.dumps(dbMapInfo) 
+                ]]
+                self.map2db(insertArgs)
+            else:
+                dbMapInfo = {}
+        return dbMapInfo
