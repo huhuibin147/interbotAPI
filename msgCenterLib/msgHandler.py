@@ -156,14 +156,14 @@ class msgHandler():
 
     def extractOptions(self, msg):
         """选项提取"""
-        p = re.compile(r'*\w+')
+        p = re.compile('\*\w+')
         opts = p.findall(msg)
         logging.info('提取的opts:%s', opts)
         return opts
 
     def filterOptions(self, msg):
         """选项过滤"""
-        return re.sub(r'*\w+', '', msg)
+        return re.sub('\*\w+', '', msg)
 
     def autoReply(self, msg):
         """自动回复，非特殊指令性"""
