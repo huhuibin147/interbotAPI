@@ -30,3 +30,8 @@ class ppyHandler():
         }
         logging.info(kw)
         return ppyAPI.apiRoute('bp', **kw)
+    
+    def getOsuBeatMapInfo(self, bid):
+        kw = {'bid': bid}
+        logging.info(kw)
+        return ppyAPI.apiRoute('beatmap', **kw)
