@@ -95,7 +95,7 @@ class msgHandler():
 
         # 配置回复选项
         if res['at']:
-            opts.append('-at')
+            opts.append('*at')
 
         # 调用核心 
         res = requests.post(
