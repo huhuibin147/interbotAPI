@@ -79,7 +79,7 @@ class msgHandler():
             return r
 
         # 帮助选项
-        if '-h' in msg:
+        if '*h' in msg:
             return res['reply']
 
         apiUrl = '{location}{api}'.format(
@@ -126,7 +126,7 @@ class msgHandler():
     def returnHandler(self, res, opts, context):
         """转发封装 带上选项"""
         returnstr = ''
-        if '-at' in opts:
+        if '*at' in opts:
             qq = context['user_id']
             returnstr = ''
             returnstr += '[CQ:at,qq=%s] ' % (qq)
@@ -143,10 +143,10 @@ class msgHandler():
             x
         """
         args = []
-        if '-r' not in msg:
+        if '*r' not in msg:
             msgf = self.filterOptions(msg)
         else:
-            msgf = msg.replace('-r', '')
+            msgf = msg.replace('*r', '')
         effmsg = msgf[msgf.find(cmd):]
         l = effmsg.split(' ')
         if len(l) > 1:
@@ -156,14 +156,14 @@ class msgHandler():
 
     def extractOptions(self, msg):
         """选项提取"""
-        p = re.compile(r'-\w+')
+        p = re.compile(r'*\w+')
         opts = p.findall(msg)
         logging.info('提取的opts:%s', opts)
         return opts
 
     def filterOptions(self, msg):
         """选项过滤"""
-        return re.sub(r'-\w+', '', msg)
+        return re.sub(r'*\w+', '', msg)
 
     def autoReply(self, msg):
         """自动回复，非特殊指令性"""

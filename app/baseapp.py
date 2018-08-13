@@ -26,7 +26,7 @@ def userInfoApi(**kw):
 @appTools.deco()
 def bindUserInfo(**kw):
     ins = baseHandler.baseHandler()
-    osuid = kw['iargs'][0] if kw.get('iargs') else kw.get('osuid', '')
+    osuid = ' '.join(kw['iargs']) if kw.get('iargs') else kw.get('osuid', '')
     r = ins.bindOsuUser(osuid, kw['qqid'], kw['groupid'])
     if r > 0:
         rs = '绑定成功!'
