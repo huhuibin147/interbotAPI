@@ -58,6 +58,14 @@ def osufile(**kw):
     ret = os.popen('curl https://osu.ppy.sh/osu/%s' % bid)
     return json.dumps(ret)
 
+@app.route('/beatmap', methods=['POST'])
+@appTools.deco()
+def beatmap(**kw):
+    bid = kw.get('bid')
+    pyh = ppyHandler.ppyHandler()
+    ret = pyh.getOsuBeatMapInfo(bid)
+    return json.dumps(ret)
+
 if __name__ == '__main__':
     app.run()
     
