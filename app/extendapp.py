@@ -17,7 +17,7 @@ app = Flask(__name__)
 @app.route('/inter3', methods=['POST'])
 @appTools.deco()
 def inter3(**kw):
-    return 'inter3节点测试'
+    return 'inter3节点响应测试'
 
 if __name__ == '__main__':
     app.run()
