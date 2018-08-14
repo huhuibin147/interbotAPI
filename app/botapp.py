@@ -20,11 +20,11 @@ app = Flask(__name__)
 def rctpp(**kw):
     b = botHandler.botHandler()
     qqid = kw['qqid'] if not kw.get('atqq') else kw['atqq']
-    osuinfo = b.getOsuInfo({"qqid": qqid, "groupid": kw['groupid']})
+    osuinfo = b.getOsuInfo(qqid, kw['groupid'])
     logging.info(osuinfo)
     if osuinfo:
         osuid = osuinfo[0]['osuid']
-        recinfo = b.getRecInfo({"osuid": osuid, "limit": "1"})
+        recinfo = b.getRecInfo(osuid, "1")
         logging.info(recinfo)
         if not recinfo:
             res = "没有最近游戏记录,绑定用户为%s" % osuinfo[0]['osuname']
@@ -41,7 +41,7 @@ def mybp(**kw):
     if int(x) < 0 or int(x) > 100:
         x = "1"
     b = botHandler.botHandler()
-    osuinfo = b.getOsuInfo({"qqid":kw['qqid'], "groupid": kw['groupid']})
+    osuinfo = b.getOsuInfo(kw['qqid'], kw['groupid'])
     logging.info(osuinfo)
     if osuinfo:
         osuid = osuinfo[0]['osuid']
@@ -50,7 +50,7 @@ def mybp(**kw):
         rds = interRedis.connect('osu2')
         rdsRs = rds.get(key % osuid)
         if not rdsRs:
-            recinfo = b.getRecBp({"osuid": osuid, "limit": "100"})
+            recinfo = b.getRecBp(osuid, "100")
             rds.setex(key % osuid, json.dumps(recinfo), 900)
         else:
             recinfo = json.loads(rdsRs)

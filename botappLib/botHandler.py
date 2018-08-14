@@ -16,28 +16,36 @@ class botHandler():
     def __init__(self):
         self.osufiledir = '/data/osufile/'
     
-    def getOsuInfo(self, args):
+    def getOsuInfo(self, qqid, groupid):
         """取osu用户绑定信息
         Args:
             qq/groupid
         """
-        ret = cmdRouter.invoke('!uinfo', args)
+        ret = cmdRouter.invoke(
+            '!uinfo', {"qqid": qqid, "groupid": groupid}
+        )
         return json.loads(ret)
 
-    def getRecInfo(self, args):
+    def getRecInfo(self, osuid, limit):
         """取osu用户rec信息
         Args:
             osuid
+            limit
         """
-        ret = cmdRouter.invoke('!rec', args)
+        ret = cmdRouter.invoke(
+            '!rec', {"osuid": osuid, "limit": limit}
+        )
         return json.loads(ret)
 
-    def getRecBp(self, args):
+    def getRecBp(self, osuid, limit):
         """取osu用户bp信息
         Args:
             osuid
+            limit
         """
-        ret = cmdRouter.invoke('!bp', args)
+        ret = cmdRouter.invoke(
+            '!bp', {"osuid": osuid, "limit": limit}
+        )
         return json.loads(ret)
 
 
@@ -257,11 +265,11 @@ class botHandler():
                     elif miss > 50:
                         r = '%smiss，太菜了，不想评价' % miss
                     else:
-                        r = '%smiss，不知道说啥，卖个广告吧' % miss
+                        r = '%smiss，接收功能建议' % miss
 
 
         if random.randint(0,100) < 20:
-            r = '%smiss，广告位出租' % miss
+            r = '%smiss，接收评价建议' % miss
         return r
 
     def osuBeatmapInfoFromDb(self, bid):
