@@ -1,0 +1,13 @@
+extendapp1:
+  name: osuApi
+  version: v0.1
+  listen: 10011
+  comment: 扩展服务
+  model: extendapp
+
+extendapp2:
+  name: osuApi
+  version: v0.1
+  listen: 10012
+  comment: 扩展服务
+  model: extendapp
