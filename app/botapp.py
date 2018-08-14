@@ -84,6 +84,25 @@ def bbp(**kw):
     res = b.bbpOutFormat(recinfo, osuname)
     return res
 
+@app.route('/test', methods=['POST'])
+@appTools.deco()
+def test(**kw):
+    # 带输入用户类型
+    b = botHandler.botHandler()
+    osuid = "" if not kw['iargs'] else ' '.join(kw['iargs'])
+    if not osuid:
+        qqid = kw['qqid'] if not kw.get('atqq') else kw['atqq']
+        osuinfo = b.getOsuInfo(qqid, kw['groupid'])
+        if not osuinfo:
+            return "你倒是绑定啊.jpg"
+        osuid = osuinfo[0]['osuid']
+    uinfo = b.getOsuInfoFromAPI(osuid)
+    if not uinfo:
+        return "不存在或者网络异常!"
+    recinfo = b.getRecBp(osuid, "5")
+    res = b.testFormatOut(uinfo[0], recinfo)
+    return res
+
 @app.route('/help', methods=['POST'])
 @appTools.deco()
 def help(**kw):

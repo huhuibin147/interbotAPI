@@ -9,6 +9,7 @@ from io import TextIOWrapper
 from commLib import cmdRouter
 from commLib import mods
 from commLib import interMysql
+from botappLib import healthCheck
 
 class botHandler():
 
@@ -24,6 +25,14 @@ class botHandler():
         ret = cmdRouter.invoke(
             '!uinfo', {"qqid": qqid, "groupid": groupid}
         )
+        return json.loads(ret)
+
+    def getOsuInfoFromAPI(self, osuid):
+        """取osu用户信息 通过ppy
+        Args:
+            osuid
+        """
+        ret = cmdRouter.invoke('!osuerinfo', {"osuid": osuid})
         return json.loads(ret)
 
     def getRecInfo(self, osuid, limit):
@@ -351,7 +360,7 @@ class botHandler():
         cmdInfo = self.cmdRefFromDb(level=[1])
         rs = 'interbot2 v1.0\n'
         for i, c in enumerate(cmdInfo):
-            rs += '{}.{} {}\n'.format(
+            rs += '{}.[{}] {}\n'.format(
                     i+1, c["cmd"], c["reply"]
                 )
         return rs[:-1]
@@ -372,4 +381,10 @@ class botHandler():
             level = [1]
         sql = sql % ','.join([str(l) for l in level])
         rs = db.query(sql)
+        return rs
+
+    def testFormatOut(self, userinfo, bp):
+        """test输出
+        """
+        rs = healthCheck.health_check(userinfo, bp)
         return rs
