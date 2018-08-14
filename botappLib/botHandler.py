@@ -326,3 +326,50 @@ class botHandler():
             else:
                 dbMapInfo = {}
         return dbMapInfo
+
+    def bbpOutFormat(self, bp5, ousname):
+        """bbp输出格式化
+        """
+        s_msg = "%s's bp!!\n" % ousname
+        for i,r in enumerate(bp5[0:5]):
+            msg = 'bp{x},{pp}pp,{acc}%,{rank},+{mod}'
+            c50 = float(r['count50'])
+            c100 = float(r['count100'])
+            c300 = float(r['count300'])
+            cmiss = float(r['countmiss'])
+            acc = round((c50*50+c100*100+c300*300)/(c50+c100+c300+cmiss)/300*100, 2)
+            msg = msg.format(
+                x=i+1,
+                pp=round(float(r['pp'])),
+                acc=acc,rank=r['rank'],
+                mod=','.join(mods.getMod(int(r['enabled_mods'])))
+            )
+            s_msg = s_msg + msg + '\n'
+        return s_msg[:-1]
+
+    def helpFormatOut(self):
+        cmdInfo = self.cmdRefFromDb(level=[1])
+        rs = 'interbot2 v1.0\n'
+        for i, c in enumerate(cmdInfo):
+            rs += '{}.{} {}\n'.format(
+                    i+1, c["cmd"], c["reply"]
+                )
+        return rs[:-1]
+
+    def cmdRefFromDb(self, level):
+        """命令信息
+        Args:
+            level  
+                Type:list
+                Default: 1
+        """
+        db = interMysql.Connect('osu2')
+        sql = '''
+            SELECT cmd, reply 
+            FROM cmdRef WHERE level in (%s)
+        '''
+        if not level:
+            level = [1]
+        sql = sql % ','.join([str(l) for l in level])
+        rs = db.query(sql)
+        return rs

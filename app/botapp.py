@@ -63,6 +63,33 @@ def mybp(**kw):
         res = "你倒是绑定啊.jpg"
     return res
 
+@app.route('/bbp', methods=['POST'])
+@appTools.deco()
+def bbp(**kw):
+    # 带输入用户类型
+    b = botHandler.botHandler()
+    osuid = "" if not kw['iargs'] else ' '.join(kw['iargs'])
+    osuname = osuid
+    if not osuid:
+        qqid = kw['qqid'] if not kw.get('atqq') else kw['atqq']
+        osuinfo = b.getOsuInfo(qqid, kw['groupid'])
+        if not osuinfo:
+            return "你倒是绑定啊.jpg"
+        osuid = osuinfo[0]['osuid']
+        osuname = osuinfo[0]['osuname']
+
+    recinfo = b.getRecBp(osuid, "5")
+    if not recinfo:
+        return "没有Bp,下一个!!"
+    res = b.bbpOutFormat(recinfo, osuname)
+    return res
+
+@app.route('/help', methods=['POST'])
+@appTools.deco()
+def help(**kw):
+    b = botHandler.botHandler()
+    rs = b.helpFormatOut()
+    return rs
 
 @app.route('/tt', methods=['POST'])
 @appTools.deco()
