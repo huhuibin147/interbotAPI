@@ -66,6 +66,14 @@ def beatmap(**kw):
     ret = pyh.getOsuBeatMapInfo(bid)
     return json.dumps(ret)
 
+@app.route('/osuskill', methods=['POST'])
+@appTools.deco()
+def osuskill(**kw):
+    bid = kw.get('bid')
+    pyh = ppyHandler.ppyHandler()
+    ret = pyh.getSkillInfo(bid)
+    return json.dumps(ret)
+
 if __name__ == '__main__':
     app.run()
     
