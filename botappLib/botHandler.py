@@ -83,6 +83,14 @@ class botHandler():
         ret = cmdRouter.invoke('!beatmap', {"bid": bid})
         return json.loads(ret)
 
+    def getSkillInfo(self, osuname):
+        """取osu skill信息
+        Args:
+            osuname
+        """
+        ret = cmdRouter.invoke('!osuskill', {"osuname": osuname})
+        return ret
+
     def getRctppRes(self, recinfo):
         # rec计算
         bid = recinfo['beatmap_id']

@@ -16,22 +16,17 @@ app = Flask(__name__)
 
 
 @app.route('/rctpp', methods=['POST'])
-@appTools.deco()
+@appTools.deco(autoOusInfoKey='osuid,osuname')
 def rctpp(**kw):
     b = botHandler.botHandler()
-    qqid = kw['qqid'] if not kw.get('atqq') else kw['atqq']
-    osuinfo = b.getOsuInfo(qqid, kw['groupid'])
-    logging.info(osuinfo)
-    if osuinfo:
-        osuid = osuinfo[0]['osuid']
-        recinfo = b.getRecInfo(osuid, "1")
-        logging.info(recinfo)
-        if not recinfo:
-            res = "没有最近游戏记录,绑定用户为%s" % osuinfo[0]['osuname']
-        else:
-            res = b.getRctppRes(recinfo[0])
+    osuid = kw['autoOusInfoKey']['osuid']
+    osuname = kw['autoOusInfoKey']['osuname']
+    recinfo = b.getRecInfo(osuid, "1")
+    logging.info(recinfo)
+    if not recinfo:
+        res = "没有最近游戏记录,绑定用户为%s" % osuname
     else:
-        res = "你倒是绑定啊.jpg"
+        res = b.getRctppRes(recinfo[0])
     return res
 
 @app.route('/mybp', methods=['POST'])
@@ -64,19 +59,12 @@ def mybp(**kw):
     return res
 
 @app.route('/bbp', methods=['POST'])
-@appTools.deco()
+@appTools.deco(autoOusInfoKey='osuid,osuname')
 def bbp(**kw):
     # 带输入用户类型
     b = botHandler.botHandler()
-    osuid = "" if not kw['iargs'] else ' '.join(kw['iargs'])
-    osuname = osuid
-    if not osuid:
-        qqid = kw['qqid'] if not kw.get('atqq') else kw['atqq']
-        osuinfo = b.getOsuInfo(qqid, kw['groupid'])
-        if not osuinfo:
-            return "你倒是绑定啊.jpg"
-        osuid = osuinfo[0]['osuid']
-        osuname = osuinfo[0]['osuname']
+    osuid = kw['autoOusInfoKey']['osuid']
+    osuname = kw['autoOusInfoKey'].get('osuname')
 
     recinfo = b.getRecBp(osuid, "5")
     if not recinfo:
@@ -85,22 +73,25 @@ def bbp(**kw):
     return res
 
 @app.route('/test', methods=['POST'])
-@appTools.deco()
+@appTools.deco(autoOusInfoKey='osuid')
 def test(**kw):
     # 带输入用户类型
     b = botHandler.botHandler()
-    osuid = "" if not kw['iargs'] else ' '.join(kw['iargs'])
-    if not osuid:
-        qqid = kw['qqid'] if not kw.get('atqq') else kw['atqq']
-        osuinfo = b.getOsuInfo(qqid, kw['groupid'])
-        if not osuinfo:
-            return "你倒是绑定啊.jpg"
-        osuid = osuinfo[0]['osuid']
+    osuid = kw['autoOusInfoKey']['osuid']
     uinfo = b.getOsuInfoFromAPI(osuid)
     if not uinfo:
         return "不存在或者网络异常!"
     recinfo = b.getRecBp(osuid, "5")
     res = b.testFormatOut(uinfo[0], recinfo)
+    return res
+
+@app.route('/skill', methods=['POST'])
+@appTools.deco(autoOusInfoKey='osuname')
+def skill(**kw):
+    # 带输入用户类型
+    b = botHandler.botHandler()
+    osuname = kw['autoOusInfoKey']['osuname']
+    res = b.getSkillInfo(osuname)
     return res
 
 @app.route('/help', methods=['POST'])
