@@ -7,6 +7,7 @@ Created on Tue Aug  7 17:20:40 2018
 
 import jieba
 import copy
+import pickle
 import tensorflow as tf
 import numpy as np
 from tensorflow.python.layers.core import Dense
@@ -44,6 +45,12 @@ def get_vocab(data):
 
 ques_word2int, ques_int2word = get_vocab(ques)
 ans_word2int, ans_int2word= get_vocab(ans)
+
+with open('ques_vocab.pkl', 'wb') as f:
+    f.write(pickle.dumps(ques_word2int))
+
+with open('ans_vocab.pkl', 'wb') as f:
+    f.write(pickle.dumps(ans_word2int))
 
 def data2int():
     ques_data2int = [[ques_word2int.get(word, vocab["<UNK>"]) 

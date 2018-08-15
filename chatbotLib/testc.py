@@ -8,10 +8,14 @@ Created on Fri Aug 10 16:20:10 2018
 import tensorflow as tf
 import jieba
 import copy
+import os
+import pickle
 
 
 Q_file = 'chatbotLib/data/questions.txt'
 A_file = 'chatbotLib/data/answers.txt'
+Q_pkl = 'chatbotLib/data/ques_vocab.pkl'
+A_pkl = 'chatbotLib/data/ans_vocab.pkl'
 vocab = {"<PAD>": 1, "<UNK>": 2, "<GO>": 3, "<EOS>": 4}
 
 batch_size = 2
@@ -30,7 +34,6 @@ def get_data():
         ans = f.read()
     return ques, ans
         
-ques, ans = get_data()
 
 def get_vocab(data):
     word2int = copy.deepcopy(vocab)
@@ -48,9 +51,17 @@ def get_vocab(data):
     return word2int, int2word
 
 
-ques_word2int, ques_int2word = get_vocab(ques)
-ans_word2int, ans_int2word= get_vocab(ans)
-
+if os.path.exists(Q_pkl):
+    with open(Q_pkl, 'rb') as f:
+        ques_word2int = pickle.loads(f.read())
+        ques_int2word = {v:k for k,v in ques_word2int.items()}
+    with open(A_pkl, 'rb') as f:
+        ans_word2int = pickle.loads(f.read())
+        ans_int2word = {v:k for k,v in ans_word2int.items()}
+else:
+    ques, ans = get_data()
+    ques_word2int, ques_int2word = get_vocab(ques)
+    ans_word2int, ans_int2word= get_vocab(ans)
 
 
 def source_to_seq(cutwords):
@@ -83,7 +94,7 @@ def getAnswer(input_seq):
 
     pad = ques_word2int["<PAD>"] 
 
-    return '{}'.format(" ".join([ans_int2word[i] for i in answer_logits if i != pad]))
+    return '{}'.format("".join([ans_int2word[i] for i in answer_logits if i != pad]))
 
 if __name__ == '__main__':
     print(getAnswer('无敌'))
