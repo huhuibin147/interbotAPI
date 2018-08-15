@@ -38,19 +38,19 @@ class ppyHandler():
         logging.info(kw)
         return ppyAPI.apiRoute('beatmap', **kw)
 
-    def getSkillInfo(self, uid):
+    def getSkillInfo(self, osuname):
         """Skill抓取
         """
         try:
-            kw = {'uid': uid}
-            res = ppyAPI.crawlPageByGet('skill', kw)
+            kw = {'osuname': osuname}
+            res = ppyAPI.crawlPageByGet('skill', **kw)
             if not res:
-                return '没有数据,太弱了!!'
-            s_msg = uid+"'s skill\n"
+                return '网络异常!!'
+            s_msg = osuname+"'s skill\n"
             value = re.compile(r'<output class="skillValue">(.*?)</output>')
-            values = value.findall(res.text)
+            values = value.findall(res)
             if not values:
-                return '那个破网站连不上!!'
+                return '抓取不到相关信息!!'
             skills = ['Stamina', 'Tenacity', 'Agility', 'Accuracy', 'Precision', 'Reaction', 'Memory', 'Reading']
             #skills_list = list(map(lambda x,y:x+y ,skills,values))
             for i,s in enumerate(skills):
@@ -67,5 +67,5 @@ class ppyHandler():
                 s_msg = s_msg+skillkey+valueskey+star+'\n'
             return s_msg[0:-1]
         except:
-            logging.error(traceback.print_exc())
+            logging.error(traceback.format_exc())
             return '那个破网站连不上!!'

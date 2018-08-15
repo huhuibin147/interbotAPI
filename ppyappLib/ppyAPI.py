@@ -3,7 +3,7 @@ import yaml
 import json
 import logging
 import requests
-from commLib import interRequests
+from commLib import interRequest
 
 with open('./ppyappLib/ppy.yaml', encoding='utf8') as f:
     config = yaml.load(f)
@@ -15,7 +15,7 @@ ref = {
     'userinfo': 'https://osu.ppy.sh/api/get_user?k=%s&u={uid}' % OSU_API_KEY,
     'bp': 'https://osu.ppy.sh/api/get_user_best?k=%s&u={uid}&m={mode}&limit={limit}' % OSU_API_KEY,
     'beatmap': 'https://osu.ppy.sh/api/get_beatmaps?k=%s&b={bid}' % OSU_API_KEY,
-    'skill': 'http://osuskills.tk/user/{uid}'
+    'skill': 'http://osuskills.tk/user/{osuname}'
 }
 
 
@@ -33,10 +33,10 @@ def apiRoute(api, **kw):
 def crawlPageByGet(api, **kw):
     # 抓取方法
     ret = None
-    req = interRequests.interReq()
+    req = interRequest.interReq()
     url = ref[api].format(**kw)
     res = req.get(url)
-    logging.info('crawlPageByGet url:%s|status:%s|res:%s', url, res, res.text)
+    logging.info('crawlPageByGet url:%s|status:%s|', url, res)
     if res.status_code == 200 and res.text:
         ret = res.text
 

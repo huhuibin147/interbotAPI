@@ -23,11 +23,11 @@ class interReq():
 
     def post(self, url, params=None):
         res = requests.post(url=url, data=params, timeout=self.timeout, headers=self.headers)
-        return ret
+        return res
 
     def get(self, url):
         res = requests.get(url=url, timeout=self.timeout, headers=self.headers) 
-        return ret
+        return res
 
 
     def down_image(self, iname, url, path=None):
