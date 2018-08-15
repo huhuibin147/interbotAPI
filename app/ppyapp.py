@@ -69,9 +69,9 @@ def beatmap(**kw):
 @app.route('/osuskill', methods=['POST'])
 @appTools.deco()
 def osuskill(**kw):
-    uid = kw.get('uid')
+    osuname = kw.get('osuname')
     pyh = ppyHandler.ppyHandler()
-    ret = pyh.getSkillInfo(uid)
+    ret = pyh.getSkillInfo(osuname)
     return ret
 
 if __name__ == '__main__':
