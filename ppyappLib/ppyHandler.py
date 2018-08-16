@@ -69,3 +69,31 @@ class ppyHandler():
         except:
             logging.error(traceback.format_exc())
             return '那个破网站连不上!!'
+
+    def skillVsInfo(self, uid, uid2):
+        try:
+            kw = {'osuname': uid, 'vsosuname': uid2}
+            res = ppyAPI.crawlPageByGet('skillvs', **kw)
+            if not res:
+                return '网络异常!!'
+            value = re.compile(r'<output class="skillValue">(.*?)</output>')
+            values = value.findall(res)
+            if not values:
+                return '那个破网站连不上,你们还是去床上解决吧!!'
+            skills = ['Stamina', 'Tenacity', 'Agility', 'Accuracy', 'Precision', 'Reaction', 'Memory', 'Reading']
+            s_msg = '%s vs %s\n'%(uid, uid2)
+            for i,s in enumerate(skills):
+                v1 = int(values[i])
+                v2 = int(values[i+8])
+                vv = str(abs(v1-v2))
+                fuhao = ' -- '
+                if v1 > v2:
+                    s_msg = s_msg + s + ' : ' + values[i]+'(+'+vv+')' + fuhao + values[i+8] +'\n'
+                elif v1 < v2:
+                    s_msg = s_msg + s + ' : ' + values[i] + fuhao + values[i+8] +'(+'+vv+')'+'\n'
+                else:
+                    s_msg = s_msg + s + ' : ' + values[i] + fuhao + values[i+8] +'\n'
+            return s_msg[0:-1]
+        except:
+            logging.error(traceback.format_exc())
+            return '那个破网站连不上,你们还是去床上解决吧!!'

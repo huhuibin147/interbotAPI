@@ -74,6 +74,15 @@ def osuskill(**kw):
     ret = pyh.getSkillInfo(osuname)
     return ret
 
+@app.route('/osuskillvs', methods=['POST'])
+@appTools.deco()
+def osuskillvs(**kw):
+    osuname = kw.get('osuname')
+    vsosuname = kw.get('vsosuname')
+    pyh = ppyHandler.ppyHandler()
+    ret = pyh.skillVsInfo(osuname, vsosuname)
+    return ret
+
 if __name__ == '__main__':
     app.run()
     
