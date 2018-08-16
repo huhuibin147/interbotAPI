@@ -61,7 +61,6 @@ def mybp(**kw):
 @app.route('/bbp', methods=['POST'])
 @appTools.deco(autoOusInfoKey='osuid,osuname')
 def bbp(**kw):
-    # 带输入用户类型
     b = botHandler.botHandler()
     osuid = kw['autoOusInfoKey']['osuid']
     osuname = kw['autoOusInfoKey'].get('osuname')
@@ -75,7 +74,6 @@ def bbp(**kw):
 @app.route('/test', methods=['POST'])
 @appTools.deco(autoOusInfoKey='osuid')
 def test(**kw):
-    # 带输入用户类型
     b = botHandler.botHandler()
     osuid = kw['autoOusInfoKey']['osuid']
     uinfo = b.getOsuInfoFromAPI(osuid)
@@ -88,10 +86,37 @@ def test(**kw):
 @app.route('/skill', methods=['POST'])
 @appTools.deco(autoOusInfoKey='osuname')
 def skill(**kw):
-    # 带输入用户类型
     b = botHandler.botHandler()
     osuname = kw['autoOusInfoKey']['osuname']
     res = b.getSkillInfo(osuname)
+    return res
+
+@app.route('/todaybp', methods=['POST'])
+@appTools.deco(autoOusInfoKey='osuname')
+def todaybp(**kw):
+    b = botHandler.botHandler()
+    osuname = kw['autoOusInfoKey']['osuname']
+    res = b.todaybp(osuname)
+    return res
+
+@app.route('/mu', methods=['POST'])
+@appTools.deco(autoOusInfoKey='osuid')
+def mu(**kw):
+    b = botHandler.botHandler()
+    osuid = kw['autoOusInfoKey']['osuid']
+    res = 'https://osu.ppy.sh/u/%s' % osuid
+    return res
+
+@app.route('/myinfo', methods=['POST'])
+@appTools.deco(autoOusInfoKey='osuid,osuname,money,bagnum')
+def myinfo(**kw):
+    b = botHandler.botHandler()
+    osuid = kw['autoOusInfoKey']['osuid']
+    osuname = kw['autoOusInfoKey']['osuname']
+    money = kw['autoOusInfoKey']['money']
+    bagnum = kw['autoOusInfoKey']['bagnum']
+    home_url = 'https://osu.ppy.sh/u/%s' % osuname
+    res = "osu:%s\nosuid:%s\nmoney:%s\nbagnum:%s\n%s" % (osuname, osuid, money, bagnum, home_url)
     return res
 
 @app.route('/help', methods=['POST'])
