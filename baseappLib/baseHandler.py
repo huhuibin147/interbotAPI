@@ -22,8 +22,7 @@ class baseHandler():
             xxx
         """
         db = interMysql.Connect('osu2')
-        sql = '''SELECT id, qq, osuid,
-                        groupid, osuname
+        sql = '''SELECT *
                 FROM user
                 WHERE 1=1
             '''
