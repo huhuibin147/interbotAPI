@@ -6,7 +6,7 @@ import logging
 class interReq():
 
 
-    def __init__(self, timeout=5, headers={}):
+    def __init__(self, timeout=10, headers={}):
         if not headers:
             self.headers = {
                 'accept' : 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
