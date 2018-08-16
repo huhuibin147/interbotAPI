@@ -91,6 +91,30 @@ def skill(**kw):
     res = b.getSkillInfo(osuname)
     return res
 
+@app.route('/vssk', methods=['POST'])
+@appTools.deco()
+def vssk(**kw):
+    b = botHandler.botHandler()
+    groupid = kw['groupid']
+    # 先判断自己绑定信息
+    osuinfo = b.getOsuInfo(kw['qqid'], groupid)
+    if not osuinfo:
+        return "你倒是绑定啊.jpg"
+    osuname = osuinfo[0]['osuname']
+    # 判断输入信息和艾特信息
+    if kw.get('atqq'):
+        vsosuinfo = b.getOsuInfo(kw['atqq'], groupid)
+        if not vsosuinfo:
+            return "他没有绑定，赶紧叫他绑定啊!"
+        vsosuname = vsosuinfo[0]['osuname']
+    else:
+        if not kw['iargs']:
+            return "你倒是输入vs谁啊" 
+        else:
+            vsosuname = ' '.join(kw['iargs'])
+    res = b.getSkillvsInfo(osuname, vsosuname)
+    return res
+
 @app.route('/todaybp', methods=['POST'])
 @appTools.deco(autoOusInfoKey='osuname')
 def todaybp(**kw):
