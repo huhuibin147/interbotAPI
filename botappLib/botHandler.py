@@ -248,7 +248,7 @@ class botHandler():
         ar = float(ar)
         stars = float(stars)
         cb = int(cb)
-        maxcb = int(cb)
+        maxcb = int(maxcb)
         if miss == 0:
             if maxcb != cb:
                 r = '感受滑条的魅力吧'
@@ -409,7 +409,7 @@ class botHandler():
         return rs
 
     def todaybp(self, uid):
-        # 来自int100
+        # 修改自int100
         bps = self.getRecBp(uid, "100")
 
         if len(bps) == 0:
