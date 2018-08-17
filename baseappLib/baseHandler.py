@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import json
+import traceback
 import logging
 import requests
 
@@ -71,7 +72,7 @@ class baseHandler():
                 conn.commit()
             return ret
         except:
-            logging.error('用户[%s]插入/更新失败', qq, traceback.print_exc())
+            logging.error('用户[%s]插入/更新失败', qq, traceback.format_exc())
             conn.rollback()
             return -1
 

@@ -135,7 +135,7 @@ class botHandler():
             logging.info('bid[%s],extend[%s]', bid, extend)
             return ret.read()
         except:
-            logging.error(traceback.print_exc())
+            logging.error(traceback.format_exc())
             return ''
 
     def oppai2json(self, bid, extend=''):
@@ -146,7 +146,7 @@ class botHandler():
             logging.info('bid[%s],extend[%s]', bid, extend)
             return json.loads(ret.read())
         except:
-            logging.error(traceback.print_exc())
+            logging.error(traceback.format_exc())
             return {}
         
 
@@ -327,7 +327,7 @@ class botHandler():
             return ret
         except:
             db.rollback()
-            logging.error(traceback.print_exc())
+            logging.error(traceback.format_exc())
 
     def getOsuBeatMapInfo(self, bid):
         """取map信息，从库中取，取不到再取api
