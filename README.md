@@ -1,6 +1,6 @@
 # interbotAPI<br>
 ## 简介
-**基于微服务思想由API为核心的，基于python3+酷Q+httpAPI的QQBot**<br>
+基于微服务思想由API为核心的，基于python3+酷Q+httpAPI的QQBot<br>
 
 
 ## 构成
