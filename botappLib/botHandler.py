@@ -249,6 +249,7 @@ class botHandler():
         stars = float(stars)
         cb = int(cb)
         maxcb = int(maxcb)
+        ranReply = self.replyFromDb()
         if miss == 0:
             if maxcb != cb:
                 r = '感受滑条的魅力吧'
@@ -293,12 +294,29 @@ class botHandler():
                     elif miss > 50:
                         r = '%smiss，太菜了，不想评价' % miss
                     else:
-                        r = '%smiss，接收功能建议' % miss
+                        r = '%smiss，%s' % (miss, ranReply)
 
 
-        if random.randint(0,100) < 20:
-            r = '%smiss，接收评价建议' % miss
+        if random.randint(0,100) < 50:
+            r = '%smiss，%s' % (miss, ranReply)
         return r
+
+    def replyFromDb(self):
+        """自动回复信息
+        """
+        db = interMysql.Connect('osu2')
+        sql = '''
+            SELECT count(1) c FROM defContent 
+        '''
+        c = db.query(sql)[0]['c']
+        skip = random.randint(0, c-1)
+        sql2 = '''
+            SELECT content FROM defContent
+            WHERE ctype = 'rctpp' limit %s, %s
+        '''
+        args = [skip, 1]
+        rs = db.query(sql2, args)
+        return rs[0]['content']
 
     def osuBeatmapInfoFromDb(self, bid):
         db = interMysql.Connect('osu')
