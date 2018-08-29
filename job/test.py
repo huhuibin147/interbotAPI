@@ -3,11 +3,12 @@ import time
 import logging
 import jobCenter
 
+
 class test(jobCenter.jobCenter):
 
 
     def addJob(self):
-        self.sched.add_job(self.jobMethod, 'interval', minutes=1, args=[])
+        self.sched.add_job(self.jobMethod, 'interval', seconds=10, args=[])
 
     def jobMethod(self):
         groupid = 641236878

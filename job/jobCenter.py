@@ -4,6 +4,9 @@ import json
 import logging
 import websocket
 
+sys.path.append('./commLib')
+
+import pushTools
 from apscheduler.schedulers.blocking import BlockingScheduler
 
 
@@ -12,7 +15,6 @@ class jobCenter():
 
 
     def __init__(self):
-        self.ws = 'ws://interbot.cn:12345/'
         self.sched = BlockingScheduler()
         logging.basicConfig(
             level=logging.INFO,
@@ -31,13 +33,7 @@ class jobCenter():
         logging.info('default job!')
 
     def sendCq(self, groupid, msg):
-        ws = websocket.create_connection(self.ws)
-        ws.send(json.dumps({
-                "groupid": groupid,
-                "msg": msg
-            }))
-        logging.info('send to[%s],msg[%s]', groupid, msg)
-        ws.close()
+        pushTools.pushMsgOne(groupid, msg)
 
 
 def main(modelname):
