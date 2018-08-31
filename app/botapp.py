@@ -150,6 +150,13 @@ def help(**kw):
     rs = b.helpFormatOut()
     return rs
 
+@app.route('/thanks', methods=['POST'])
+@appTools.deco()
+def thanks(**kw):
+    b = botHandler.botHandler()
+    rs = b.thanksFormatOut()
+    return rs
+
 @app.route('/tt', methods=['POST'])
 @appTools.deco()
 def tt(**kw):

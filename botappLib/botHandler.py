@@ -455,3 +455,11 @@ class botHandler():
 
         return mtext[:-1]
 
+    def thanksFormatOut(self):
+        rs = '感谢列表\n'
+        rs += '------------------\n'
+        rs += '1.iron大哥(ironwitness) 2018-08-31 捐赠了50软妹币\n'
+        rs += '2.无敌阿卡蕾(arcareh) 2018-08-31 捐赠了66软妹币\n'
+        rs += '------------------\n'
+        rs += '小声bibi骗钱万岁'
+        return rs
