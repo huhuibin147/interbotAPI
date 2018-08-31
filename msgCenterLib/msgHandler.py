@@ -79,7 +79,7 @@ class msgHandler():
             return r
 
         # 帮助选项
-        if '*h' in msg:
+        if '*h' in msg or not res['location']:
             return res['reply']
 
         apiUrl = '{location}{api}'.format(

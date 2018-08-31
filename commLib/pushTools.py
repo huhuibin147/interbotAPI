@@ -32,5 +32,5 @@ def pushGroupMsg(groupids, msg):
 
 if __name__ == '__main__':
     groupids = [614892339, 514661057, 641236878, 758120648]
-    msg = "interbot通知消息：pro已到期(续不起费)，准备进行降级到air版本，直接影响功能[群榜单]，rank榜上传不受影响，但是查询功能会失效"
+    msg = "interbot通知消息：降级成功！当前为air版本！"
     pushGroupMsg(groupids, msg)
