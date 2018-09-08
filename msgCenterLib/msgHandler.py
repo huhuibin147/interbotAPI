@@ -10,6 +10,7 @@ class msgHandler():
 
     def __init__(self, context):
         self.context = context
+        self.isPrivate = 0
 
     def auto(self):
         """消息处理"""
@@ -17,6 +18,11 @@ class msgHandler():
         # 分发线程
         t = threading.Thread(target=self.msgTransmit, args=(self.context, ))
         t.start()
+
+        # 兼容私聊
+        if self.context['message_type'] == 'private':
+            self.isPrivate = 1
+            self.context['group_id'] = -1
 
         # 自动处理
         msg = self.context['message']
@@ -135,6 +141,7 @@ class msgHandler():
             returnstr += str(res)
         else:
             returnstr = res
+        
         return returnstr
 
     def extractArgs(self, msg, cmd):
