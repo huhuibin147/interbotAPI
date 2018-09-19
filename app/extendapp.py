@@ -23,7 +23,8 @@ def inter3(**kw):
 @appTools.deco(autoOusInfoKey='osuid')
 @appTools.deco()
 def check(**kw):
-    return kw['osuid']
+    osuid = kw['autoOusInfoKey']['osuid']
+    return osuid
 
 if __name__ == '__main__':
     app.run()
