@@ -20,5 +20,5 @@ def inter3(**kw):
     return 'inter3节点响应测试'
 
 if __name__ == '__main__':
-    app.run()
+    app.run(threaded=True)
     
