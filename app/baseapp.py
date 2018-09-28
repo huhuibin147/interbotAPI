@@ -91,6 +91,13 @@ def chat(**kw):
     r = ins.chat2bot(inputs)
     return r
 
+@app.route('/oauth', methods=['POST'])
+@appTools.deco()
+def bindUserToken(**kw):
+    ins = baseHandler.baseHandler()
+    url = 'https://osu.ppy.sh/oauth/authorize?client_id=19&response_type=code&state=%sx%s' % (kw['qqid'], kw['groupid'])
+    ret = url + '\n *登录后选择绑定绿色按钮完成授权，不会盗号请放心!注：不要顺便修改url，此绑定较为重要!并且不能使用别人的认证链接!'
+    return ret
 
 if __name__ == '__main__':
     app.run(threaded=True)
