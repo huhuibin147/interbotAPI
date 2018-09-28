@@ -6,7 +6,7 @@ import requests
 
 centerURL = 'http://118.24.91.98/center/msg'
 
-msg = '!rctpp'
+msg = 'test'
 
 if len(sys.argv) > 1:
     msg = sys.argv[1]

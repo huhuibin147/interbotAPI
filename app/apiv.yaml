@@ -1,0 +1,6 @@
+apiv:
+  name: api
+  version: v2
+  listen: 10020
+  comment: 外部api
+  model: apiv
