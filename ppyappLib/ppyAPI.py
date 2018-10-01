@@ -4,11 +4,15 @@ import json
 import logging
 import requests
 from commLib import interRequest
+from baseappLib import baseHandler
 
 with open('./ppyappLib/ppy.yaml', encoding='utf8') as f:
     config = yaml.load(f)
 
 OSU_API_KEY = config['osuApiKey']
+
+apiv2Url = 'https://osu.ppy.sh/api/v2/{endponit}'
+apiv2FailWord = 'unauthorized'
 
 ref = {
     'recent': 'https://osu.ppy.sh/api/get_user_recent?k=%s&u={uid}&m={mode}&limit={limit}' % OSU_API_KEY,
@@ -40,5 +44,65 @@ def crawlPageByGet(api, **kw):
     logging.info('crawlPageByGet url:%s|status:%s|', url, res)
     if res.status_code == 200 and res.text:
         ret = res.text
+
+    return ret
+
+def apiv2Req(endponit, token, refreshtoken, isrefresh=1, **kw):
+    """apiv2请求主体
+    Returns:
+        ret:
+            -1 请求异常
+            -2 token失效
+            或 list对象
+    """
+    url = apiv2Url.format(endponit=endponit)
+    header = {
+        'Authorization': 'Bearer %s' % token
+    }
+    ret = -1
+    res = requests.get(url, headers = header)
+    logging.info('apiV2 url:%s|status:%s', url, res)
+    if res.status_code == 200:
+        if apiv2FailWord not in res.text:
+            ret = json.loads(res.text)
+            return ret
+        else:
+            ret = -2
+            logging.info('token失效')
+            if isrefresh:
+                rs = apiv2RefreshToken(refreshtoken, **kw)
+                if rs not in (-1, -2):
+                    access_token = rs
+                    logging.info('token刷新成功！')
+                    return apiv2Req(endponit, rs, refreshtoken, isrefresh=0, **kw)
+
+    return ret
+
+def apiv2RefreshToken(refreshtoken, updatedb=1, **kw):
+    """token刷新
+    """
+    url = 'https://osu.ppy.sh/oauth/token'
+    header = {
+        'Content-Type': 'application/x-www-form-urlencoded'
+    }
+    params = {
+        'grant_type': 'refresh_token',
+        'client_id': '19',
+        'client_secret': '',
+        'refresh_token': refreshtoken
+    }
+    ret = -1
+    res = requests.post(url, headers=header, data=params)
+    logging.info('refreshtoken:%s|status:%s', url, res)
+    if res.status_code == 200:
+        rs = json.loads(res.text)
+        if not rs.get('error'):
+            ret = rs['access_token']
+            if updatedb:
+                baseHandler.baseHandler().updateToken(kw['qq'], kw['groupid'], 
+                        rs['access_token'], rs['refresh_token'])
+        else:
+            ret = -2
+            logging.info('token失效')
 
     return ret

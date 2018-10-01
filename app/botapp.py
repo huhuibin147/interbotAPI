@@ -8,6 +8,7 @@ from flask import request
 from botappLib import botHandler
 from commLib import appTools
 from commLib import interRedis
+from ppyappLib import ppyHandler
 
 with open('./app/botapp.yaml', encoding='utf8') as f:
     config = yaml.load(f)
@@ -157,13 +158,19 @@ def thanks(**kw):
     rs = b.thanksFormatOut()
     return rs
 
+@app.route('/friends', methods=['POST'])
+@appTools.deco()
+def friends(**kw):
+    b = ppyHandler.ppyHandler()
+    rs = b.getFriends(kw['qqid'], kw['groupid'])
+    return rs
+
 @app.route('/tt', methods=['POST'])
 @appTools.deco()
 def tt(**kw):
-    b = botHandler.botHandler()
-    rs = b.getOsuBeatMapInfo(bid=kw['iargs'][0])
-    logging.info(rs)
-    return ''
+    b = ppyHandler.ppyHandler()
+    rs = b.getFriends(kw['qqid'], kw['groupid'])
+    return rs
 
 
 if __name__ == '__main__':

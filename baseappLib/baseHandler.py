@@ -132,3 +132,19 @@ class baseHandler():
         if ans.strip() == '':
             ans = '本bot还没学会怎么回答这鬼问题!'
         return ans
+
+    def updateToken(self, qq, groupid, token, refreshtoken):
+        """更新token
+        """
+        db = interMysql.Connect('osu2')
+        sql = '''
+            UPDATE user SET acesstoken = %s, refreshtoken = %s
+            WHERE qq = %s and groupid = %s
+        '''
+        args = [token, refreshtoken, qq, groupid]
+        ret = db.execute(sql, args)
+        if ret > 0:
+            logging.info('token更新DB成功')
+        else:
+            logging.info('token更新DB失败')
+        db.commit()

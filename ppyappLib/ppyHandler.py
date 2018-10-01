@@ -3,6 +3,7 @@ import logging
 import traceback
 import re
 from ppyappLib import ppyAPI
+from baseappLib import baseHandler
 
 class ppyHandler():
 
@@ -97,3 +98,22 @@ class ppyHandler():
         except:
             logging.error(traceback.format_exc())
             return '那个破网站连不上,你们还是去床上解决吧!!'
+
+    def getFriends(self, qq, groupid):
+        uinfo = baseHandler.baseHandler().getUserBindInfo({"qq": qq, "groupid": groupid})
+        token = uinfo[0]["acesstoken"]
+        refreshtoken = uinfo[0]["refreshtoken"]
+        osuname = uinfo[0]["osuname"]
+        if not token:
+            return '请使用oauth进行认证绑定!'
+        res = ppyAPI.apiv2Req("friends", token, refreshtoken, qq=qq, groupid=groupid)
+        if res == -1:
+            return '网络异常!'
+        elif res == -2:
+            return 'token失效!请使用oauth进行认证绑定!' 
+        else:
+            friendsNum = len(res)
+            rs = "%s's friends(%s)\n" % (osuname, friendsNum)
+            for i, r in enumerate(res[:10]):
+                rs += '%s.%s\n' % (i+1, r["username"])
+        return rs[:-1]
