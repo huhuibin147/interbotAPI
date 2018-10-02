@@ -11,21 +11,22 @@ import copy
 import os
 import pickle
 
+try:
+    Q_file = 'chatbotLib/data/questions.txt'
+    A_file = 'chatbotLib/data/answers.txt'
+    Q_pkl = 'chatbotLib/data/ques_vocab.pkl'
+    A_pkl = 'chatbotLib/data/ans_vocab.pkl'
+    vocab = {"<PAD>": 1, "<UNK>": 2, "<GO>": 3, "<EOS>": 4}
 
-Q_file = 'chatbotLib/data/questions.txt'
-A_file = 'chatbotLib/data/answers.txt'
-Q_pkl = 'chatbotLib/data/ques_vocab.pkl'
-A_pkl = 'chatbotLib/data/ans_vocab.pkl'
-vocab = {"<PAD>": 1, "<UNK>": 2, "<GO>": 3, "<EOS>": 4}
+    batch_size = 2
 
-batch_size = 2
+    with open(Q_file, 'r', encoding='utf-8') as f:
+        source_data = f.read()
 
-with open(Q_file, 'r', encoding='utf-8') as f:
-    source_data = f.read()
-
-with open(A_file, 'r', encoding='utf-8') as f:
-    target_data = f.read()
- 
+    with open(A_file, 'r', encoding='utf-8') as f:
+        target_data = f.read()
+ except:
+    pass
 
 def get_data():
     with open(Q_file, 'r', encoding='utf-8') as f:
