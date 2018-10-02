@@ -25,7 +25,7 @@ try:
 
     with open(A_file, 'r', encoding='utf-8') as f:
         target_data = f.read()
- except:
+except:
     pass
 
 def get_data():
