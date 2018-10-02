@@ -7,7 +7,11 @@ import requests
 from commLib import cmdRouter
 from commLib import interMysql
 from commLib import interRedis
-from chatbotLib import testc
+
+try:
+    from chatbotLib import testc
+except:
+    pass
 
 class baseHandler():
 
@@ -139,9 +143,9 @@ class baseHandler():
         db = interMysql.Connect('osu2')
         sql = '''
             UPDATE user SET acesstoken = %s, refreshtoken = %s
-            WHERE qq = %s and groupid = %s
+            WHERE qq = %s
         '''
-        args = [token, refreshtoken, qq, groupid]
+        args = [token, refreshtoken, qq]
         ret = db.execute(sql, args)
         if ret > 0:
             logging.info('token更新DB成功')
