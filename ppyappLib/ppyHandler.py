@@ -2,8 +2,10 @@
 import logging
 import traceback
 import re
+import json
 from ppyappLib import ppyAPI
 from baseappLib import baseHandler
+import matplotlib.pyplot as plt
 
 class ppyHandler():
 
@@ -104,16 +106,83 @@ class ppyHandler():
         token = uinfo[0]["acesstoken"]
         refreshtoken = uinfo[0]["refreshtoken"]
         osuname = uinfo[0]["osuname"]
-        if not token:
-            return '请使用oauth进行认证绑定!'
-        res = ppyAPI.apiv2Req("friends", token, refreshtoken, qq=qq, groupid=groupid)
-        if res == -1:
-            return '网络异常!'
-        elif res == -2:
-            return 'token失效!请使用oauth进行认证绑定!' 
+        res = self.autov2Req(qq, groupid, "friends", token, refreshtoken)
+        if isinstance(res, str):
+            return res
         else:
             friendsNum = len(res)
             rs = "%s's friends(%s)\n" % (osuname, friendsNum)
             for i, r in enumerate(res[:10]):
                 rs += '%s.%s\n' % (i+1, r["username"])
         return rs[:-1]
+
+    def getV2MyInfo(self, qq, groupid):
+        uinfo = baseHandler.baseHandler().getUserBindInfo({"qq": qq, "groupid": groupid})
+        token = uinfo[0]["acesstoken"]
+        refreshtoken = uinfo[0]["refreshtoken"]
+        osuname = uinfo[0]["osuname"]
+        res = self.autov2Req(qq, groupid, "me", token, refreshtoken)
+        if isinstance(res, str):
+            return res
+        else:
+            return json.dumps(res)
+        
+
+    def autov2Req(self, qq, groupid, endponit, token, refreshtoken):
+        if not token:
+            return '请使用oauth进行认证绑定!'
+        res = ppyAPI.apiv2Req(endponit, token, refreshtoken, qq=qq, groupid=groupid)
+        if res == -1:
+            return '网络异常!'
+        elif res == -2:
+            return 'token失效!请使用oauth进行认证绑定!' 
+        else:
+            return res
+
+
+    # def drawRankLine(self, y, osuname, pp, locate, rank1, rank2):
+        
+    #     x=[i for i in range(len(y))]
+
+    #     plt.figure(figsize=(6,3))
+    #     ys1 = max(y) - (max(y) - min(y)) / 10
+    #     ys2 = max(y) - (max(y) - min(y)) / 10 * 1.8
+    #     ys3 = max(y) - (max(y) - min(y)) / 10 * 2.6
+    #     plt.text(30, ys3, 'interbot 1,688pp')
+    #     plt.text(30, ys2, 'china #5,232')
+    #     plt.text(31, ys1, '#161,188')
+    #     plt.plot(x, y)
+
+    #     ax = plt.gca()
+    #     ax.invert_yaxis()
+
+    #     plt.savefig('rank.png')
+
+
+    def drawRankLine(self, res, qq):
+        y = res['rankHistory']['data']
+        x=[i for i in range(len(y))]
+        osuname = res['username']
+        pp = format(int(float(res['statistics']['pp'])), ',')
+        rank = res['statistics']['rank']
+        globalrank = format(int(rank['global']), ',')
+        countryrank = format(int(rank['country']), ',')
+        countryname = res['country']['name']
+        plt.figure(figsize=(6,3))
+        maxy = max(y)
+        miny = min(y)
+        ys1 = maxy - (maxy - miny) / 10
+        ys2 = maxy - (maxy - miny) / 10 * 1.8
+        ys3 = maxy - (maxy - miny) / 10 * 2.6
+        plt.text(30, ys3, '%s %spp' % (osuname, pp))
+        plt.text(30, ys2, '%s #%s' % (countryname, countryrank))
+        plt.text(31, ys1, '#%s' % globalrank)
+        plt.plot(x, y)
+
+        ax = plt.gca()
+        ax.invert_yaxis()
+
+        imgPath = '/static/interbot/image/%s_rank.png' % qq
+        plt.savefig(imgPath)
+
+        return 'interbot.cn/itbimage/%s.png' % qq

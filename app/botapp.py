@@ -169,7 +169,14 @@ def friends(**kw):
 @appTools.deco()
 def tt(**kw):
     b = ppyHandler.ppyHandler()
-    rs = b.getFriends(kw['qqid'], kw['groupid'])
+    rs = b.getV2MyInfo(kw['qqid'], kw['groupid'])
+    return rs
+
+@app.route('/v2me', methods=['POST'])
+@appTools.deco()
+def v2me(**kw):
+    b = ppyHandler.ppyHandler()
+    rs = b.getV2MyInfo(kw['qqid'], kw['groupid'])
     return rs
 
 
