@@ -9,7 +9,7 @@ class apivHandler():
 
 
     def __init__(self):
-        self.client_secret = ""
+        self.client_secret = "46SmWQ2TyF5FMECwHrblTZ2oiYq4yyAbOH5BDDS7"
         self.client_id = "19"
     
     def userOauth(self, code, state):

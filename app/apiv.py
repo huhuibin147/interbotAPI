@@ -19,10 +19,11 @@ app = Flask(__name__)
 def statApi(**kw):
     code = request.args.get('code')
     state = request.args.get('state')
+    qq, groupid = state.split('x')
     obj = apivHandler.apivHandler()
     rs = obj.userOauth(code, state)
     if rs > 0:
-        ret = '通过授权，绑定interbot成功!后续将开放apiv2功能，敬请期待！'
+        ret = '授权成功！屙屎账号成功绑定interbot！（不要期待后续功能咕咕） **请核对绑定Q号[%s]，如不正确，请去interbot生成自己的链接 重新绑定！ ' % qq
     else:
         ret = '绑定出错，请联系inter!'
     return ret

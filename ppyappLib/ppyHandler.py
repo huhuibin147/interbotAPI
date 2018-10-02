@@ -185,4 +185,4 @@ class ppyHandler():
         imgPath = '/static/interbot/image/%s_rank.png' % qq
         plt.savefig(imgPath)
 
-        return 'interbot.cn/itbimage/%s.png' % qq
+        return 'http://interbot.cn/itbimage/%s_rank.png' % qq

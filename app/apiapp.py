@@ -45,16 +45,16 @@ def apiv2me(**kw):
     groupid = request.form.get('groupid')
     url = "http://139.199.10.126/osubot/v2me"
     data = {
-        "qqid": b.qq,
-        "groupid": b.group_id
+        "qqid": qqid,
+        "groupid": groupid
     }
     r = requests.post(url, timeout=10, data=data)
     try:
         rdata = json.loads(r.text)
-        imgpath = ppyHandler.ppyHandler().drawRankLine(rdata, b.qq)
+        imgpath = ppyHandler.ppyHandler().drawRankLine(rdata, qqid)
         return imgpath
     except:
-        logging.error(traceback.format_ext())
+        logging.error(traceback.format_exc())
         if len(r.text) < 50:
             return r.text
         else:
