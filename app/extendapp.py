@@ -20,11 +20,13 @@ def inter3(**kw):
     return 'inter3节点响应测试'
 
 @app.route('/check', methods=['POST'])
-@appTools.deco(autoOusInfoKey='osuid')
-@appTools.deco()
+@appTools.deco(autoOusInfoKey='osuid,osuname')
 def check(**kw):
     osuid = kw['autoOusInfoKey']['osuid']
-    return osuid
+    osuname = kw['autoOusInfoKey']['osuname']
+    extObj = extendHandler.extendHandler()
+    ret = extObj.checkFormat(osuid, osuname)
+    return ret
 
 if __name__ == '__main__':
     app.run(threaded=True)
