@@ -46,7 +46,7 @@ class apivHandler():
             return access_token, refresh_token
 
         else:
-            logging.info('调用[%s]异常' % apiUrl)
+            logging.info('调用[%s]异常，rs:%s' % (apiUrl, rs.text))
             return -1, -1
 
 

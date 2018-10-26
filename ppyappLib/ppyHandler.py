@@ -3,9 +3,11 @@ import logging
 import traceback
 import re
 import json
+from datetime import datetime
 from ppyappLib import ppyAPI
 from baseappLib import baseHandler
 import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
 
 class ppyHandler():
 
@@ -165,8 +167,8 @@ class ppyHandler():
         osuname = res['username']
         pp = format(int(float(res['statistics']['pp'])), ',')
         rank = res['statistics']['rank']
-        globalrank = format(int(rank['global']), ',')
-        countryrank = format(int(rank['country']), ',')
+        globalrank = format(int(rank.get('global', 0)), ',')
+        countryrank = format(int(rank.get('country', 0)), ',')
         countryname = res['country']['name']
         plt.figure(figsize=(6,3))
         maxy = max(y)
@@ -186,3 +188,26 @@ class ppyHandler():
         plt.savefig(imgPath)
 
         return 'http://interbot.cn/itbimage/%s_rank.png' % qq
+
+    def drawPlayCount(self, res, qq):
+        data = res['monthly_playcounts']
+        dates = []
+        counts = []
+        for d in data[-10:]:
+            dates.append(d["start_date"])
+            counts.append(int(d["count"]))
+            
+        xs=[datetime.strptime(d, "%Y-%m-%d").date() for d in dates]
+        ys = counts
+        # 配置横坐标
+        plt.figure(figsize=(6,3))
+        plt.gca().xaxis.set_major_formatter(mdates.DateFormatter("%Y-%m"))
+        plt.gca().xaxis.set_major_locator(mdates.MonthLocator())
+        plt.plot(xs, ys)
+        # 自动旋转日期标记
+        plt.gcf().autofmt_xdate()  
+
+        imgPath = '/static/interbot/image/%s_playcount.png' % qq
+        plt.savefig(imgPath)
+
+        return 'http://interbot.cn/itbimage/%s_playcount.png' % qq
