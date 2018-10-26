@@ -83,6 +83,27 @@ def rplaycount(**kw):
             return '异常'
     return '异常,懒得修了'
 
+@app.route('/osuheadimg', methods=['POST'])
+def osuheadimg(**kw):
+    qqid = request.form.get('qqid')
+    groupid = request.form.get('groupid')
+    url = "http://139.199.10.126/osubot/v2me"
+    data = {
+        "qqid": qqid,
+        "groupid": groupid
+    }
+    r = requests.post(url, timeout=10, data=data)
+    try:
+        rdata = json.loads(r.text)
+        return rdata.get('avatar_url', '')
+    except:
+        logging.error(traceback.format_exc())
+        if len(r.text) < 50:
+            return r.text
+        else:
+            return '异常'
+    return '异常,懒得修了'
+
 
 if __name__ == '__main__':
     app.run(threaded=True)
