@@ -12,6 +12,7 @@ from commLib import cmdRouter
 def deco(**kw):
     # 控制位置
     autoOusInfoKey = kw.get('autoOusInfoKey')
+    rawinput = kw.get('rawinput')
 
     def inner(func):
 
@@ -30,7 +31,7 @@ def deco(**kw):
                 kwargs['autoOusInfoKey'] = {}
                 inputs = "" if not kwargs['iargs'] else ' '.join(kwargs['iargs'])
                 autokeys = autoOusInfoKey.split(',')
-                if not inputs:
+                if not inputs or rawinput:
                     qqid = kwargs['qqid'] if not kwargs.get('atqq') else kwargs['atqq']
                     osuinfo = getOsuInfo(qqid, kwargs['groupid'])
                     if not osuinfo:
