@@ -180,6 +180,20 @@ def v2me(**kw):
     return rs
 
 
+@app.route('/nbp', methods=['POST'])
+@appTools.deco(autoOusInfoKey='osuid,osuname', rawinput=1)
+def nbp(**kw):
+    b = botHandler.botHandler()
+    osuid = kw['autoOusInfoKey']['osuid']
+    osuname = kw['autoOusInfoKey'].get('osuname')
+    bid = kw['iargs'][0]
+
+    recinfo = b.getRecBp(osuid, "100")
+    if not recinfo:
+        return "没有Bp,下一个!!"
+    res = b.getBpNumBybid(recinfo, osuname, bid)
+    return res
+
 if __name__ == '__main__':
     app.run(threaded=True)
     

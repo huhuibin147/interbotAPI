@@ -463,3 +463,15 @@ class botHandler():
         rs += '------------------\n'
         rs += '小声bibi骗钱万岁'
         return rs
+
+    def getBpNumBybid(self, bplist, ousname, bid):
+        """输入bid得到bp几
+        """
+        rs = ""
+        for i, bp in enumerate(bplist):
+            if bp["beatmap_id"] == bid:
+                rs = 'bid:%s，是你的bp%s' % (bid, str(i+1))
+                break
+        else:
+            rs = "不存在的!" 
+        return rs
