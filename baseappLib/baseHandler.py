@@ -8,10 +8,10 @@ from commLib import cmdRouter
 from commLib import interMysql
 from commLib import interRedis
 
-try:
-    from chatbotLib import testc
-except:
-    pass
+# try:
+#     from chatbotLib import testc
+# except:
+#     pass
 
 class baseHandler():
 
