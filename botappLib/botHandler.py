@@ -138,22 +138,27 @@ class botHandler():
             logging.error(traceback.format_exc())
             return ''
 
-    def oppai2json(self, bid, extend=''):
+    def oppai2json(self, bid, extend='', recusion=0):
         """取oppai结果 json"""
         try:
-            self.downOsufile(bid)
+            if recusion == 0:
+                self.downOsufile(bid)
+            else:
+                self.downOsufile(bid, compulsiveWrite=1)
             ret = os.popen('cat /data/osufile/%s.osu | /root/oppai/./oppai - %s -ojson' % (bid, extend))
             logging.info('bid[%s],extend[%s]', bid, extend)
             return json.loads(ret.read())
         except:
+            if recusion == 0:
+                return self.oppai2json(bid, extend, recusion=1)
             logging.error(traceback.format_exc())
             return {}
         
 
-    def downOsufile(self, bid):
+    def downOsufile(self, bid, compulsiveWrite=0):
         """down osu file"""
         f = '%s%s.osu' % (self.osufiledir, bid)
-        if not os.path.exists(f):
+        if compulsiveWrite == 1 or not os.path.exists(f):
             logging.info('[%s.osu]不存在,进行download', bid)
             os.system('curl https://osu.ppy.sh/osu/{0} > /data/osufile/{0}.osu'.format(bid))
         return
@@ -475,3 +480,96 @@ class botHandler():
         else:
             rs = "不存在的!" 
         return rs
+
+    def room2DB(self, osuname, qqid, groupid, roomname, roompwd, rtype):
+        """入库
+        """
+        try:
+            db = interMysql.Connect('osu')
+            sql = '''
+                INSERT into room(roomname, password, uid, qq, groupid, 
+                    rtype, status, createtime)
+                VALUES(%s, %s, %s, %s, %s, %s, %s, now())
+            '''
+            args = [roomname, roompwd, osuname, qqid, groupid,
+                rtype, 0]
+            ret = db.execute(sql, args)
+            db.commit()
+            logging.info('room入库记录[%s]', ret)
+            return ret
+        except:
+            db.rollback()
+            logging.error(traceback.format_exc())
+
+    def createMpRoom(self, osuname, qqid, groupid, roomname, roompwd):
+        """创建房间
+        """
+        rs = self.room2DB(osuname, qqid, groupid, roomname, roompwd, rtype='mp')
+        if not rs:
+            return '创建失败！'
+        else:
+            return '创建成功！请到游戏中创建mp房，更新mplink！（后续操作查看帮助）'
+
+    def getMpRoom(self, qqid, groupid):
+        """取mp房信息
+        """
+        msg = ''
+        rs = self.queryRoomInfo(qqid, groupid)
+        if not rs:
+            return '不存在记录！'
+        # 暂时取第一条
+        row = rs[0]
+        msg += '房间号:%s\n' % (row['id'])
+        msg += '房间名:%s\n' % (row['roomname'])
+        msg += '创建者:%s\n' % (row['uid'])
+        msg += '密码:%s\n' % (row['password'])
+        msg += '房间类型:%s\n' % (row['rtype'])
+        msg += '房间状态:%s\n' % (row['status'])
+        msg += 'link:%s\n' % (row['mplink'])
+        msg += '开始时间:%s\n' % (row['starttime'])
+        msg += '创建时间:%s' % (row['createtime'])
+        return msg
+
+
+    def queryRoomInfo(self, qqid, groupid):
+        """读库
+        """
+        db = interMysql.Connect('osu')
+        sql = '''
+            SELECT id, roomname, mplink, password,
+                uid, rtype, status, starttime, 
+                createtime
+            FROM room 
+            WHERE qq = %s and groupid = %s
+        '''
+        args = [qqid, groupid]
+        rs = db.query(sql, args)
+        return rs
+
+    def joinMpRoom(self):
+        """加房
+        """
+        rs = self.roomMember2DB()
+        if rs:
+            return '加入成功！'
+        else:
+            return '加入失败！'
+
+    def roomMember2DB(self, roomid, mtype, oid, oname, pp, qq, groupid, userjson):
+        """入库
+        """
+        try:
+            db = interMysql.Connect('osu')
+            sql = '''
+                INSERT into roommembers(roomid, membertype, osuuid, osuname, pp, 
+                    qq, groupid, userjson)
+                VALUES(%s, %s, %s, %s, %s, %s, %s, %s)
+            '''
+            args = [roomid, mtype, oid, oname, pp, qq, groupid, userjson]
+            ret = db.execute(sql, args)
+            db.commit()
+            logging.info('member入库记录[%s]', ret)
+            return ret
+        except:
+            db.rollback()
+            logging.error(traceback.format_exc())
