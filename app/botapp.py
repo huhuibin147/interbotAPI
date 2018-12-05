@@ -194,6 +194,35 @@ def nbp(**kw):
     res = b.getBpNumBybid(recinfo, osuname, bid)
     return res
 
+@app.route('/createroom', methods=['POST'])
+@appTools.deco(autoOusInfoKey='osuname', rawinput=1)
+def createroom(**kw):
+    b = botHandler.botHandler()
+    osuname = kw['autoOusInfoKey']['osuname']
+    if len(kw['iargs']) != 2:
+        return '参数错误 usage: ¡createroom roomname password'
+    roomname = kw['iargs'][0]
+    roompwd = kw['iargs'][1]
+
+    res = b.createMpRoom(osuname, kw['qqid'], kw['groupid'], roomname, roompwd)
+    return res
+
+@app.route('/getroom', methods=['POST'])
+@appTools.deco()
+def getroom(**kw):
+    b = botHandler.botHandler()
+
+    res = b.getMpRoom(kw['qqid'], kw['groupid'])
+    return res
+
+@app.route('/joinroom', methods=['POST'])
+@appTools.deco(autoOusInfoKey='osuid,osuname', rawinput=1)
+def joinroom(**kw):
+    b = botHandler.botHandler()
+
+    res = b.joinMpRoom()
+    return res
+
 if __name__ == '__main__':
     app.run(threaded=True)
     
