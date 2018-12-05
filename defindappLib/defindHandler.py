@@ -7,12 +7,13 @@ import threading
 import redis
 from commLib import interMysql
 from commLib import interRedis
+from defindappLib import audio
 
 class defindHandler():
 
     def __init__(self, context):
         self.context = context
-        self.job = [self.test]
+        self.job = [self.audioMain]
         # self.job = [self.recordRecommendMap]
 
     def main(self):
@@ -65,3 +66,12 @@ class defindHandler():
 
     def test(self):
         logging.info('defind test job suc')
+
+
+    def audioMain(self):
+        """语音姬
+        """
+        try:
+            audio.entry(self.context)
+        except:
+            logging.error(traceback.format_exc())
