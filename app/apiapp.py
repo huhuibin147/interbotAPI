@@ -95,7 +95,7 @@ def osuheadimg(**kw):
     r = requests.post(url, timeout=10, data=data)
     try:
         rdata = json.loads(r.text)
-        return rdata.get('avatar_url', '')
+        return "[CQ:image,cache=0,file=%s]" % rdata.get('avatar_url', '')
     except:
         logging.error(traceback.format_exc())
         if len(r.text) < 50:
