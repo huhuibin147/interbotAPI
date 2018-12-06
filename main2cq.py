@@ -11,9 +11,9 @@ from tornado.httpserver import HTTPServer
 from tornado.ioloop import IOLoop
 
 
-bot = CQHttp(api_root='http://127.0.0.1:5700/')
+bot = CQHttp(api_root='http://inter4.com:5700/')
 
-centerURL = 'http://118.24.91.98/center/msg'
+centerURL = 'http://inter1.com/center/msg'
 
 # 初始化日志格式
 logging.basicConfig(
