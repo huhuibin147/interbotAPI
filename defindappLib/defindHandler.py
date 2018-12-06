@@ -13,7 +13,7 @@ class defindHandler():
 
     def __init__(self, context):
         self.context = context
-        self.job = [self.audioMain]
+        self.job = [self.oldBotMain]
         # self.job = [self.recordRecommendMap]
 
     def main(self):
@@ -68,8 +68,8 @@ class defindHandler():
         logging.info('defind test job suc')
 
 
-    def audioMain(self):
-        """语音姬
+    def oldBotMain(self):
+        """实现旧版本模式
         """
         try:
             audio.entry(self.context)
