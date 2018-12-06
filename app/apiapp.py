@@ -39,11 +39,11 @@ def statApi(**kw):
     resp = Response(r.content, mimetype="image/jpeg")
     return resp
 
-@app.route('/me', methods=['POST'])
+@app.route('/rankline', methods=['POST'])
 def apiv2me(**kw):
     qqid = request.form.get('qqid')
     groupid = request.form.get('groupid')
-    url = "http://139.199.10.126/osubot/v2me"
+    url = "http://inter4.com/osubot/v2me"
     data = {
         "qqid": qqid,
         "groupid": groupid
@@ -52,7 +52,7 @@ def apiv2me(**kw):
     try:
         rdata = json.loads(r.text)
         imgpath = ppyHandler.ppyHandler().drawRankLine(rdata, qqid)
-        return imgpath
+        return "[CQ:image,cache=0,file=%s]" % imgpath
     except:
         logging.error(traceback.format_exc())
         if len(r.text) < 50:
@@ -65,7 +65,7 @@ def apiv2me(**kw):
 def rplaycount(**kw):
     qqid = request.form.get('qqid')
     groupid = request.form.get('groupid')
-    url = "http://139.199.10.126/osubot/v2me"
+    url = "http://inter4.com/osubot/v2me"
     data = {
         "qqid": qqid,
         "groupid": groupid
@@ -74,7 +74,7 @@ def rplaycount(**kw):
     try:
         rdata = json.loads(r.text)
         imgpath = ppyHandler.ppyHandler().drawPlayCount(rdata, qqid)
-        return imgpath
+        return "[CQ:image,cache=0,file=%s]" % imgpath
     except:
         logging.error(traceback.format_exc())
         if len(r.text) < 50:
@@ -87,7 +87,7 @@ def rplaycount(**kw):
 def osuheadimg(**kw):
     qqid = request.form.get('qqid')
     groupid = request.form.get('groupid')
-    url = "http://139.199.10.126/osubot/v2me"
+    url = "http://inter4.com/osubot/v2me"
     data = {
         "qqid": qqid,
         "groupid": groupid

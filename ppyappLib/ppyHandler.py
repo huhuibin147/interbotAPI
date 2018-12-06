@@ -184,10 +184,10 @@ class ppyHandler():
         ax = plt.gca()
         ax.invert_yaxis()
 
-        imgPath = '/static/interbot/image/%s_rank.png' % qq
+        imgPath = '/static/interbot/image/tmp/%s_rank.png' % qq
         plt.savefig(imgPath)
 
-        return 'http://interbot.cn/itbimage/%s_rank.png' % qq
+        return 'http://interbot.cn/itbimage/tmp/%s_rank.png' % qq
 
     def drawPlayCount(self, res, qq):
         data = res['monthly_playcounts']
@@ -207,7 +207,7 @@ class ppyHandler():
         # 自动旋转日期标记
         plt.gcf().autofmt_xdate()  
 
-        imgPath = '/static/interbot/image/%s_playcount.png' % qq
+        imgPath = '/static/interbot/image/tmp/%s_playcount.png' % qq
         plt.savefig(imgPath)
 
-        return 'http://interbot.cn/itbimage/%s_playcount.png' % qq
+        return 'http://interbot.cn/itbimage/tmp/%s_playcount.png' % qq
