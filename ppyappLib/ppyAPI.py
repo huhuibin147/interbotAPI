@@ -88,7 +88,7 @@ def apiv2RefreshToken(refreshtoken, updatedb=1, **kw):
     params = {
         'grant_type': 'refresh_token',
         'client_id': '19',
-        'client_secret': '',
+        'client_secret': '46SmWQ2TyF5FMECwHrblTZ2oiYq4yyAbOH5BDDS7',
         'refresh_token': refreshtoken
     }
     ret = -1
