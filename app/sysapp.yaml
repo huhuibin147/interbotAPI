@@ -1,0 +1,6 @@
+sysapp1:
+  name: systemApi
+  version: v0.1
+  listen: 10030
+  comment: 系统级别
+  model: sysapp

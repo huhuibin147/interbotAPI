@@ -4,9 +4,9 @@ import json
 import requests
 
 
-centerURL = 'http://127.0.0.1:10003/'
+centerURL = 'http://127.0.0.1:10030/'
 
-cmd = 'osuskill'
+cmd = 'functest'
 
 if len(sys.argv) > 1:
     msg = sys.argv[1]
