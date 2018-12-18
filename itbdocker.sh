@@ -5,8 +5,8 @@ appdir=`pwd`
 start(){
     checklogdir
     #nohup python3 main.py $1 >/dev/null 2>itberror.log &
-    nohup python3 main.py $1 >> $appdir/var/log/itb.$1.log 2>&1 &
-    #python3 main.py $1 >> $appdir/var/log/itb.$1.log 2>&1
+    # nohup python3 main.py $1 >> $appdir/var/log/itb.$1.log 2>&1 &
+    python3 main.py $1 >> $appdir/var/log/itb.$1.log 2>&1
     echo "$1 start..."
 }
 

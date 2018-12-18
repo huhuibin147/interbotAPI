@@ -64,7 +64,7 @@ class sysHandler():
         """链路测试,502异常,404存活
         """
         try:
-            r = requests.get(url)
+            r = requests.get(url, timeout=3)
             logging.info('NodeTest [%s] %s', url, r.status_code)
             if r.status_code == 502:
                 return False

@@ -1,0 +1,11 @@
+cqhttp
+flask
+pymysql
+PyYAML
+tornado
+requests
+DBUtils 
+websockets
+asyncio
+apscheduler
+redis

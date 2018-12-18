@@ -6,9 +6,9 @@ import threading
 import asyncio
 import websockets
 from cqhttp import CQHttp
-from tornado.wsgi import WSGIContainer
-from tornado.httpserver import HTTPServer
-from tornado.ioloop import IOLoop
+# from tornado.wsgi import WSGIContainer
+# from tornado.httpserver import HTTPServer
+# from tornado.ioloop import IOLoop
 
 
 bot = CQHttp(api_root='http://inter4.com:5700/')
