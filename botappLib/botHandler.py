@@ -123,6 +123,54 @@ class botHandler():
 
         return res
 
+    def getRctppBatchRes(self, recinfos):
+        """批量版本
+        """
+        ret = ""
+        l = len(recinfos)
+        totalMiss = 0
+        totalStars = 0
+        totalpp = 0
+        totalppfc = 0
+        totalppss = 0
+        totalacc = 0
+        for i, recinfo in enumerate(recinfos):
+            # rec计算
+            bid = recinfo['beatmap_id']
+            rinfo = self.exRecInfo(recinfo)
+            extend = self.convert2oppaiArgs(**rinfo) 
+            ojson = self.oppai2json(bid, extend)
+
+            # fc计算
+            fcacc = self.calFcacc(recinfo)
+            extendFc = self.convert2oppaiArgs(rinfo['mods'], fcacc)
+            ojsonFc = self.oppai2json(bid, extendFc)
+
+            # ac计算
+            extendSs = self.convert2oppaiArgs(rinfo['mods'])
+            ojsonSs = self.oppai2json(bid, extendSs)
+
+            res, data = self.formatRctpp3(ojson, recinfo['rank'], rinfo['acc'], 
+                ojsonFc['pp'], ojsonSs['pp'], bid, fcacc, recinfo['countmiss'])
+            totalStars += data["stars"]
+            totalMiss += int(data["miss"])
+            totalpp += data["pp"]
+            totalppfc += data["ppfc"]
+            totalppss += data["ppss"] 
+            totalacc += data["acc"]
+
+            ret = ret + '[%s].' % (i+1) + res + '\n---------------------------------\n'
+
+        avgStars = round(totalStars/l, 2)
+        avgAcc = round(totalacc/l, 2)
+        avgMiss = totalMiss/l
+        totalpp = round(totalpp, 2)
+        totalppfc = round(totalppfc, 2)
+        totalppss = round(totalppss, 2)
+        ret += '平均star:{stars}*/acc:{acc}%/Miss:{miss}x \n'.format(stars=avgStars, acc=avgAcc, miss=avgMiss) 
+        ret += '总计{pp}pp /{ppfc}pp /{ppss}pp'.format(pp=totalpp, ppfc=totalppfc, ppss=totalppss)
+        return ret
+
     def oppai(self, bid, extend=''):
         """取oppai结果
         Args:
@@ -246,6 +294,48 @@ class botHandler():
         )
 
         return out
+
+    def formatRctpp3(self, ojson, rank, acc, ppfc, ppss, bid, fcacc, miss):
+        """格式化rctpp简版输出"""
+        outp = '{artist} - {title} [{version}][ar{ar}][bpm{bpm}] {mods_str} \n'
+        outp += '{stars}* | {rank} | {acc}% | {combo}x/{max_combo}x | {miss}x \n'
+        outp += '{pp}pp /{ppfc}pp /{ppss}pp'
+
+        missStr = self.missReply(miss, acc, ojson['ar'], 
+            ojson['combo'], ojson['max_combo'], ojson['stars'])
+
+        mapInfo = self.getOsuBeatMapInfo(bid)
+        bpm = self.factBpm(float(mapInfo['bpm']), ojson['mods_str'])
+ 
+        data = {
+            'artist': mapInfo['artist'],
+            'title': mapInfo['title'],
+            'version': mapInfo['version'],
+            # 'creator': mapInfo['creator'],
+            'ar': ojson['ar'],
+            # 'cs': ojson['cs'],
+            # 'od': ojson['od'],
+            # 'hp': ojson['hp'],
+            'stars': round(ojson['stars'], 2),
+            'combo': ojson['combo'],
+            'max_combo': ojson['max_combo'],
+            'acc': round(acc, 2),
+            'mods_str': ojson['mods_str'],
+            'pp': round(ojson['pp'], 2),
+            'rank': rank,
+            'ppfc': round(ppfc, 2),
+            'ppss': round(ppss, 2),
+            # 'bid': bid,
+            # 'fcacc': fcacc,
+            'miss': miss,
+            # 'missStr': missStr,
+            'bpm': bpm
+        }
+
+        out = outp.format(**data)
+
+        return out, data
+
 
     def missReply(self, miss, acc, ar, cb, maxcb, stars):
         miss = int(miss)
