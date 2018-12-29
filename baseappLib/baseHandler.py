@@ -152,3 +152,10 @@ class baseHandler():
         else:
             logging.info('token更新DB失败')
         db.commit()
+
+    def getUserPermission(self, qq):
+        """取用户权限信息"""
+        uinfo = self.getUserBindInfo({"qq": qq})
+        tokenPMS = uinfo["tokenpermission"]
+        
+        return tokenPMS
