@@ -99,6 +99,13 @@ def bindUserToken(**kw):
     ret = url + '\n*不要点别人的链接!，不要点别人的链接!'
     return ret
 
+@app.route('/permission', methods=['POST'])
+@appTools.deco()
+def userPermission(**kw):
+    ins = baseHandler.baseHandler()
+    ret = ins.getUserPermission(kw['qqid'])
+    return ret
+
 if __name__ == '__main__':
     app.run(threaded=True)
     
