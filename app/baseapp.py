@@ -95,7 +95,7 @@ def chat(**kw):
 @appTools.deco()
 def bindUserToken(**kw):
     ins = baseHandler.baseHandler()
-    url = 'https://osu.ppy.sh/oauth/authorize?client_id=19&response_type=code&state=%sx%s' % (kw['qqid'], kw['groupid'])
+    url = 'https://osu.ppy.sh/oauth/authorize?client_id=19&response_type=code&state=%sx%s&scope=friends.read%%20identify' % (kw['qqid'], kw['groupid'])
     ret = url + '\n*不要点别人的链接!，不要点别人的链接!'
     return ret
 
