@@ -182,8 +182,14 @@ def friends(**kw):
 @app.route('/tt', methods=['POST'])
 @appTools.deco()
 def tt(**kw):
+    rs = '%s->%s' % (kw['qqid'], kw['atqq'])
+    return rs
+
+@app.route('/stat', methods=['POST'])
+@appTools.deco()
+def stat(**kw):
     b = ppyHandler.ppyHandler()
-    rs = b.getV2MyInfo(kw['qqid'], kw['groupid'])
+    rs = b.osuV2stat(kw['qqid'], kw['groupid'])
     return rs
 
 @app.route('/v2me', methods=['POST'])

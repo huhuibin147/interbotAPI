@@ -3,9 +3,11 @@ import logging
 import traceback
 import re
 import json
-from datetime import datetime
+from commLib import mods
+from datetime import datetime, timedelta
 from ppyappLib import ppyAPI
 from baseappLib import baseHandler
+from botappLib import botHandler
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 
@@ -128,19 +130,107 @@ class ppyHandler():
             return res
         else:
             return json.dumps(res)
-        
+
+    def getV2osuInfo(self, qq, groupid):
+        uinfo = baseHandler.baseHandler().getUserBindInfo({"qq": qq, "groupid": groupid})
+        token = uinfo[0]["acesstoken"]
+        refreshtoken = uinfo[0]["refreshtoken"]
+        osuname = uinfo[0]["osuname"]
+        return self.autov2Req2(qq, groupid, "me", token, refreshtoken)
+
+    def autov2Req2(self, qq, groupid, endponit, token, refreshtoken):
+        if not token:
+            return -3, '请使用oauth进行认证绑定!'
+        res = ppyAPI.apiv2Req(endponit, token, refreshtoken, qq=qq, groupid=groupid)
+        if res in (-1, -2):
+            return 'token失效!请使用oauth进行认证绑定!'
+        else:
+            return 1, res
 
     def autov2Req(self, qq, groupid, endponit, token, refreshtoken):
         if not token:
             return '请使用oauth进行认证绑定!'
         res = ppyAPI.apiv2Req(endponit, token, refreshtoken, qq=qq, groupid=groupid)
-        if res == -1:
-            return '网络异常!'
-        elif res == -2:
-            return 'token失效!请使用oauth进行认证绑定!' 
+        if res in (-1, -2):
+            return 'token失效!请使用oauth进行认证绑定!'
         else:
             return res
 
+    def osuV2stat(self, qq, groupid):
+        rs = ""
+        status, ret = self.getV2osuInfo(qq, groupid)
+        if status < 0:
+            return ret
+
+        uid = ret["id"]
+        grade_counts = ret['statistics']['grade_counts']
+        pp = ret['statistics']['pp']
+        pc = ret['statistics']['play_count']
+        acc = ret['statistics']['hit_accuracy']
+        username = ret["username"]
+        join_time = ret['join_date'].split('T')[0]
+
+        total_hits = ret["statistics"]["total_hits"]
+        tth_pc_incr = int(total_hits / pc)
+        total_hits_str = self.numberFormat2w(total_hits)
+        tth_pc_incr_str = self.numberFormat2w(tth_pc_incr)
+
+        play_time = ret["statistics"]["play_time"]
+        play_days = play_time / 84600
+        play_hours = play_time % 84600 / 3600
+
+        if not ret['last_visit']:
+            last_visit_str = '?'
+        else:
+            last_visit_f, last_visit_s = ret['last_visit'].split('T')
+            last_visit_utc = '%s %s' % (last_visit_f, last_visit_s.split('+')[0])
+            last_visit = datetime.strptime(last_visit_utc, '%Y-%m-%d %H:%M:%S') + timedelta(hours=8)
+            last_visit_str = datetime.strftime(last_visit, '%Y-%m-%d %H:%M')
+
+        follower_count = ret["follower_count"][0]
+        avatar = ret["avatar_url"]
+        join_days = (datetime.now()-datetime.strptime(join_time, '%Y-%m-%d')).days
+        pp_days_incr = round(float(pp) / join_days, 2)
+        pc_days_incr = round(float(pc) / join_days, 2)
+
+        # bp
+        botIns = botHandler.botHandler()
+        bpinfo = botIns.getRecBp(uid, "5")
+        bp1 = bpinfo[0]
+        c50,c100,c300,cmiss = int(bp1['count50']),int(bp1['count100']),int(bp1['count300']),int(bp1['countmiss'])
+        bp1_acc = round((c50*50+c100*100+c300*300)/(c50+c100+c300+cmiss)/300*100, 2)
+        bp1_mod = ','.join(mods.getMod(int(bp1['enabled_mods'])))
+        bp1_pp = round(float(bp1['pp']))
+        bp1_rank = bp1['rank']
+        bp1_data = bp1['date']
+        bp1_bid = bp1['beatmap_id']
+        bp1_days = (datetime.now()-datetime.strptime(bp1_data, '%Y-%m-%d %H:%M:%S')).days
+        if bp1_days > 365:
+            bp1_days_str = '%s年前' % int(bp1_days / 365)
+        elif bp1_days > 182:
+            bp1_days_str = '半年前'
+        elif bp1_days > 30:
+            bp1_days_str = '%s个月前' % int(bp1_days / 30)
+        else:
+            bp1_days_str = '%s天前' % bp1_days
+        # map
+        bp1_mapInfo = botIns.getOsuBeatMapInfo(bp1_bid)
+        bp1_stars = bp1_mapInfo["difficultyrating"][:3]
+
+        rs += '{username}\n'.format(username=username)
+        rs += '[CQ:image,cache=0,file={avatar}]\n'.format(avatar=avatar)
+        rs += '{pp}pp ({pp_days_incr}/day)\n'.format(pp=int(pp), pp_days_incr=pp_days_incr)
+        rs += '{pc}pc ({pc_days_incr}/day)\n'.format(pc=pc, pc_days_incr=pc_days_incr)
+        rs += '{tth}tth ({tth_pc_incr}/pc)\n'.format(tth=total_hits_str, tth_pc_incr=tth_pc_incr_str)
+        rs += '--------------------\n'
+        rs += 'SS+({ssh}) | SS({ss}) | S+({sh}) | S({s}) | A({a})\n'.format(**grade_counts)
+        rs += 'bp1: {pp}pp,{stars}*,{acc}%,+{mod}({d})\n'.format(pp=bp1_pp, acc=bp1_acc, mod=bp1_mod, d=bp1_days_str, stars=bp1_stars)
+        rs += '--------------------\n'
+        rs += '粉丝数: {follower_count}\n'.format(follower_count=follower_count)
+        rs += '爆肝时长: {play_days}天{play_hours}小时\n'.format(play_days=int(play_days), play_hours=int(play_hours))
+        rs += '最后登录: {last_visit_str}\n'.format(last_visit_str=last_visit_str)
+        rs += '注册时间: {join_time} ({join_days}天)'.format(join_time=join_time, join_days=join_days)
+        return rs
 
     # def drawRankLine(self, y, osuname, pp, locate, rank1, rank2):
         
@@ -211,3 +301,12 @@ class ppyHandler():
         plt.savefig(imgPath)
 
         return 'http://interbot.cn/itbimage/tmp/%s_playcount.png' % qq
+
+    def numberFormat2w(self, n):
+        """数值转换为带w的字符串"""
+        rs = n
+        if n >= 10000:
+            rs = '%sw' % int(n/10000)
+        return rs
+
+

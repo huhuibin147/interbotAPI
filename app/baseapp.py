@@ -7,6 +7,7 @@ from flask import Flask
 from flask import request
 from baseappLib import baseHandler
 from commLib import appTools
+from commLib import Config
 
 with open('./app/baseapp.yaml', encoding='utf8') as f:
     config = yaml.load(f)
@@ -105,6 +106,26 @@ def userPermission(**kw):
     ins = baseHandler.baseHandler()
     ret = ins.getUserPermission(kw['qqid'])
     return ret
+
+@app.route('/settokenpms', methods=['POST'])
+@appTools.deco()
+def userPermissionSet(**kw):
+    ins = baseHandler.baseHandler()
+    pms = Config.TOKEN_PERMISSION
+    levels = pms.keys()
+    usage = 'usage: ¡settokenpms %s\n注:' % ('/'.join(levels))
+    for k in levels:
+        usage += k + '-' + pms[k] + ' '
+    if not kw.get('iargs'):
+        return usage
+    inputLevel = kw['iargs'][0]
+    if inputLevel not in levels:
+        return usage
+    ret = ins.updateUserPermission(kw['qqid'], inputLevel)
+    rs = "token权限更新成功!\n当前权限: %s-%s" % (inputLevel, pms[inputLevel])
+    if ret <= 0:
+        rs = "token权限更新失败!\n当前权限: %s-%s" % (inputLevel, pms[inputLevel])
+    return rs
 
 if __name__ == '__main__':
     app.run(threaded=True)

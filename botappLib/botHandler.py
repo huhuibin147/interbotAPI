@@ -452,6 +452,7 @@ class botHandler():
             dbMapInfo = self.getOsuBeatMap(bid)
             if dbMapInfo:
                 dbMapInfo = dbMapInfo[0]
+                mapjson = json.dumps(dbMapInfo) 
                 insertArgs = [[
                     dbMapInfo["beatmap_id"], 
                     dbMapInfo['source'], 
@@ -461,7 +462,7 @@ class botHandler():
                     dbMapInfo['creator'], 
                     dbMapInfo['difficultyrating'],
                     dbMapInfo['last_update'],
-                    json.dumps(dbMapInfo) 
+                    mapjson
                 ]]
                 self.map2db(insertArgs)
             else:

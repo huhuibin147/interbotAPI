@@ -7,6 +7,7 @@ import requests
 from commLib import cmdRouter
 from commLib import interMysql
 from commLib import interRedis
+from commLib import Config
 
 # try:
 #     from chatbotLib import testc
@@ -155,7 +156,19 @@ class baseHandler():
 
     def getUserPermission(self, qq):
         """取用户权限信息"""
+        levelRef = Config.TOKEN_PERMISSION
         uinfo = self.getUserBindInfo({"qq": qq})
-        tokenPMS = uinfo["tokenpermission"]
-        
-        return tokenPMS
+        if not uinfo:
+            return "请使用¡setid绑定"
+        tokenPMS = uinfo[0]["tokenpermission"]
+        ret = "token权限等级: %s\n" % tokenPMS
+        ret += "权限说明: %s" % levelRef[str(tokenPMS)]
+        return ret
+
+    def updateUserPermission(self, qq, level):
+        """用户权限设置"""
+        db = interMysql.Connect('osu2')
+        sql = 'UPDATE user SET tokenpermission=%s WHERE qq=%s'
+        ret = db.execute(sql, (level, qq, ))
+        db.commit()
+        return ret
