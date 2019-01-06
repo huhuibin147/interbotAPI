@@ -53,6 +53,8 @@ def entry(context):
     elif qq == Config.SUPER_QQ:
         if msg == 'interbot快叫dalou还钱':
             audioFile = 'daloumoneyjp.mp3'
+        elif msg == 'interbot快叫醒她':
+            audioFile = 'exclusive_inter.wav'
 
     # dalou彩蛋
     elif qq == 1061566571:
