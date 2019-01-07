@@ -12,3 +12,8 @@ TOKEN_PERMISSION = {
     '1': "仅供对比功能使用",
     '2': "开放给其他人查询"
 }
+
+
+TOKEN_PERMISSION_SELF = 0
+TOKEN_PERMISSION_HALF = 1
+TOKEN_PERMISSION_ALL = 2
