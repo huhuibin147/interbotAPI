@@ -34,7 +34,7 @@ class msgHandler():
 
     def msgTransmit(self, context):
         """消息转发"""
-        url = 'http://118.24.91.98/defindapp/defindmsg'
+        url = 'http://inter1.com/defindapp/defindmsg'
         requests.post(url, data={"context": json.dumps(context)})
 
     def checkPermission(self, cmd):
