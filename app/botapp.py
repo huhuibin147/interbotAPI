@@ -194,17 +194,9 @@ def stat(**kw):
     atqq = kw['atqq']
     if atqq:
         base = baseHandler.baseHandler()
-        rs = base.getUserBindInfo({"qq": atqq, "groupid": kw['groupid']})
-        if not rs:
-            return "Ta还没有绑定，赶紧叫Ta绑定(¡setid)啊！"
-        uinfo = rs[0]
-        if not uinfo["acesstoken"]:
-            return "Ta还没有授权，赶紧叫Ta授权(¡oauth)啊！"
-        if uinfo["tokenpermission"] != Config.TOKEN_PERMISSION_ALL:
-            tpms = str(uinfo["tokenpermission"])
-            return "Ta还没有放开token权限，当前权限为%s(%s)，赶紧叫Ta放开(¡settokenpms)啊！" \
-                % (tpms, Config.TOKEN_PERMISSION[tpms])
-        rs = b.osuV2stat(atqq, kw['groupid'])
+        rs = base.checkTokenPermission(atqq, kw['groupid'])
+        if rs.isdigit():
+            rs = b.osuV2stat(atqq, kw['groupid'])
     else:
         rs = b.osuV2stat(kw['qqid'], kw['groupid'])
     return rs

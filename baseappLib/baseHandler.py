@@ -172,3 +172,17 @@ class baseHandler():
         ret = db.execute(sql, (level, qq, ))
         db.commit()
         return ret
+
+    def checkTokenPermission(self, qq, groupid):
+        """检查token权限"""
+        rs = self.getUserBindInfo({"qq": qq, "groupid": groupid})
+        if not rs:
+            return "Ta还没有绑定，赶紧叫Ta绑定(¡setid)啊！"
+        uinfo = rs[0]
+        if not uinfo["acesstoken"]:
+            return "Ta还没有授权，赶紧叫Ta授权(¡oauth)啊！"
+        if uinfo["tokenpermission"] != Config.TOKEN_PERMISSION_ALL:
+            tpms = str(uinfo["tokenpermission"])
+            return "Ta还没有放开token权限，当前权限为%s(%s)，赶紧叫Ta放开(¡settokenpms)啊！" \
+                % (tpms, Config.TOKEN_PERMISSION[tpms])
+        return qq

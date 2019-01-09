@@ -10,6 +10,7 @@ from flask import Response, Flask
 from flask import request
 from subprocess import Popen
 from ppyappLib import ppyHandler
+from baseappLib import baseHandler
 
 with open('./app/apiapp.yaml', encoding='utf8') as f:
     config = yaml.load(f)
@@ -43,15 +44,24 @@ def statApi(**kw):
 def apiv2me(**kw):
     qqid = request.form.get('qqid')
     groupid = request.form.get('groupid')
+    atqq = request.form.get('atqq')
+    queryid = qqid
+    if atqq:
+        base = baseHandler.baseHandler()
+        rs = base.checkTokenPermission(atqq, groupid)
+        if rs.isdigit():
+            queryid = atqq
+        else:
+            return rs
     url = "http://inter4.com/osubot/v2me"
     data = {
-        "qqid": qqid,
+        "qqid": queryid,
         "groupid": groupid
     }
     r = requests.post(url, timeout=10, data=data)
     try:
         rdata = json.loads(r.text)
-        imgpath = ppyHandler.ppyHandler().drawRankLine(rdata, qqid)
+        imgpath = ppyHandler.ppyHandler().drawRankLine(rdata, queryid)
         return "[CQ:image,cache=0,file=%s]" % imgpath
     except:
         logging.error(traceback.format_exc())
