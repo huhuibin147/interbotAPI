@@ -252,6 +252,11 @@ def joinroom(**kw):
     res = b.joinMpRoom()
     return res
 
+@app.route('/privatetest', methods=['POST'])
+@appTools.deco()
+def privatetest(**kw):
+    return 'interbot偷偷cue了你一下！'
+
 if __name__ == '__main__':
     app.run(threaded=True)
     
