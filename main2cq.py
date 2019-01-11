@@ -59,7 +59,7 @@ async def wsMain(websockets, path):
     if 'groupid' in recvDict:
         bot.send_group_msg(group_id=int(recvDict['groupid']), message=recvDict['msg'])
     elif 'qqid' in recvDict:
-        bot.send_private_msg(group_id=int(recvDict['qqid']), message=recvDict['msg'])
+        bot.send_private_msg(user_id=int(recvDict['qqid']), message=recvDict['msg'])
     
 
 ser = websockets.serve(wsMain, '0.0.0.0', 12345)
