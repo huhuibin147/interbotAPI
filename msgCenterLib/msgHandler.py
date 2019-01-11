@@ -145,7 +145,7 @@ class msgHandler():
             returnstr += str(res)
         elif '*toprivate' in opts:
             context["message_type"] = "private"
-            pushTools.pushMsgOnePrivate(context['user_id'], returnstr)
+            pushTools.pushMsgOnePrivate(context['user_id'], res)
         else:
             returnstr = res
         
