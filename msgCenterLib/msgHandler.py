@@ -5,6 +5,7 @@ import logging
 import requests
 import threading
 from commLib import interMysql
+from commLib import pushTools
 
 class msgHandler():
 
@@ -103,6 +104,9 @@ class msgHandler():
         if res['at']:
             opts.append('*at')
 
+        if res['toprivate']:
+            opts.append('*toprivate')
+
         # 调用核心 
         res = requests.post(
             apiUrl, 
@@ -139,6 +143,9 @@ class msgHandler():
             if len(res) > 20:
                 returnstr += '\n'
             returnstr += str(res)
+        elif '*toprivate' in opts:
+            context["message_type"] = "private"
+            pushTools.pushMsgOnePrivate(context['user_id'], returnstr)
         else:
             returnstr = res
         
@@ -207,7 +214,7 @@ class msgHandler():
         """映射"""
         db = interMysql.Connect('osu2')
         sql = '''
-            SELECT cmd, url, location, reply, at
+            SELECT cmd, url, location, reply, at, toprivate
             FROM cmdRef WHERE cmd = %s
         '''
         res = db.query(sql, [cmd])

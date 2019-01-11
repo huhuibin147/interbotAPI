@@ -19,9 +19,21 @@ class pushC():
         logging.info('send to[%s],msg[%s]', groupid, msg)
         ws.close()
 
+    def sendCqPrivate(self, qqid, msg):
+        ws = websocket.create_connection(self.ws)
+        ws.send(json.dumps({
+                "qqid": qqid,
+                "msg": msg
+            }))
+        logging.info('send to[%s],msg[%s]', qqid, msg)
+        ws.close()
+
 
 def pushMsgOne(groupid, msg):
     pushC().sendCq(groupid, msg)
+
+def pushMsgOnePrivate(qqid, msg):
+    pushC().sendCqPrivate(qqid, msg)
 
 def pushGroupMsg(groupids, msg):
     obj = pushC()
