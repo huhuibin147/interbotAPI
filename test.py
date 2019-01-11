@@ -4,7 +4,7 @@ import json
 import requests
 
 
-centerURL = 'http://118.24.91.98/center/msg'
+centerURL = 'http://inter1.com/center/msg'
 
 msg = 'test'
 
