@@ -28,6 +28,17 @@ def check(**kw):
     ret = extObj.checkFormat(osuid, osuname)
     return ret
 
+@app.route('/map', methods=['POST'])
+@appTools.deco(autoOusInfoKey='osuid,osuname')
+def map(**kw):
+    osuid = kw['autoOusInfoKey']['osuid']
+    osuname = kw['autoOusInfoKey']['osuname']
+    extObj = extendHandler.extendHandler()
+    map_id, num = extObj.choiceMap(osuid)
+    if not map_id:
+        return '本bot根本不想给你推荐图'
+    return 'inter推荐给%s的图:https://osu.ppy.sh/b/%s  推荐指数:%s' %(osuname, map_id, num)
+
 if __name__ == '__main__':
     app.run(threaded=True)
     

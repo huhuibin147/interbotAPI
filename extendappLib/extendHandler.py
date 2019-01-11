@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import logging
 import traceback
+import random
 from botappLib import botHandler
 from commLib import interMysql
 
@@ -68,3 +69,25 @@ class extendHandler():
         if not pp:
             return '你在逗我把,哪来的pp???'
         return '%s\npp:%spp\ninter手算:%spp\n目前潜力:%spp' % (osuname, pp, pp2, maxpp)
+
+    def choiceMap(self, osuid):
+        '''低端推荐pp图'''
+        try:
+            conn = interMysql.Connect('osu')
+            botObj = botHandler.botHandler()
+            apiUserInfo = botObj.getOsuInfoFromAPI(osuid)
+            pp = apiUserInfo[0]['pp_raw']
+            if not pp:
+                return 0,0
+            pp = float(pp)
+            sql = '''
+                SELECT beatmap_id,count(beatmap_id) num FROM osu_user ta INNER JOIN osu_bp tb on ta.user_id = tb.user_id where ta.pp_raw BETWEEN %s and %s GROUP BY beatmap_id ORDER BY num desc limit 0,20; 
+            '''
+            res = conn.query(sql, [pp, pp+20])
+            if not res:
+                return 0,0
+            ret = random.choice(res)
+            return ret['beatmap_id'],ret['num']
+        except:
+            logging.error(traceback.format_exc())
+            return 0,0
