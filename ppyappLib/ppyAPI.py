@@ -19,8 +19,8 @@ ref = {
     'userinfo': 'https://osu.ppy.sh/api/get_user?k=%s&u={uid}' % OSU_API_KEY,
     'bp': 'https://osu.ppy.sh/api/get_user_best?k=%s&u={uid}&m={mode}&limit={limit}' % OSU_API_KEY,
     'beatmap': 'https://osu.ppy.sh/api/get_beatmaps?k=%s&b={bid}' % OSU_API_KEY,
-    'skill': 'http://osuskills.tk/user/{osuname}',
-    'skillvs': 'http://osuskills.tk/user/{osuname}/vs/{vsosuname}'
+    'skill': 'http://osuskills.com/user/{osuname}',
+    'skillvs': 'http://osuskills.com/user/{osuname}/vs/{vsosuname}'
 }
 
 
