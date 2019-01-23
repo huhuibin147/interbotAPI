@@ -179,7 +179,7 @@ class botHandler():
         """
         try:
             self.downOsufile(bid)
-            ret = os.popen('cat /data/osufile/%s.osu | /root/oppai/./oppai - %s' % (bid, extend))
+            ret = os.popen('cat /data/osufile/%s.osu | oppai - %s' % (bid, extend))
             logging.info('bid[%s],extend[%s]', bid, extend)
             return ret.read()
         except:
@@ -193,7 +193,7 @@ class botHandler():
                 self.downOsufile(bid)
             else:
                 self.downOsufile(bid, compulsiveWrite=1)
-            ret = os.popen('cat /data/osufile/%s.osu | /root/oppai/./oppai - %s -ojson' % (bid, extend))
+            ret = os.popen('cat /data/osufile/%s.osu | oppai - %s -ojson' % (bid, extend))
             logging.info('bid[%s],extend[%s]', bid, extend)
             return json.loads(ret.read())
         except:
