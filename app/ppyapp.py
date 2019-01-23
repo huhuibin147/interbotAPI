@@ -48,7 +48,8 @@ def recent(**kw):
 def oppai(**kw):
     bid = kw['bid'] if not kw.get('iargs') else kw['iargs'][0]
     extend = kw.get('extend', '')
-    ret = os.popen('curl https://osu.ppy.sh/osu/%s | /root/oppai/./oppai - %s -ojson' % (bid, extend))
+    # ret = os.popen('curl https://osu.ppy.sh/osu/%s | /root/oppai/./oppai - %s -ojson' % (bid, extend))
+    ret = os.popen('curl https://osu.ppy.sh/osu/%s | oppai - %s -ojson' % (bid, extend))
     return json.dumps(ret.read())
 
 @app.route('/osufile', methods=['POST'])
