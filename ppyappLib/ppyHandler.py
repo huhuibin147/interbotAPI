@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import logging
 import traceback
+import random
 import re
 import json
 from commLib import mods
@@ -116,7 +117,11 @@ class ppyHandler():
         else:
             friendsNum = len(res)
             rs = "%s's friends(%s)\n" % (osuname, friendsNum)
-            for i, r in enumerate(res[:10]):
+            if friendsNum < 10:
+                fs = res
+            else:
+                fs = random.sample(res, 10)
+            for i, r in enumerate(fs):
                 rs += '%s.%s\n' % (i+1, r["username"])
         return rs[:-1]
 
