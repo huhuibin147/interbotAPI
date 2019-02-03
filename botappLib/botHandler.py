@@ -273,9 +273,9 @@ class botHandler():
             title = mapInfo['title'],
             version = mapInfo['version'],
             creator = mapInfo['creator'],
-            ar = int(ojson['ar']),
+            ar = round(ojson['ar'], 2),
             cs = ojson['cs'],
-            od = int(ojson['od']),
+            od = round(ojson['od'], 2),
             hp = ojson['hp'],
             stars = round(ojson['stars'], 2),
             combo = ojson['combo'],
@@ -556,6 +556,7 @@ class botHandler():
         rs += '------------------\n'
         rs += '1.iron大哥(ironwitness) 2018-08-31 捐赠了50软妹币\n'
         rs += '2.无敌阿卡蕾(arcareh) 2018-08-31 捐赠了66软妹币\n'
+        rs += '2.sxyyyy 2019-02-03 捐赠了100软妹币\n'
         rs += '------------------\n'
         rs += '小声bibi骗钱万岁'
         return rs
