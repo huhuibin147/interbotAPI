@@ -8,7 +8,7 @@ class pushC():
 
 
     def __init__(self, ws=None):
-        self.ws = ws if ws else 'ws://interbot.cn:12345/'
+        self.ws = ws if ws else 'ws://inter4.com:12345/'
 
     def sendCq(self, groupid, msg):
         ws = websocket.create_connection(self.ws)
@@ -43,6 +43,6 @@ def pushGroupMsg(groupids, msg):
     logging.info('群发结束')
 
 if __name__ == '__main__':
-    groupids = [614892339,514661057,641236878,758120648,863935563,669361496,929271186,885984366,903924170,955072861]
-    msg = "interbot发红包啦！！！快发送money领钱啦！！！"
+    groupids = [514661057,758120648,669361496,885984366,713688443,609633978,709804864]
+    msg = "【interbot通知消息】\nxxxxx"
     pushGroupMsg(groupids, msg)
