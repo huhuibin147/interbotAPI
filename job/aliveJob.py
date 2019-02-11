@@ -9,12 +9,12 @@ class aliveJob(jobCenter.jobCenter):
 
 
     def addJob(self):
-        self.sched.add_job(self.jobMethod, 'interval', seconds=2, args=[])
+        self.sched.add_job(self.jobMethod, 'interval', seconds=10, args=[])
 
     def jobMethod(self):
         for ser in self.getServers():
             os.system("sh loopUtil.sh %s" % ser)
 
     def getServers(self):
-        sers = ["apiapp1", "apiapp2"]
+        sers = ["apiapp1", "apiapp2", "apiv", "ppyapp1", "sysapp1", "defindapp1", "msgCenter1"]
         return sers
