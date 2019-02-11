@@ -5,8 +5,8 @@
 
 checkalive() {
     #echo $1
-    lines=`ps axu|grep "python3 main.py $1"|wc -l`
-    if [ "2" -ne $lines ]; then
+    lines=`ps axu|grep "python3 main.py $1"|grep -v grep|wc -l`
+    if [ "1" -ne $lines ]; then
         #echo $lines
         sh itb.sh $1 restart
     fi
