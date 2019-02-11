@@ -148,7 +148,7 @@ class ppyHandler():
             return -3, '请使用oauth进行认证绑定!'
         res = ppyAPI.apiv2Req(endponit, token, refreshtoken, qq=qq, groupid=groupid)
         if res in (-1, -2):
-            return 'token失效!请使用oauth进行认证绑定!'
+            return -1, 'token失效!请使用oauth进行认证绑定!'
         else:
             return 1, res
 
