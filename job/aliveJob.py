@@ -9,7 +9,7 @@ class aliveJob(jobCenter.jobCenter):
 
 
     def addJob(self):
-        self.sched.add_job(self.jobMethod, 'interval', seconds=10, args=[])
+        self.sched.add_job(self.jobMethod, 'interval', seconds=60, args=[])
 
     def jobMethod(self):
         for ser in self.getServers():
