@@ -309,12 +309,12 @@ class msgHandler():
         """取步数
         """
         if not isinteractive:
-            return 1
+            return 0
         rds = interRedis.connect('inter1')
         key = Config.CMDSTEP_KEY.format(qq=qq, groupid=groupid, func=func)
         rs = rds.get(key)
         if not rs:
-            return 1
+            return 0
         else:
             return rs
 
