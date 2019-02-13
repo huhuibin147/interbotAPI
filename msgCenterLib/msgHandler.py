@@ -6,6 +6,8 @@ import requests
 import threading
 from commLib import interMysql
 from commLib import pushTools
+from commLib import interRedis
+from commLib import Config
 
 class msgHandler():
 
@@ -100,6 +102,9 @@ class msgHandler():
         opts = self.extractOptions(msg)
         atqq = self.extractAtqqid(msg)
 
+        qqid = self.context['user_id']
+        groupid = self.context['group_id']
+
         # 配置回复选项
         if res['at']:
             opts.append('*at')
@@ -107,14 +112,18 @@ class msgHandler():
         if res['toprivate']:
             opts.append('*toprivate')
 
+        # 交互式命令判断
+        step = self.getFuncStep(res['url'][1:], qqid, groupid, res['interactive'])
+
         # 调用核心 
         res = requests.post(
             apiUrl, 
             data = {
                 "iargs": json.dumps(iargs),
-                "qqid": self.context['user_id'],
-                "groupid": self.context['group_id'],
-                "atqq": atqq
+                "qqid": qqid,
+                "groupid": groupid,
+                "atqq": atqq,
+                "step": step
             }
         )
         if res.status_code == 200 and res.text:
@@ -214,7 +223,7 @@ class msgHandler():
         """映射"""
         db = interMysql.Connect('osu2')
         sql = '''
-            SELECT cmd, url, location, reply, at, toprivate
+            SELECT cmd, url, location, reply, at, toprivate, interactive
             FROM cmdRef WHERE cmd = %s
         '''
         res = db.query(sql, [cmd])
@@ -280,4 +289,16 @@ class msgHandler():
         logging.info('[%s]权限限制,在黑名单范围内', account)
         return -1, ''
 
-    
+    def getFuncStep(self, func, qq, groupid, isinteractive):
+        """取步数
+        """
+        logging.info(isinteractive)
+        if not isinteractive:
+            return 1
+        rds = interRedis.connect('inter1')
+        key = Config.CMDSTEP_KEY.format(qq=qq, groupid=groupid, func=func)
+        rs = rds.get(key)
+        if not rs:
+            return 1
+        else:
+            return rs

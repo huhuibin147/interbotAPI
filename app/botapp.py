@@ -257,6 +257,20 @@ def joinroom(**kw):
 def privatetest(**kw):
     return 'interbot偷偷cue了你一下！'
 
+
+@app.route('/sttest', methods=['POST'])
+@appTools.deco()
+def sttest(**kw):
+    sttest_start('sttest', kw['qqid'], kw['groupid'], kw['step'])
+    return str(kw)
+
+def sttest_start(func, qqid, groupid, step):
+    rds = interRedis.connect('inter1')
+    key = Config.CMDSTEP_KEY.format(qq=qqid, groupid=groupid, func=func)
+    rds.incr(key)
+    rds.expire(key, Config.CMDSTEP_KEY_EXPIRE_TIME)
+
+
 if __name__ == '__main__':
     app.run(threaded=True)
     
