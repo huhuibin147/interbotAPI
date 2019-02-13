@@ -292,7 +292,6 @@ class msgHandler():
     def getFuncStep(self, func, qq, groupid, isinteractive):
         """取步数
         """
-        logging.info(isinteractive)
         if not isinteractive:
             return 1
         rds = interRedis.connect('inter1')

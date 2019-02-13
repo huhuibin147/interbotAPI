@@ -8,7 +8,7 @@ class pushC():
 
 
     def __init__(self, ws=None):
-        self.ws = ws if ws else 'ws://inter4.com:12345/'
+        self.ws = ws if ws else 'ws://inter1.com:12345/'
 
     def sendCq(self, groupid, msg):
         ws = websocket.create_connection(self.ws)
