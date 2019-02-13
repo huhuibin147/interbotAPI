@@ -30,8 +30,9 @@ class msgHandler():
         # 自动处理
         msg = self.context['message']
         msg = msg.replace('！', '!')
+        replyFlag, msg = self.interactiveFuncRef(self.context['user_id'], self.context['group_id'], msg)
         if '!' in msg:
-            return self.autoApi(msg)
+            return self.autoApi(msg, replyFlag)
         else:
             return self.autoReply(msg)
 
@@ -75,10 +76,20 @@ class msgHandler():
 
         return 1, '无限制'
 
-    def autoApi(self, msg):
-        """api检测，自动调用"""
+    def autoApi(self, msg, replyFlag):
+        """api检测，自动调用
+        Args:
+            replyFlag 直接出参代替调用
+        """
         cmd = self.extractCmd(msg)
         res = self.getCmdRef(cmd)
+
+        # 直接回复
+        if replyFlag:
+            return self.returnHandler(msg, ['*at'], self.context)
+
+        logging.info('提取的cmd[%s]', cmd)
+
         if not res:
             return ''
 
@@ -112,8 +123,14 @@ class msgHandler():
         if res['toprivate']:
             opts.append('*toprivate')
 
+        isInteractive = res['interactive']
         # 交互式命令判断
-        step = self.getFuncStep(res['url'][1:], qqid, groupid, res['interactive'])
+        step = self.getFuncStep(res['url'][1:], qqid, groupid, isInteractive)
+        # 写入命令列表
+        if isInteractive:
+            rds = interRedis.connect('inter1')
+            key = Config.FUNC_ACTIVE_KEY.format(qq=qqid, groupid=groupid)
+            rds.sadd(key, cmd[1:])
 
         # 调用核心 
         res = requests.post(
@@ -210,7 +227,6 @@ class msgHandler():
         cmds = p.findall(msg)
         if cmds:
             retcmd = cmds[0]
-        logging.info('提取的cmd[%s]', retcmd)
         return retcmd
 
     def filterCN(self, content):
@@ -301,3 +317,23 @@ class msgHandler():
             return 1
         else:
             return rs
+
+    def interactiveFuncRef(self, qq, groupid, msg):
+        """交互式映射，自动补充命令
+            当超过2个时，变更为指定式
+        """
+        replyFlag = 0
+        rds = interRedis.connect('inter1')
+        key = Config.FUNC_ACTIVE_KEY.format(qq=qq, groupid=groupid)
+        if '!' not in msg:
+            activeCmds = rds.smembers(key)
+            acs = len(activeCmds)
+            if acs == 1:
+                msg = '!%s %s' % (list(activeCmds)[0], msg)
+            elif acs > 1:
+                msg = '当前使用交互式命令>2，请选择指定命令交互!cmd content，当前绑定命令为%s' % activeCmds
+                replyFlag = 1
+        return replyFlag, msg
+
+
+

@@ -21,3 +21,6 @@ TOKEN_PERMISSION_ALL = 2
 # 命令步数KEY
 CMDSTEP_KEY = 'CMDSTEP-{func}-{qq}-{groupid}'
 CMDSTEP_KEY_EXPIRE_TIME = 86400
+
+# 交互式命令集
+FUNC_ACTIVE_KEY = 'FUNC-ACTIVE-{qq}-{groupid}'
