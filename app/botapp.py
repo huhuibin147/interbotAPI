@@ -261,14 +261,31 @@ def privatetest(**kw):
 @app.route('/sttest', methods=['POST'])
 @appTools.deco()
 def sttest(**kw):
-    sttest_start('sttest', kw['qqid'], kw['groupid'], kw['step'])
-    return str(kw)
+    end = sttest_start('sttest', kw['qqid'], kw['groupid'], kw['step'])
+    if end:
+        return '交互次数达到3，sttest结束退出'
+    return '[%s] %s' % ('sttest1', str(kw))
+
+@app.route('/sttest2', methods=['POST'])
+@appTools.deco()
+def sttest2(**kw):
+    end = sttest_start('sttest2', kw['qqid'], kw['groupid'], kw['step'])
+    if end:
+        return '交互次数达到3，sttest2结束退出'
+    return '[%s] %s' % ('sttest2', str(kw))
 
 def sttest_start(func, qqid, groupid, step):
     rds = interRedis.connect('inter1')
     key = Config.CMDSTEP_KEY.format(qq=qqid, groupid=groupid, func=func)
-    rds.incr(key)
+    rs = rds.incr(key)
     rds.expire(key, Config.CMDSTEP_KEY_EXPIRE_TIME)
+    end = 0
+    if rs >= 3:
+        rds.delete(key)
+        key2 = Config.FUNC_ACTIVE_KEY.format(qq=qqid, groupid=groupid)
+        rds.srem(key2, func)
+        end = 1
+    return end
 
 
 if __name__ == '__main__':
