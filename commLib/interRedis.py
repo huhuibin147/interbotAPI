@@ -15,7 +15,7 @@ class interRedis():
 
     def __init__(self, node):
         conf = getConfig(node)
-        self.rds = redis.Redis(conf['host'], conf['port'], conf['db'], decode_responses=True)
+        self.rds = redis.Redis(conf['host'], conf['port'], conf['db'], decode_responses=True, password=conf.get('pwd'))
 
     def getRds(self):
         return self.rds
@@ -23,7 +23,7 @@ class interRedis():
 def getConfig(node):
     if not node:
         return config
-    yamlFile = open('./commLib/redis.yaml', encoding='utf8')
+    yamlFile = open('redis.yaml', encoding='utf8')
     _conf = yaml.load(yamlFile)
     config.update(_conf.get(node, {}))
     return config
