@@ -23,7 +23,7 @@ class interRedis():
 def getConfig(node):
     if not node:
         return config
-    yamlFile = open('redis.yaml', encoding='utf8')
+    yamlFile = open('./commLib/redis.yaml', encoding='utf8')
     _conf = yaml.load(yamlFile)
     config.update(_conf.get(node, {}))
     return config
