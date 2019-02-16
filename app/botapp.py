@@ -32,6 +32,20 @@ def rctpp(**kw):
         res = b.getRctppRes(recinfo[0])
     return res
 
+@app.route('/rctppnew', methods=['POST'])
+@appTools.deco(autoOusInfoKey='osuid,osuname')
+def rctppnew(**kw):
+    b = botHandler.botHandler()
+    osuid = kw['autoOusInfoKey']['osuid']
+    osuname = kw['autoOusInfoKey']['osuname']
+    recinfo = b.getRecInfo(osuid, "1")
+    logging.info(recinfo)
+    if not recinfo:
+        res = "没有最近游戏记录,绑定用户为%s" % osuname
+    else:
+        res = b.getRctppResNew(recinfo[0])
+    return res
+
 @app.route('/rctpps', methods=['POST'])
 @appTools.deco(autoOusInfoKey='osuid,osuname')
 def rctpps(**kw):
@@ -70,7 +84,7 @@ def mybp(**kw):
         if not recinfo:
             res = "别复读好马!"
         else:
-            res = b.getRctppRes(recinfo[int(x)-1])
+            res = b.getRctppResNew(recinfo[int(x)-1])
     else:
         res = "你倒是绑定啊.jpg"
     return res
