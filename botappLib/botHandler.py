@@ -230,7 +230,7 @@ class botHandler():
             logging.error(traceback.format_exc())
             return {}
     
-    def ppy_tools_difficulty(self, bid, extend='', recusion=0):
+    def ppy_tools_difficulty(self, bid, extend=''):
         """ppy 地图难度计算工具
         """
         try:
@@ -241,7 +241,7 @@ class botHandler():
                    extendStr += ' -m '
                 extendStr += extend[index]
 
-            cmd = 'dotnet %s/PerformanceCalculator.dll difficulty /data/osufile/%s.osu %s' % (path, bid,extendStr)    
+            cmd = 'dotnet %s/PerformanceCalculator.dll difficulty /data/osufile/%s.osu %s' % (path, bid, extendStr)    
             ret = os.popen(cmd)
             res = ret.read()
             difficulty = self.get_difficulty_from_str(res)
@@ -401,7 +401,10 @@ class botHandler():
         outp += 'https://osu.ppy.sh/b/{bid}'
 
         mapInfo = self.getOsuBeatMapInfo(bid)
-        stars = self.ppy_tools_difficulty(bid,ojson['mods_str'])
+        if not ojson['mods_str']:
+            stars = mapInfo['difficultyrating']
+        else:
+            stars = self.ppy_tools_difficulty(bid, ojson['mods_str'])
 
         missStr = self.missReply(miss, acc, ojson['ar'], 
             ojson['combo'], ojson['max_combo'], stars)
