@@ -169,11 +169,13 @@ class msgHandler():
             if len(res) > 20:
                 returnstr += '\n'
             returnstr += str(res)
-        elif '*toprivate' in opts:
-            context["message_type"] = "private"
-            pushTools.pushMsgOnePrivate(context['user_id'], res)
         else:
             returnstr = res
+
+        if '*toprivate' in opts:
+            context["message_type"] = "private"
+            pushTools.pushMsgOnePrivate(context['user_id'], res)
+            returnstr = ''
         
         return returnstr
 

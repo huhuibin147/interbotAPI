@@ -24,3 +24,6 @@ CMDSTEP_KEY_EXPIRE_TIME = 86400
 
 # 交互式命令集
 FUNC_ACTIVE_KEY = 'FUNC-ACTIVE-{qq}-{groupid}'
+
+# ppy-tools path
+PP_TOOLS_PATH = '/root/code/netcoreapp2.0'

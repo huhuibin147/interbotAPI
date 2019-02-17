@@ -9,6 +9,7 @@ import traceback
 from io import TextIOWrapper
 from commLib import cmdRouter
 from commLib import mods
+from commLib import Config
 from commLib import interMysql
 from botappLib import healthCheck
 
@@ -123,6 +124,30 @@ class botHandler():
 
         return res
 
+    def getRctppResNew(self, recinfo):
+        # rec计算
+        bid = recinfo['beatmap_id']
+        rinfo = self.exRecInfo(recinfo)
+        extend = self.convert2oppaiArgs(**rinfo) 
+        ojson = self.oppai2json(bid, extend)
+        pp = self.get_pp_from_str(self.ppy_tools_pp(bid, self.convert2oppaiArgsNew(**rinfo)))
+
+        # fc计算
+        fcacc = self.calFcacc(recinfo)
+        extendFc = self.convert2oppaiArgs(rinfo['mods'], fcacc)
+        fcpp = self.get_pp_from_str(self.ppy_tools_pp(bid, self.convert2oppaiArgsNew(rinfo['mods'], fcacc)))
+
+        # ac计算
+        extendSs = self.convert2oppaiArgs(rinfo['mods'])
+        sspp = self.get_pp_from_str(self.ppy_tools_pp(bid, self.convert2oppaiArgsNew(rinfo['mods'])))
+
+        logging.info('ppppppp,%s,%s,%s', pp, fcpp, sspp)
+
+        res = self.formatRctpp2New(ojson, recinfo['rank'], rinfo['acc'], 
+            fcpp, sspp, bid, fcacc, recinfo['countmiss'], pp)
+
+        return res
+
     def getRctppBatchRes(self, recinfos):
         """批量版本
         """
@@ -186,6 +211,38 @@ class botHandler():
             logging.error(traceback.format_exc())
             return ''
 
+    def ppy_tools_pp(self, bid, extend='', recusion=0):
+        """ppy pp计算工具
+        """
+        try:
+            if recusion == 0:
+                self.downOsufile(bid)
+            else:
+                self.downOsufile(bid, compulsiveWrite=1)
+
+            path = Config.PP_TOOLS_PATH
+            cmd = 'dotnet %s/PerformanceCalculator.dll simulate osu /data/osufile/%s.osu %s' % (path, bid, extend)
+            ret = os.popen(cmd)
+            res = ret.read()
+            logging.info('bid[%s],extend[%s]', bid, extend)
+            return res
+        except:
+            if recusion == 0:
+                return self.oppai2json(bid, extend, recusion=1)
+            logging.error(traceback.format_exc())
+            return {}
+
+    def get_pp_from_str(self, s):
+        """从pp工具返回结果中提取pp值
+        Returns:
+            pp int
+        """
+        p = re.compile('pp.*:(.*)') 
+        res = p.findall(s) 
+        pp = round(float(res[0]))
+        return pp
+
+
     def oppai2json(self, bid, extend='', recusion=0):
         """取oppai结果 json"""
         try:
@@ -222,6 +279,19 @@ class botHandler():
             args += '%sx ' % cb
         if miss:
             args += '%sm' % miss
+        return args
+
+    def convert2oppaiArgsNew(self, mods='', acc='', cb='', miss=''):
+        """oppai参数转换"""
+        args = ''
+        for i in range(0, len(mods), 2):
+            args += '-m %s ' % mods[i:i+2]
+        if acc:
+            args += '-a %s ' % acc
+        if cb:
+            args += '-c %s ' % cb
+        if miss:
+            args += '-X %s ' % miss
         return args
 
     def exRecInfo(self, rec):
@@ -283,6 +353,53 @@ class botHandler():
             acc = round(acc, 2),
             mods_str = ojson['mods_str'],
             pp = round(ojson['pp'], 2),
+            rank = rank,
+            ppfc = round(ppfc, 2),
+            ppss = round(ppss, 2),
+            bid = bid,
+            fcacc = fcacc,
+            miss = miss,
+            missStr = missStr,
+            bpm = bpm
+        )
+
+        return out
+
+    def formatRctpp2New(self, ojson, rank, acc, ppfc, ppss, bid, fcacc, miss, pp):
+        """格式化rctpp输出"""
+        outp = '{artist} - {title} [{version}] \n'
+        outp += 'Beatmap by {creator} \n'
+        outp += '[ar{ar} cs{cs} od{od} hp{hp}  bpm{bpm}]\n\n'
+        outp += 'stars: {stars}* | {mods_str} \n'
+        outp += '{combo}x/{max_combo}x | {acc}% | {rank} \n\n'
+        outp += '{acc}%: {pp}pp\n'
+        outp += '{fcacc}%: {ppfc}pp\n'
+        outp += '100.0%: {ppss}pp\n'
+        outp += '{missStr}\n'
+        outp += 'https://osu.ppy.sh/b/{bid}'
+
+        mapInfo = self.getOsuBeatMapInfo(bid)
+
+        missStr = self.missReply(miss, acc, ojson['ar'], 
+            ojson['combo'], ojson['max_combo'], mapInfo['difficultyrating'])
+
+        bpm = self.factBpm(float(mapInfo['bpm']), ojson['mods_str'])
+ 
+        out = outp.format(
+            artist = mapInfo['artist'],
+            title = mapInfo['title'],
+            version = mapInfo['version'],
+            creator = mapInfo['creator'],
+            ar = round(ojson['ar'], 2),
+            cs = ojson['cs'],
+            od = round(ojson['od'], 2),
+            hp = ojson['hp'],
+            stars = round(float(mapInfo['difficultyrating']), 2),
+            combo = ojson['combo'],
+            max_combo = ojson['max_combo'],
+            acc = round(acc, 2),
+            mods_str = ojson['mods_str'],
+            pp = pp,
             rank = rank,
             ppfc = round(ppfc, 2),
             ppss = round(ppss, 2),
