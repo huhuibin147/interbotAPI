@@ -239,7 +239,7 @@ class botHandler():
         """
         p = re.compile('pp.*:(.*)') 
         res = p.findall(s) 
-        pp = round(float(res[0]))
+        pp = round(float(res[0]), 2)
         return pp
 
 
