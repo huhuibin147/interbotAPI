@@ -231,6 +231,35 @@ class botHandler():
                 return self.oppai2json(bid, extend, recusion=1)
             logging.error(traceback.format_exc())
             return {}
+    
+    def ppy_tools_difficulty(self,bid,extend='', recusion=0):
+        """ppy 地图难度计算工具
+        """
+        try:
+            if recusion == 0:
+                self.downOsufile(bid)
+            else:
+                self.downOsufile(bid, compulsiveWrite=1)
+
+            path = Config.PP_TOOLS_PATH
+
+            extendStr=''
+            for index in range(0, len(extend)):
+                if(index % 2 == 0):
+                   extendStr += ' -m '
+                extendStr += extend[index]
+
+            cmd = 'dotnet %s/PerformanceCalculator.dll difficulty /data/osufile/%s.osu %s' % (path, bid,extendStr)    
+            ret = os.popen(cmd)
+            res = ret.read()
+            logging.info('bid[%s],extend[%s]', bid, extend)
+            difficulty = get_difficulty_from_str(res)
+            return difficulty
+        except:
+            if recusion == 0:
+                return self.oppai2json(bid, recusion=1)
+            logging.error(traceback.format_exc())
+            return {}
 
     def get_pp_from_str(self, s):
         """从pp工具返回结果中提取pp值
@@ -242,6 +271,10 @@ class botHandler():
         pp = round(float(res[0]), 2)
         return pp
 
+    def get_difficulty_from_str(self,s):
+          p = re.compile('\d{1,4}\.\d\d')
+          res = p.findall(s)
+          return float(res[0])
 
     def oppai2json(self, bid, extend='', recusion=0):
         """取oppai结果 json"""
@@ -379,6 +412,7 @@ class botHandler():
         outp += 'https://osu.ppy.sh/b/{bid}'
 
         mapInfo = self.getOsuBeatMapInfo(bid)
+        mapInfo['difficultyrating']=self.ppy_tools_difficulty(bid,ojson['mods_str'])
 
         missStr = self.missReply(miss, acc, ojson['ar'], 
             ojson['combo'], ojson['max_combo'], mapInfo['difficultyrating'])
