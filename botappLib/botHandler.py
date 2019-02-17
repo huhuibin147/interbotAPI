@@ -268,7 +268,7 @@ class botHandler():
         """
         p = re.compile('pp.*:(.*)') 
         res = p.findall(s) 
-        pp = round(float(res[0]))
+        pp = round(float(res[0]), 2)
         return pp
 
     def get_difficulty_from_str(self,s):
