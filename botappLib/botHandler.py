@@ -244,7 +244,8 @@ class botHandler():
             cmd = 'dotnet %s/PerformanceCalculator.dll difficulty /data/osufile/%s.osu %s' % (path, bid, extendStr)    
             ret = os.popen(cmd)
             res = ret.read()
-            difficulty = self.get_difficulty_from_str(res)
+            logging.info(res)
+            difficulty = self.get_difficulty_from_str(res, bid)
             return difficulty
         except:
             logging.error(traceback.format_exc())
@@ -260,10 +261,19 @@ class botHandler():
         pp = round(float(res[0]), 2)
         return pp
 
-    def get_difficulty_from_str(self,s):
-          p = re.compile('\d{1,4}\.\d\d')
-          res = p.findall(s)
-          return float(res[0])
+    def get_difficulty_from_str(self, s, bid):
+        p = re.compile('\d{1,4}\.\d\d')
+        res = p.findall(s)
+        if not res:
+            p = re.compile('\d')
+            p2 = re.compile('\d+ - .*[),\]]+')
+            r_str = re.sub(p2, '', s)
+            rs = p.findall(r_str)
+            logging.info(rs)
+            r = '%s.%s%s' % (rs[0], rs[1], rs[2])
+        else:
+            r = res[0]
+        return float(r)
 
     def oppai2json(self, bid, extend='', recusion=0):
         """取oppai结果 json"""
@@ -699,7 +709,7 @@ class botHandler():
         rs += '------------------\n'
         rs += '1.iron大哥(ironwitness) 2018-08-31 捐赠了50软妹币\n'
         rs += '2.无敌阿卡蕾(arcareh) 2018-08-31 捐赠了66软妹币\n'
-        rs += '2.富婆(sxyyyy) 2019-02-03 捐赠了100软妹币\n'
+        rs += '3.富婆(sxyyyy) 2019-02-03 捐赠了100软妹币\n'
         rs += '------------------\n'
         rs += '小声bibi骗钱万岁'
         return rs
