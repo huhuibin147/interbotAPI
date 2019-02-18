@@ -415,6 +415,8 @@ class botHandler():
             stars = mapInfo['difficultyrating']
         else:
             stars = self.ppy_tools_difficulty(bid, ojson['mods_str'])
+            if stars == -1:
+                stars = mapInfo['difficultyrating']
 
         missStr = self.missReply(miss, acc, ojson['ar'], 
             ojson['combo'], ojson['max_combo'], stars)
