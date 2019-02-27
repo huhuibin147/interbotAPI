@@ -91,11 +91,11 @@ class apivHandler():
         """
         db = interMysql.Connect('osu2')
         checkSql = '''
-            SELECT 1 FROM user WHERE qq=%s and groupid=%s
+            SELECT count(1) c FROM user WHERE qq=%s and groupid=%s
         '''
         checkArgs = [qq, groupid]
         checkRet = db.query(checkSql, checkArgs)
-        if not checkRet:
+        if not checkRet[0]["c"]:
             rs = self.insertUser(qq, groupid)
             if not rs:
                 return -1
@@ -126,6 +126,7 @@ class apivHandler():
         args = [qq, groupid]
         ret = db.execute(sql, args)
         db.commit()
+        logging.info('v2入库记录:%s', ret)
         if ret < 1:
             return False
         else:
