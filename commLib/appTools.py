@@ -37,7 +37,7 @@ def deco(**kw):
                     if not osuinfo:
                         return "你倒是绑定啊.jpg"
                     for k in autokeys:
-                        kwargs['autoOusInfoKey'][k] = osuinfo[0][k]
+                        kwargs['autoOusInfoKey'][k] = osuinfo[k]
                 else:
                     for k in autokeys:
                         kwargs['autoOusInfoKey'][k] = inputs
@@ -53,7 +53,7 @@ def deco(**kw):
     return inner
 
 
-def getOsuInfo(qqid, groupid):
+def getOsuInfo(qqid):
     """取osu用户绑定信息
     Args:
         qq/groupid

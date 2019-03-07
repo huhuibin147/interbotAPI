@@ -241,7 +241,7 @@ class botHandler():
                    extendStr += ' -m '
                 extendStr += extend[index]
 
-            cmd = 'dotnet %s/PerformanceCalculator.dll difficulty /data/osufile/%s.osu %s' % (path, bid, extendStr)    
+            cmd = 'dotnet %s/PerformanceCalculator.dll difficulty /data/osufile/%s.osu %s' % (path, bid, extendStr)
             ret = os.popen(cmd)
             res = ret.read()
             logging.info(res)
