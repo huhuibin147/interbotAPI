@@ -22,6 +22,13 @@ def userInfoApi(**kw):
     rts = ins.getUserBindInfo({"qq":kw['qqid'], "groupid": kw['groupid']})
     return json.dumps(rts)
 
+@app.route('/uinfo2', methods=['POST'])
+@appTools.deco()
+def userInfoApi2(**kw):
+    ins = baseHandler.baseHandler()
+    rts = ins.getUserBindInfo2(kw['qqid'])
+    return json.dumps(rts)
+
 
 @app.route('/setid', methods=['POST'])
 @appTools.deco()

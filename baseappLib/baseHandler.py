@@ -42,6 +42,24 @@ class baseHandler():
         logging.info('触发用户绑定查询ret:%s', ret)
         return ret
 
+    def getUserBindInfo2(self, qq):
+        """取用户绑定信息
+        Args:
+            kvWhere 条件  k-v形式
+        Returns:
+            xxx
+        """
+        db = interMysql.Connect('osu2')
+        sql = '''SELECT *
+                FROM user
+                WHERE qq = %s
+            '''
+        ret = db.query(sql, (qq, ))
+        if not ret:
+            return ret
+        logging.info('触发用户绑定查询ret:%s', ret)
+        return ret[0]
+
     def bindOsuUser(self, osuid, qq, groupid):
         """用户绑定
         Args:

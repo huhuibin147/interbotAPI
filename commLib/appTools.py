@@ -33,7 +33,7 @@ def deco(**kw):
                 autokeys = autoOusInfoKey.split(',')
                 if not inputs or rawinput:
                     qqid = kwargs['qqid'] if not kwargs.get('atqq') else kwargs['atqq']
-                    osuinfo = getOsuInfo(qqid, kwargs['groupid'])
+                    osuinfo = getOsuInfo(qqid)
                     if not osuinfo:
                         return "你倒是绑定啊.jpg"
                     for k in autokeys:
@@ -59,6 +59,6 @@ def getOsuInfo(qqid, groupid):
         qq/groupid
     """
     ret = cmdRouter.invoke(
-        '!uinfo', {"qqid": qqid, "groupid": groupid}
+        '!uinfo2', {"qqid": qqid}
     )
     return json.loads(ret)
