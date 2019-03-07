@@ -141,8 +141,6 @@ class botHandler():
         extendSs = self.convert2oppaiArgs(rinfo['mods'])
         sspp = self.get_pp_from_str(self.ppy_tools_pp(bid, self.convert2oppaiArgsNew(rinfo['mods'])))
 
-        logging.info('ppppppp,%s,%s,%s', pp, fcpp, sspp)
-
         res = self.formatRctpp2New(ojson, recinfo['rank'], rinfo['acc'], 
             fcpp, sspp, bid, fcacc, recinfo['countmiss'], pp)
 
@@ -231,6 +229,27 @@ class botHandler():
                 return self.oppai2json(bid, extend, recusion=1)
             logging.error(traceback.format_exc())
             return {}
+    
+    def ppy_tools_difficulty(self, bid, extend=''):
+        """ppy 地图难度计算工具
+        """
+        try:
+            path = Config.PP_TOOLS_PATH
+            extendStr = ''
+            for index in range(0, len(extend)):
+                if(index % 2 == 0):
+                   extendStr += ' -m '
+                extendStr += extend[index]
+
+            cmd = 'dotnet %s/PerformanceCalculator.dll difficulty /data/osufile/%s.osu %s' % (path, bid, extendStr)    
+            ret = os.popen(cmd)
+            res = ret.read()
+            logging.info(res)
+            difficulty = self.get_difficulty_from_str(res, bid)
+            return difficulty
+        except:
+            logging.error(traceback.format_exc())
+            return -1
 
     def get_pp_from_str(self, s):
         """从pp工具返回结果中提取pp值
@@ -239,9 +258,22 @@ class botHandler():
         """
         p = re.compile('pp.*:(.*)') 
         res = p.findall(s) 
-        pp = round(float(res[0]))
+        pp = round(float(res[0]), 2)
         return pp
 
+    def get_difficulty_from_str(self, s, bid):
+        p = re.compile('\d{1,4}\.\d\d')
+        res = p.findall(s)
+        if not res:
+            p = re.compile('\d')
+            p2 = re.compile('\d+ - .*[),\]]+')
+            r_str = re.sub(p2, '', s)
+            rs = p.findall(r_str)
+            logging.info(rs)
+            r = '%s.%s%s' % (rs[0], rs[1], rs[2])
+        else:
+            r = res[0]
+        return float(r)
 
     def oppai2json(self, bid, extend='', recusion=0):
         """取oppai结果 json"""
@@ -379,9 +411,15 @@ class botHandler():
         outp += 'https://osu.ppy.sh/b/{bid}'
 
         mapInfo = self.getOsuBeatMapInfo(bid)
+        if not ojson['mods_str']:
+            stars = mapInfo['difficultyrating']
+        else:
+            stars = self.ppy_tools_difficulty(bid, ojson['mods_str'])
+            if stars == -1:
+                stars = mapInfo['difficultyrating']
 
         missStr = self.missReply(miss, acc, ojson['ar'], 
-            ojson['combo'], ojson['max_combo'], mapInfo['difficultyrating'])
+            ojson['combo'], ojson['max_combo'], stars)
 
         bpm = self.factBpm(float(mapInfo['bpm']), ojson['mods_str'])
  
@@ -394,7 +432,7 @@ class botHandler():
             cs = ojson['cs'],
             od = round(ojson['od'], 2),
             hp = ojson['hp'],
-            stars = round(float(mapInfo['difficultyrating']), 2),
+            stars = round(float(stars), 2),
             combo = ojson['combo'],
             max_combo = ojson['max_combo'],
             acc = round(acc, 2),
@@ -673,7 +711,7 @@ class botHandler():
         rs += '------------------\n'
         rs += '1.iron大哥(ironwitness) 2018-08-31 捐赠了50软妹币\n'
         rs += '2.无敌阿卡蕾(arcareh) 2018-08-31 捐赠了66软妹币\n'
-        rs += '2.富婆(sxyyyy) 2019-02-03 捐赠了100软妹币\n'
+        rs += '3.富婆(sxyyyy) 2019-02-03 捐赠了100软妹币\n'
         rs += '------------------\n'
         rs += '小声bibi骗钱万岁'
         return rs
