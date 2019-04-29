@@ -121,7 +121,7 @@ class apivHandler():
         """
         db = interMysql.Connect('osu2')
         sql = '''
-            INSERT into user(qq, groupid) values(%s, %s)
+            INSERT into user(qq, groupid, tokenpermission) values(%s, %s, 2)
         '''
         args = [qq, groupid]
         ret = db.execute(sql, args)
