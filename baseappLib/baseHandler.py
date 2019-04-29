@@ -82,9 +82,9 @@ class baseHandler():
             conn = interMysql.Connect('osu2')
             sql = '''
                 insert into user
-                    (qq, osuid, name, groupid, osuname) 
+                    (qq, osuid, name, groupid, osuname, tokenpermission) 
                 values
-                    (%s,%s,%s,%s,%s)
+                    (%s,%s,%s,%s,%s,2)
                 on duplicate key update
                     osuid = %s, osuname = %s, name = %s
             '''
