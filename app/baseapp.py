@@ -19,7 +19,7 @@ app = Flask(__name__)
 @appTools.deco()
 def userInfoApi(**kw):
     ins = baseHandler.baseHandler()
-    rts = ins.getUserBindInfo({"qq":kw['qqid'], "groupid": kw['groupid']})
+    rts = ins.getUserBindInfo({"qq":kw['qqid']})
     return json.dumps(rts)
 
 @app.route('/uinfo2', methods=['POST'])

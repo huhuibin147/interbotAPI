@@ -12,6 +12,7 @@ from commLib import cmdRouter
 def deco(**kw):
     # 控制位置
     autoOusInfoKey = kw.get('autoOusInfoKey')
+    # 不用使用输入代替用户名查询绑定
     rawinput = kw.get('rawinput')
 
     def inner(func):

@@ -193,7 +193,7 @@ class baseHandler():
 
     def checkTokenPermission(self, qq, groupid):
         """检查token权限"""
-        rs = self.getUserBindInfo({"qq": qq, "groupid": groupid})
+        rs = self.getUserBindInfo({"qq": qq})
         if not rs:
             return "Ta还没有绑定，赶紧叫Ta绑定(¡setid)啊！"
         uinfo = rs[0]
