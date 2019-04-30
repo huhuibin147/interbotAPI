@@ -107,7 +107,7 @@ class ppyHandler():
             return '那个破网站连不上,你们还是去床上解决吧!!'
 
     def getFriends(self, qq, groupid):
-        uinfo = baseHandler.baseHandler().getUserBindInfo({"qq": qq, "groupid": groupid})
+        uinfo = baseHandler.baseHandler().getUserBindInfo({"qq": qq})
         token = uinfo[0]["acesstoken"]
         refreshtoken = uinfo[0]["refreshtoken"]
         osuname = uinfo[0]["osuname"]
