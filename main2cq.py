@@ -56,10 +56,14 @@ async def wsMain(websockets, path):
     recvJson = await websockets.recv()
     recvDict = json.loads(recvJson)
     # await websockets.send(msg)
-    if 'groupid' in recvDict:
-        bot.send_group_msg(group_id=int(recvDict['groupid']), message=recvDict['msg'])
-    elif 'qqid' in recvDict:
-        bot.send_private_msg(user_id=int(recvDict['qqid']), message=recvDict['msg'])
+    interface = recvDict.get('interface', 'send_msg')
+    if interface == "send_msg":
+        if 'groupid' in recvDict:
+            bot.send_group_msg(group_id=int(recvDict['groupid']), message=recvDict['msg'])
+        elif 'qqid' in recvDict:
+            bot.send_private_msg(user_id=int(recvDict['qqid']), message=recvDict['msg'])
+    elif interface == "smoke":
+        bot.set_group_ban(group_id=int(recvDict["groupid"]), user_id=int(recvDict["qqid"]), duration=int(recvDict["ts"]))
     
 
 ser = websockets.serve(wsMain, '0.0.0.0', 12345)
