@@ -5,6 +5,7 @@ import time
 import json
 import random
 import logging
+import datetime
 import traceback
 from io import TextIOWrapper
 from commLib import cmdRouter
@@ -13,6 +14,7 @@ from commLib import Config
 from commLib import interMysql
 from commLib import pushTools
 from botappLib import healthCheck
+from ppyappLib import ppyHandler
 
 class botHandler():
 
@@ -152,10 +154,10 @@ class botHandler():
         extendSs = self.convert2oppaiArgs(rinfo['mods'])
         sspp = self.get_pp_from_str(self.ppy_tools_pp(bid, self.convert2oppaiArgsNew(rinfo['mods'])))
 
-        res, stars = self.formatRctpp2New(ojson, recinfo['rank'], rinfo['acc'], 
+        res, kv = self.formatRctpp2New(ojson, recinfo['rank'], rinfo['acc'], 
             fcpp, sspp, bid, fcacc, recinfo['countmiss'], pp)
 
-        return res, stars
+        return res, kv
 
     def getRctppBatchRes(self, recinfos):
         """批量版本
@@ -459,8 +461,12 @@ class botHandler():
             missStr = missStr,
             bpm = bpm
         )
-
-        return out, stars_2
+        # 供外部smoke使用
+        kv = {
+            "stars": stars_2, 
+            "rank": rank
+        }
+        return out, kv
 
     def formatRctpp3(self, ojson, rank, acc, ppfc, ppss, bid, fcacc, miss):
         """格式化rctpp简版输出"""
@@ -833,21 +839,37 @@ class botHandler():
             db.rollback()
             logging.error(traceback.format_exc())
 
-    def rctppSmoke(self, groupid, qq, stars):
-        """超星处理
+    def rctppSmoke(self, groupid, qq, kv):
+        """超星机制
         规则：
             新人群
-            超星机制
                 5.6星 0.01*10分钟
                 6.0星 0.01*20分钟
+            进阶群
+                6.51-8.00 评级A以下 0.01*10分钟
+                8.01-20.00 fail    0.01*20分钟
         """
+        flag = 0
+        stars = kv["stars"]
+        rank = kv["rank"]
         if int(groupid) == Config.GROUPID["XINRENQUN"]:
             if stars > 5.6:
                 if stars < 6:
                     ts = (stars - 5.6) * 10 * 6000
                 else:
                     ts = (stars - 5.6) * 20 * 6000
-                pushTools.pushSmokeCmd(groupid, qq, ts)
+                flag = 1
+        elif int(groupid) == Config.GROUPID["JINJIEQUN"]:
+            if 8.0 > stars > 6.5:
+                if rank.lower() in ("b", "c", 'd', 'f'):
+                    ts = (stars - 6.5) * 10 * 6000
+                    flag = 1
+            elif 20.0 > stars > 8.0:
+                if rank.lower() in ("f", ):
+                    ts = (stars - 8) * 20 * 6000
+                    flag = 1
+        if flag:
+            pushTools.pushSmokeCmd(groupid, qq, ts)
 
     def groupPlayerCheck(self, groupid):
         """群检测机制
@@ -893,3 +915,144 @@ class botHandler():
         n = set(qqids) - set(list(bindusers))
         diff = len(qqids) - len(n)
         return diff
+
+    def is_insert_today(self):
+        """今天是否插入过
+        """
+        db = interMysql.Connect('osu')
+        time = self.today_date()
+        sql = '''
+            SELECT count(1) cnt from user2 where time>=%s
+        '''
+        ret = db.query(sql, time)
+        if ret[0]["cnt"]:
+            return True
+        else:
+            return False
+
+    def today_date(self):
+        return datetime.date.today()
+
+    def insert_forday(self, ousernames=[]):
+        """插入任务
+        """
+        logging.info('开始执行插入任务')
+        if not ousernames:
+            ousernames = self.get_user_list_fromDB()
+        ppyIns = ppyHandler.ppyHandler()
+        for uid in ousernames:
+            try:
+                res = ppyIns.getOsuUserInfo(uid)
+                get_num = 0
+                while not res:
+                    if get_num < 5:
+                        get_num += 1
+                        res = ppyIns.getOsuUserInfo(uid)
+                    else:
+                        break 
+                if not res:
+                    continue
+                result = res
+                if result:         
+                    result = result[0]
+                else:
+                    continue
+                username = result['username']
+                osuid = result['user_id']
+                pp = result['pp_raw']
+                in_pp = float(pp)
+                rank = result['pp_rank']
+                acc1 = round(float(result['accuracy']),2)
+                pc =  result['playcount']
+                count300 = result['count300']
+                count100 = result['count100']
+                count50 = result['count50']
+                tth = eval(count300)+eval(count50)+eval(count100)
+                self.insert_user(username,in_pp,acc1,pc,rank,tth,osuid)
+                logging.info('[%s]插入成功', uid)
+            except:
+                logging.exception('[%s]插入失败' % uid)
+
+        logging.info('插入任务结束')
+
+    def get_user_list_fromDB(self):
+        db = interMysql.Connect('osu2')
+        sql = '''
+            SELECT distinct(osuname) from user
+        '''
+        ret = db.query(sql)
+        return [r["osuname"] for r in ret]
+
+    def insert_user(self, *user):
+        try:
+            db = interMysql.Connect('osu')
+            sql = 'insert into user2(username,pp,acc,pc,rank,tth,time,osuid) values(%s,%s,%s,%s,%s,%s,now(),%s)'
+            ret = db.execute(sql,tuple(user))
+            print('插入数据结果:'+str(ret))
+            db.commit()
+        except:
+            db.rollback()
+            logging.exception('插入失败')
+
+    def osu_stats(self, osuname, days=0):
+        try:
+            ppyIns = ppyHandler.ppyHandler()
+            result = ppyIns.getOsuUserInfo(osuname)
+            if not result:
+                return ''
+            result = result[0]
+            username = result['username']
+            osuid = result['user_id']
+            pp = result['pp_raw']
+            in_pp = float(pp)
+            rank = result['pp_rank']
+            acc1 = round(float(result['accuracy']),2)
+            acc = str(acc1)
+            pc =  result['playcount']
+            count300 = result['count300']
+            count100 = result['count100']
+            count50 = result['count50']
+            tth = eval(count300)+eval(count50)+eval(count100)
+            tth_w = str(tth//10000)
+            #与本地数据比较
+            u_db_info = self.get_user_fromDB(osuname, days)
+            if u_db_info:
+                info = u_db_info[0]
+                add_pp = str(round(in_pp - float(info["pp"]),2))
+                add_rank = info["rank"] - int(rank)
+                if add_rank >= 0:
+                    add_rank = '+'+str(add_rank)
+                else:
+                    add_rank = str(add_rank)
+                add_acc =  round(acc1 - float(info["acc"]),2)
+                if add_acc >=0.0:
+                    add_acc = '+'+str(add_acc)
+                else:
+                    add_acc = str(add_acc)
+                add_pc = str(int(pc) - int(info["pc"]))
+                add_tth = str(tth - int(info["tth"]))
+                times = info["time"].strftime('%Y-%m-%d')
+                d = username+'\n'+pp+'pp(+'+add_pp+')\n'+'rank: '+rank+'('+add_rank+')\n'+'acc  : '+acc+'%('+add_acc+')\n'+'pc    : '+pc+'pc(+'+add_pc+')\n'+'tth   : '+tth_w+'w(+'+add_tth+')\n'+times
+            else:
+                d = username+'\n'+pp+'pp(+0)\n'+'rank: '+rank+'(+0)\n'+'acc : '+acc+'%(+0)\n'+'pc  : '+pc+'pc(+0)\n'+'tth  : '+tth_w+'w(+0)\n'+str(datetime.date.today())
+
+            return d
+        except:
+            logging.exception("osu_stats error")
+
+    def get_user_fromDB(self, username, days=0):
+        db = interMysql.Connect('osu')
+        if not days:
+            time = self.today_date()
+        else:
+            time = self.get_daystime(days)
+        sql = '''
+            SELECT * from user2 where username=%s and time>=%s limit 1
+        '''
+        res = db.query(sql, (username, time))
+        return res
+
+    def get_daystime(self, days):
+        now = datetime.datetime.now()
+        date = now - datetime.timedelta(days = days)
+        return date.strftime('%Y-%m-%d')

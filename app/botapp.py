@@ -44,9 +44,9 @@ def rctppnew(**kw):
     if not recinfo:
         res = "没有最近游戏记录,绑定用户为%s" % osuname
     else:
-        res, stars = b.getRctppResNew(recinfo[0])
+        res, kv = b.getRctppResNew(recinfo[0])
         # 执行管理逻辑
-        b.rctppSmoke(kw["groupid"], kw["qqid"], stars)
+        b.rctppSmoke(kw["groupid"], kw["qqid"], kv)
     return res
 
 @app.route('/rctpps', methods=['POST'])
@@ -87,9 +87,9 @@ def mybp(**kw):
         if not recinfo:
             res = "别复读好马!"
         else:
-            res, stars = b.getRctppResNew(recinfo[int(x)-1])
+            res, kv = b.getRctppResNew(recinfo[int(x)-1])
             # 执行管理逻辑
-            b.rctppSmoke(kw["groupid"], kw["qqid"], stars)
+            b.rctppSmoke(kw["groupid"], kw["qqid"], kv)
     else:
         res = "你倒是绑定啊.jpg"
     return res
@@ -252,6 +252,16 @@ def scancallback(**kw):
     ret = b.scanPlayers(groupid, users)
     return ret
 
+@app.route('/days', methods=['POST'])
+@appTools.deco(autoOusInfoKey='osuname', rawinput=1)
+def days(**kw):
+    x = 0 if not kw['iargs'] else int(kw['iargs'][0])
+    if int(x) < 0:
+        x = 0
+    osuname = kw['autoOusInfoKey']['osuname']
+    b = botHandler.botHandler()
+    ret = b.osu_stats(osuname, x)
+    return ret
 
 @app.route('/nbp', methods=['POST'])
 @appTools.deco(autoOusInfoKey='osuid,osuname', rawinput=1)
