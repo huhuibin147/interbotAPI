@@ -9,7 +9,7 @@ from cqhttp import CQHttp
 # from tornado.wsgi import WSGIContainer
 # from tornado.httpserver import HTTPServer
 # from tornado.ioloop import IOLoop
-
+from commLib import cmdRouter
 
 bot = CQHttp(api_root='http://inter4.com:5700/')
 
@@ -68,6 +68,13 @@ async def wsMain(websockets, path):
         bot.send_like(user_id=int(recvDict["qqid"]), times=int(recvDict["times"]))
     elif interface == "kick":
         bot.set_group_kick(group_id=int(recvDict["groupid"]), user_id=int(recvDict["qqid"]))
+    elif interface == "callback":
+        rs = getattr(bot, recvDict["method"])(**recvDict["kv"])
+        args = {
+            "ret": json.dumps(rs),
+            "callbackargs": recvDict["callbackargs"]
+        }
+        cmdRouter.invoke(recvDict["callbackcmd"], args)
 
 ser = websockets.serve(wsMain, '0.0.0.0', 12345)
 asyncio.get_event_loop().run_until_complete(ser)
