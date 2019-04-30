@@ -70,11 +70,15 @@ async def wsMain(websockets, path):
         bot.set_group_kick(group_id=int(recvDict["groupid"]), user_id=int(recvDict["qqid"]))
     elif interface == "callback":
         rs = getattr(bot, recvDict["method"])(**recvDict["kv"])
-        args = {
+        params = {
             "ret": json.dumps(rs),
             "callbackargs": recvDict["callbackargs"]
         }
-        cmdRouter.invoke(recvDict["callbackcmd"], args)
+        cThread = threading.Thread(target=callbackMain, args=(recvDict["callbackcmd"], params))
+        cThread.start()
+
+def callbackMain(callbackcmd, args):
+    cmdRouter.invoke(callbackcmd, args)
 
 ser = websockets.serve(wsMain, '0.0.0.0', 12345)
 asyncio.get_event_loop().run_until_complete(ser)
