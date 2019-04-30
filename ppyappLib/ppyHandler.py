@@ -126,7 +126,7 @@ class ppyHandler():
         return rs[:-1]
 
     def getV2MyInfo(self, qq, groupid):
-        uinfo = baseHandler.baseHandler().getUserBindInfo({"qq": qq, "groupid": groupid})
+        uinfo = baseHandler.baseHandler().getUserBindInfo({"qq": qq})
         token = uinfo[0]["acesstoken"]
         refreshtoken = uinfo[0]["refreshtoken"]
         osuname = uinfo[0]["osuname"]
@@ -137,7 +137,7 @@ class ppyHandler():
             return json.dumps(res)
 
     def getV2osuInfo(self, qq, groupid):
-        uinfo = baseHandler.baseHandler().getUserBindInfo({"qq": qq, "groupid": groupid})
+        uinfo = baseHandler.baseHandler().getUserBindInfo({"qq": qq})
         token = uinfo[0]["acesstoken"]
         refreshtoken = uinfo[0]["refreshtoken"]
         osuname = uinfo[0]["osuname"]
