@@ -59,6 +59,18 @@ class pushC():
         logging.info('send kick groupid[%s] qq[%s]', groupid, qqid)
         ws.close()
 
+    def sendCqCallback(self, method, kv, callbackcmd, callbackargs):
+        ws = websocket.create_connection(self.ws)
+        ws.send(json.dumps({
+                "interface": "callback",
+                "method": method,
+                "callbackcmd": callbackcmd,
+                "callbackargs": callbackargs,
+                "kv": kv
+            }))
+        logging.info('sendCqCallback method[%s] kv[%s] callbackcmd[%s]', method, kv, callbackcmd)
+        ws.close()
+
 
 
 def pushMsgOne(groupid, msg):
@@ -82,6 +94,16 @@ def pushLikeCmd(qqid, ts):
 
 def pushKickCmd(groupid, qqid):
     pushC().sendCqKick(groupid, qqid)
+
+def pushCallbackCmd(method, kv, callbackcmd, callbackargs):
+    """调用酷Q接口，同时回调服务
+    Args:
+        method coolq接口
+        kv 接口参数
+        callbackcmd 回调回来的服务cmd
+        callbackargs 回调额外参数 json
+    """
+    pushC().sendCqCallback(method, kv, callbackcmd, callbackargs)
 
 if __name__ == '__main__':
     groupids = [514661057,758120648,669361496,885984366,713688443,609633978,709804864]

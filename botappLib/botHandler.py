@@ -838,13 +838,58 @@ class botHandler():
         规则：
             新人群
             超星机制
-                5.6星 0.1*10分钟
-                6.0星 0.1*20分钟
+                5.6星 0.01*10分钟
+                6.0星 0.01*20分钟
         """
         if int(groupid) == Config.GROUPID["XINRENQUN"]:
             if stars > 5.6:
                 if stars < 6:
-                    ts = (stars - 5.6) * 10 * 600
+                    ts = (stars - 5.6) * 10 * 6000
                 else:
-                    ts = (stars - 5.6) * 20 * 600
+                    ts = (stars - 5.6) * 20 * 6000
                 pushTools.pushSmokeCmd(groupid, qq, ts)
+
+    def groupPlayerCheck(self, groupid):
+        """群检测机制
+        """
+        method = "get_group_member_list"
+        kv = {'group_id': str(groupid)}
+        callbackcmd = "!scancallback"
+        callbackargs = str(groupid)
+        pushTools.pushCallbackCmd(method, kv, callbackcmd, callbackargs)
+        # return "发起检测..."
+        return ""
+
+    def scanPlayers(self, groupid, users):
+        """检测群列表
+        """
+        qqids = [u["user_id"] for u in users]
+        a = len(qqids)
+        n = self.getBindNum2(qqids)
+        p = round(n / a * 100, 2)
+        msg = "本群人数[%s],绑定用户数[%s],占比[%s%%]" % (a, n, p) 
+        pushTools.pushMsgOne(groupid, msg)
+        return "suc"
+
+    def getBindNum(self, qqids):
+        """检查绑定数量-in版本
+        """
+        db = interMysql.Connect('osu2')
+        sql = '''
+            SELECT count(distinct(qq)) n FROM user where qq in %s
+        '''
+        ret = db.query(sql, [tuple(qqids)])
+        return ret[0]["n"]
+
+    def getBindNum2(self, qqids):
+        """检查绑定数量-暴力对比版本
+        """
+        db = interMysql.Connect('osu2')
+        sql = '''
+            SELECT distinct(qq) qq FROM user
+        '''
+        ret = db.query(sql)
+        bindusers = [int(r["qq"]) for r in ret]
+        n = set(qqids) - set(list(bindusers))
+        diff = len(qqids) - len(n)
+        return diff

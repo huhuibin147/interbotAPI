@@ -234,6 +234,24 @@ def sleep(**kw):
     pushTools.pushSmokeCmd(kw["groupid"], kw["qqid"], ts)
     return ""
 
+@app.route('/playerscheck', methods=['POST'])
+@appTools.deco()
+def playerscheck(**kw):
+    b = botHandler.botHandler()
+    ret = b.groupPlayerCheck(kw["groupid"])
+    return ret
+
+@app.route('/scancallback', methods=['POST'])
+@appTools.deco()
+def scancallback(**kw):
+    logging.info('scancallback....')
+    ret = kw["ret"]
+    users = json.loads(ret)
+    groupid = kw["callbackargs"]
+    b = botHandler.botHandler()
+    ret = b.scanPlayers(groupid, users)
+    return ret
+
 
 @app.route('/nbp', methods=['POST'])
 @appTools.deco(autoOusInfoKey='osuid,osuname', rawinput=1)
