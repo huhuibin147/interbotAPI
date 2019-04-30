@@ -27,3 +27,7 @@ FUNC_ACTIVE_KEY = 'FUNC-ACTIVE-{qq}-{groupid}'
 
 # ppy-tools path
 PP_TOOLS_PATH = '/root/code/netcoreapp2.0'
+
+GROUPID = {
+    "XINRENQUN": 885984366 # osu新人群
+}

@@ -11,6 +11,7 @@ from commLib import cmdRouter
 from commLib import mods
 from commLib import Config
 from commLib import interMysql
+from commLib import pushTools
 from botappLib import healthCheck
 
 class botHandler():
@@ -26,6 +27,16 @@ class botHandler():
         """
         ret = cmdRouter.invoke(
             '!uinfo', {"qqid": qqid, "groupid": groupid}
+        )
+        return json.loads(ret)
+    
+    def getOsuInfo2(self, qqid):
+        """取osu用户绑定信息
+        Args:
+            qq
+        """
+        ret = cmdRouter.invoke(
+            '!uinfo2', {"qqid": qqid}
         )
         return json.loads(ret)
 
@@ -141,10 +152,10 @@ class botHandler():
         extendSs = self.convert2oppaiArgs(rinfo['mods'])
         sspp = self.get_pp_from_str(self.ppy_tools_pp(bid, self.convert2oppaiArgsNew(rinfo['mods'])))
 
-        res = self.formatRctpp2New(ojson, recinfo['rank'], rinfo['acc'], 
+        res, stars = self.formatRctpp2New(ojson, recinfo['rank'], rinfo['acc'], 
             fcpp, sspp, bid, fcacc, recinfo['countmiss'], pp)
 
-        return res
+        return res, stars
 
     def getRctppBatchRes(self, recinfos):
         """批量版本
@@ -423,6 +434,7 @@ class botHandler():
 
         bpm = self.factBpm(float(mapInfo['bpm']), ojson['mods_str'])
  
+        stars_2 = round(float(stars), 2)
         out = outp.format(
             artist = mapInfo['artist'],
             title = mapInfo['title'],
@@ -432,7 +444,7 @@ class botHandler():
             cs = ojson['cs'],
             od = round(ojson['od'], 2),
             hp = ojson['hp'],
-            stars = round(float(stars), 2),
+            stars = stars_2,
             combo = ojson['combo'],
             max_combo = ojson['max_combo'],
             acc = round(acc, 2),
@@ -448,7 +460,7 @@ class botHandler():
             bpm = bpm
         )
 
-        return out
+        return out, stars_2
 
     def formatRctpp3(self, ojson, rank, acc, ppfc, ppss, bid, fcacc, miss):
         """格式化rctpp简版输出"""
@@ -820,3 +832,19 @@ class botHandler():
         except:
             db.rollback()
             logging.error(traceback.format_exc())
+
+    def rctppSmoke(self, groupid, qq, stars):
+        """超星处理
+        规则：
+            新人群
+            超星机制
+                5.6星 0.1*10分钟
+                6.0星 0.1*20分钟
+        """
+        if int(groupid) == Config.GROUPID["XINRENQUN"]:
+            if stars > 5.6:
+                if stars < 6:
+                    ts = (stars - 5.6) * 10 * 600
+                else:
+                    ts = (stars - 5.6) * 20 * 600
+                pushTools.pushSmokeCmd(groupid, qq, ts)

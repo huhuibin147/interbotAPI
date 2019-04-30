@@ -28,6 +28,38 @@ class pushC():
         logging.info('send to[%s],msg[%s]', qqid, msg)
         ws.close()
 
+    def sendCqSmoke(self, groupid, qqid, ts):
+        ws = websocket.create_connection(self.ws)
+        ws.send(json.dumps({
+                "interface": "smoke",
+                "groupid": groupid,
+                "qqid": qqid,
+                "ts": ts
+            }))
+        logging.info('smoke group[%s] qq[%s] ts[%s]', groupid, qqid, ts)
+        ws.close()
+
+    def sendCqLike(self, qqid, ts):
+        ws = websocket.create_connection(self.ws)
+        ws.send(json.dumps({
+                "interface": "send_like",
+                "qqid": qqid,
+                "times": ts
+            }))
+        logging.info('send like qq[%s] ts[%s]', qqid, ts)
+        ws.close()
+
+    def sendCqKick(self, groupid, qqid):
+        ws = websocket.create_connection(self.ws)
+        ws.send(json.dumps({
+                "interface": "kick",
+                "qqid": qqid,
+                "groupid": groupid
+            }))
+        logging.info('send kick groupid[%s] qq[%s]', groupid, qqid)
+        ws.close()
+
+
 
 def pushMsgOne(groupid, msg):
     pushC().sendCq(groupid, msg)
@@ -41,6 +73,15 @@ def pushGroupMsg(groupids, msg):
     for groupid in groupids:
         obj.sendCq(groupid, msg)
     logging.info('群发结束')
+
+def pushSmokeCmd(groupid, qqid, ts):
+    pushC().sendCqSmoke(groupid, qqid, ts)
+
+def pushLikeCmd(qqid, ts):
+    pushC().sendCqLike(qqid, ts)
+
+def pushKickCmd(groupid, qqid):
+    pushC().sendCqKick(groupid, qqid)
 
 if __name__ == '__main__':
     groupids = [514661057,758120648,669361496,885984366,713688443,609633978,709804864]

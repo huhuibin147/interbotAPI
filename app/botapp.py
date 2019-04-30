@@ -9,6 +9,7 @@ from botappLib import botHandler
 from commLib import appTools
 from commLib import Config
 from commLib import interRedis
+from commLib import pushTools
 from ppyappLib import ppyHandler
 from baseappLib import baseHandler
 
@@ -43,7 +44,9 @@ def rctppnew(**kw):
     if not recinfo:
         res = "没有最近游戏记录,绑定用户为%s" % osuname
     else:
-        res = b.getRctppResNew(recinfo[0])
+        res, stars = b.getRctppResNew(recinfo[0])
+        # 执行管理逻辑
+        b.rctppSmoke(kw["groupid"], kw["qqid"], stars)
     return res
 
 @app.route('/rctpps', methods=['POST'])
@@ -67,10 +70,10 @@ def mybp(**kw):
     if int(x) < 0 or int(x) > 100:
         x = "1"
     b = botHandler.botHandler()
-    osuinfo = b.getOsuInfo(kw['qqid'], kw['groupid'])
+    osuinfo = b.getOsuInfo2(kw['qqid'])
     logging.info(osuinfo)
     if osuinfo:
-        osuid = osuinfo[0]['osuid']
+        osuid = osuinfo['osuid']
 
         key = 'OSU2_USERBP:%s'
         rds = interRedis.connect('osu2')
@@ -84,7 +87,9 @@ def mybp(**kw):
         if not recinfo:
             res = "别复读好马!"
         else:
-            res = b.getRctppResNew(recinfo[int(x)-1])
+            res, stars = b.getRctppResNew(recinfo[int(x)-1])
+            # 执行管理逻辑
+            b.rctppSmoke(kw["groupid"], kw["qqid"], stars)
     else:
         res = "你倒是绑定啊.jpg"
     return res
@@ -221,6 +226,13 @@ def v2me(**kw):
     b = ppyHandler.ppyHandler()
     rs = b.getV2MyInfo(kw['qqid'], kw['groupid'])
     return rs
+
+@app.route('/sleep', methods=['POST'])
+@appTools.deco()
+def sleep(**kw):
+    ts = 3600*8
+    pushTools.pushSmokeCmd(kw["groupid"], kw["qqid"], ts)
+    return ""
 
 
 @app.route('/nbp', methods=['POST'])
