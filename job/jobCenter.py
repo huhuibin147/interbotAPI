@@ -2,8 +2,8 @@
 import os
 import sys
 import json
-import logging
 from logging.handlers import TimedRotatingFileHandler
+import logging
 import websocket
 
 sys.path.append('./')
