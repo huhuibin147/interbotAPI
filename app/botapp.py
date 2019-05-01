@@ -12,6 +12,8 @@ from commLib import interRedis
 from commLib import pushTools
 from ppyappLib import ppyHandler
 from baseappLib import baseHandler
+from draws import drawRank
+from draws import rank_tab
 
 with open('./app/botapp.yaml', encoding='utf8') as f:
     config = yaml.load(f)
@@ -47,6 +49,7 @@ def rctppnew(**kw):
         res, kv = b.getRctppResNew(recinfo[0])
         # 执行管理逻辑
         b.rctppSmoke(kw["groupid"], kw["qqid"], kv)
+    rank_tab.upload_rec(osuid, kw["groupid"])
     return res
 
 @app.route('/rctpps', methods=['POST'])
@@ -262,6 +265,26 @@ def days(**kw):
     b = botHandler.botHandler()
     ret = b.osu_stats(osuname, x)
     return ret
+
+@app.route('/rank', methods=['POST'])
+@appTools.deco(autoOusInfoKey='osuid', rawinput=1)
+def rank(**kw):
+    try:
+        if not kw['iargs']:
+            return "请输入bid!"
+        bid = kw['iargs'][0]
+        osuid = kw['autoOusInfoKey']['osuid']
+        p = drawRank.start(bid, kw["groupid"], hid=1, mods=-1, uid=osuid)
+        return "[CQ:image,cache=0,file=http://139.199.10.126/itbimage/%s]" % p
+    except:
+        logging.exception("rank error")
+        return "fail..."
+
+@app.route('/uploadrec', methods=['POST'])
+@appTools.deco(autoOusInfoKey='osuid', rawinput=1)
+def up(**kw):
+    osuid = kw['autoOusInfoKey']['osuid']
+    return rank_tab.upload_rec(osuid, kw["groupid"])
 
 @app.route('/nbp', methods=['POST'])
 @appTools.deco(autoOusInfoKey='osuid,osuname', rawinput=1)

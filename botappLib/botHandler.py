@@ -1056,3 +1056,20 @@ class botHandler():
         now = datetime.datetime.now()
         date = now - datetime.timedelta(days = days)
         return date.strftime('%Y-%m-%d')
+
+    def get_user_stats_today(self, uid):
+        conn = interMysql.Connect('osu')
+        sql = 'SELECT * FROM user2 where osuid = %s order by time desc limit 1'
+        ret = conn.query(sql, uid)
+        if not ret:
+            return None
+        return ret
+
+    def get_usernames_by_uid(self, uids):
+        conn = interMysql.Connect('osu')
+        sql = 'SELECT osuid,osuname FROM user where osuid in (%s)'
+        sql = sql % (','.join(map(lambda x:'%s', uids)))
+        ret = conn.query(sql, uids)
+        if not ret:
+            return None
+        return ret
