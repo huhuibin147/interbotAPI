@@ -57,6 +57,7 @@ class jobCenter():
         # )
 
     def start(self):
+        self.jobMethod()
         self.addJob()
         self.sched.start()
 

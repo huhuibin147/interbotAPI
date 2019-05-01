@@ -14,7 +14,7 @@ class autoRefreshTokenJob(jobCenter.jobCenter):
 
 
     def addJob(self):
-        self.sched.add_job(self.jobMethod, 'interval', hours=6, args=[])
+        self.sched.add_job(self.jobMethod, 'interval', hours=6, args=[], max_instances=1)
 
     def jobMethod(self):
         # get users
