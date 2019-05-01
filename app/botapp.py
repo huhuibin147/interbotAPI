@@ -14,6 +14,7 @@ from ppyappLib import ppyHandler
 from baseappLib import baseHandler
 from draws import drawRank
 from draws import rank_tab
+from draws import draw_data
 
 with open('./app/botapp.yaml', encoding='utf8') as f:
     config = yaml.load(f)
@@ -299,6 +300,13 @@ def nbp(**kw):
         return "没有Bp,下一个!!"
     res = b.getBpNumBybid(recinfo, osuname, bid)
     return res
+
+@app.route('/upimg', methods=['POST'])
+@appTools.deco(autoOusInfoKey='osuid', rawinput=1)
+def upimg(**kw):
+    osuid = kw['autoOusInfoKey']['osuid']
+    draw_data.down_images_from_ppy([osuid])
+    return '刷新成功(可能吧?'
 
 @app.route('/createroom', methods=['POST'])
 @appTools.deco(autoOusInfoKey='osuname', rawinput=1)

@@ -27,7 +27,6 @@ def filter_rec(uid, rec):
         res = json.loads(ret)
         for r in rec:
             if r['beatmap_id'] in res:
-                logging.info(r['date'], res[r['beatmap_id']])
                 if r['date'] != res[r['beatmap_id']]:
                     res['beatmap_id'] = r['date']
                     bids.append(r['beatmap_id'])

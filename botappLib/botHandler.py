@@ -887,11 +887,44 @@ class botHandler():
         """
         qqids = [u["user_id"] for u in users]
         a = len(qqids)
-        n = self.getBindNum2(qqids)
+        # 取绑定数
+        ret = self.getBindNum2(qqids)
+        n, bindRet = self.countBindDiff(ret, qqids)
         p = round(n / a * 100, 2)
-        msg = "本群人数[%s],绑定用户数[%s],占比[%s%%]" % (a, n, p) 
+        # 取超限数
+        ExLimits = self.getExceedsLimitPlayers(bindRet, int(groupid))
+        n2 = len(ExLimits)
+
+        msg = "本群人数[%s],绑定用户数[%s],占比[%s%%],超限人数[%s]" % (a, n, p, n2) 
+        if n2:
+            msg += '\n超限列表:\n'
+            for r in ExLimits:
+                msg += '%s(%spp)\n' % (r["username"], r["pp"])
+            msg = msg[:-1]
         pushTools.pushMsgOne(groupid, msg)
         return "suc"
+
+    def getExceedsLimitPlayers(self, bindRet, groupid):
+        """检测超限
+        """
+        if groupid == Config.GROUPID["XINRENQUN"]:
+            limit_pp = 3100
+        elif groupid == Config.GROUPID["JINJIEQUN"]:
+            limit_pp = 4500
+        else:
+            limit_pp = 0
+
+        if not limit_pp:
+            return 0
+            
+        db = interMysql.Connect('osu')
+        sql = '''
+            SELECT username, pp FROM user2 where username in %s and time>=%s and pp>%s
+        '''
+        username = [r["osuname"] for r in bindRet]
+        ret = db.query(sql, [tuple(username), self.today_date(), limit_pp])
+        return ret
+
 
     def getBindNum(self, qqids):
         """检查绑定数量-in版本
@@ -908,13 +941,21 @@ class botHandler():
         """
         db = interMysql.Connect('osu2')
         sql = '''
-            SELECT distinct(qq) qq FROM user
+            SELECT distinct(qq) qq, osuname FROM user
         '''
         ret = db.query(sql)
+        return ret
+
+    def countBindDiff(self, ret, qqids):
         bindusers = [int(r["qq"]) for r in ret]
         n = set(qqids) - set(list(bindusers))
+        n2 = set(qqids) & set(list(bindusers))
+        diffRet = []
+        for r in ret:
+            if int(r["qq"]) in n2:
+                diffRet.append(r)
         diff = len(qqids) - len(n)
-        return diff
+        return diff, diffRet
 
     def is_insert_today(self):
         """今天是否插入过
