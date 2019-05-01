@@ -6,7 +6,7 @@ import requests
 
 centerURL = 'http://inter1.com/center/msg'
 
-msg = 'test'
+msg = '!rank'
 
 if len(sys.argv) > 1:
     msg = sys.argv[1]
