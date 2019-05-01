@@ -22,14 +22,32 @@ logging.basicConfig(
     datefmt='%Y-%m-%d %H:%M:%S'
 )
 
+
+
 @bot.on_message()
 def handle_msg(context):
-    context['message'] = convert(context['message'])
+    if context.get('message'):
+        context['message'] = convert(context['message'])
     t = threading.Thread(target=msgHandler, args=(bot, context, ))
     t.start()
     return
 
+@bot.on_request()
+def handle_request(context):
+    logging.info('on_request.....')
+    logging.info(context)
+    t = threading.Thread(target=msgHandler, args=(bot, context, ))
+    t.start()
+    return
 
+@bot.on_notice()
+def handle_notice(context):
+    logging.info('on_notice.....')
+    logging.info(context)
+    t = threading.Thread(target=msgHandler, args=(bot, context, ))
+    t.start()
+    return
+    
 def convert(msg):
     tmps = msg.replace('&amp;', '&')
     tmps = tmps.replace('&#91;', '[')
@@ -76,6 +94,8 @@ async def wsMain(websockets, path):
         }
         cThread = threading.Thread(target=callbackMain, args=(recvDict["callbackcmd"], params))
         cThread.start()
+    elif interface == "set_group_add_request":
+        bot.set_group_add_request(flag=recvDict["flag"], sub_type=recvDict["sub_type"], approve=recvDict["approve"], reason=recvDict["reason"])
 
 def callbackMain(callbackcmd, args):
     cmdRouter.invoke(callbackcmd, args)

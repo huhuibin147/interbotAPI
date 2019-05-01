@@ -8,6 +8,7 @@ from commLib import interMysql
 from commLib import pushTools
 from commLib import interRedis
 from commLib import Config
+from msgCenterLib import otherMsgHandler
 
 class msgHandler():
 
@@ -18,23 +19,28 @@ class msgHandler():
     def auto(self):
         """消息处理"""
 
-        # 分发线程
-        t = threading.Thread(target=self.msgTransmit, args=(self.context, ))
-        t.start()
+        if self.context["post_type"] == "message":
+            # 分发线程
+            t = threading.Thread(target=self.msgTransmit, args=(self.context, ))
+            t.start()
 
-        # 兼容私聊
-        if self.context['message_type'] == 'private':
-            self.isPrivate = 1
-            self.context['group_id'] = -1
+            # 兼容私聊
+            if self.context['message_type'] == 'private':
+                self.isPrivate = 1
+                self.context['group_id'] = -1
 
-        # 自动处理
-        msg = self.context['message']
-        msg = msg.replace('！', '!')
-        replyFlag, msg = self.interactiveFuncRef(self.context['user_id'], self.context['group_id'], msg)
-        if '!' in msg:
-            return self.autoApi(msg, replyFlag)
+            # 自动处理
+            msg = self.context['message']
+            msg = msg.replace('！', '!')
+            replyFlag, msg = self.interactiveFuncRef(self.context['user_id'], self.context['group_id'], msg)
+            if '!' in msg:
+                return self.autoApi(msg, replyFlag)
+            else:
+                return self.autoReply(msg)
+        
         else:
-            return self.autoReply(msg)
+            o = otherMsgHandler.oMsgHandler(self.context)
+            return o.main()
 
     def msgTransmit(self, context):
         """消息转发"""

@@ -71,6 +71,18 @@ class pushC():
         logging.info('sendCqCallback method[%s] kv[%s] callbackcmd[%s]', method, kv, callbackcmd)
         ws.close()
 
+    def sendCqSetRequest(self, flag, sub_type="add", approve="true", reason=""):
+        ws = websocket.create_connection(self.ws)
+        ws.send(json.dumps({
+                "interface": "set_group_add_request",
+                "flag": flag,
+                "sub_type": sub_type,
+                "approve": approve,
+                "reason": reason
+            }))
+        logging.info('sendCqSetRequest flag[%s], approve[%s]', flag, approve)
+        ws.close()
+
 
 
 def pushMsgOne(groupid, msg):
@@ -95,6 +107,9 @@ def pushLikeCmd(qqid, ts):
 def pushKickCmd(groupid, qqid):
     pushC().sendCqKick(groupid, qqid)
 
+def pushSetRequestCmd(flag, sub_type, approve, reason=""):
+    pushC().sendCqSetRequest(flag, sub_type, approve, reason)
+
 def pushCallbackCmd(method, kv, callbackcmd, callbackargs):
     """调用酷Q接口，同时回调服务
     Args:
@@ -106,6 +121,7 @@ def pushCallbackCmd(method, kv, callbackcmd, callbackargs):
     pushC().sendCqCallback(method, kv, callbackcmd, callbackargs)
 
 if __name__ == '__main__':
-    groupids = [514661057,758120648,669361496,885984366,713688443,609633978,709804864]
-    msg = "【interbot通知消息】\nxxxxx"
-    pushGroupMsg(groupids, msg)
+    # groupids = [514661057,758120648,669361496,885984366,713688443,609633978,709804864]
+    # msg = "【interbot通知消息】\nxxxxx"
+    # pushGroupMsg(groupids, msg)
+    pushKickCmd("619786604", "405622418")

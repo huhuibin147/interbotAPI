@@ -30,7 +30,8 @@ PP_TOOLS_PATH = '/root/code/netcoreapp2.0'
 
 GROUPID = {
     "XINRENQUN": 885984366, # osu新人群
-    "JINJIEQUN": 758120648 # osu进阶群
+    "JINJIEQUN": 758120648, # osu进阶群
+    "test": 619786604
 }
 
 # 群ID
