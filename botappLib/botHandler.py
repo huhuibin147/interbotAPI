@@ -882,6 +882,16 @@ class botHandler():
         # return "发起检测..."
         return ""
 
+    def groupPpCheck(self, groupid):
+        """群pp分布检测
+        """
+        method = "get_group_member_list"
+        kv = {'group_id': str(groupid)}
+        callbackcmd = "!ppcheckcallback"
+        callbackargs = str(groupid)
+        pushTools.pushCallbackCmd(method, kv, callbackcmd, callbackargs)
+        return ""
+
     def scanPlayers(self, groupid, users):
         """检测群列表
         """
@@ -924,6 +934,62 @@ class botHandler():
         username = [r["osuname"] for r in bindRet]
         ret = db.query(sql, [tuple(username), self.today_date(), limit_pp])
         return ret
+
+    def scanPlayers2(self, groupid, users):
+        """pp分布
+        """
+        qqids = [u["user_id"] for u in users]
+        a = len(qqids)
+        # 取绑定数
+        ret = self.getBindNum2(qqids)
+        n, bindRet = self.countBindDiff(ret, qqids)
+        p = round(n / a * 100, 2)
+        
+        msg = "本群人数[%s],绑定用户数[%s],占比[%s%%]\n" % (a, n, p) 
+        
+        
+        # 取分布，按群细分
+        msg += "本群pp分布: \n"
+        msg += self.ppStatics(bindRet, int(groupid))
+        pushTools.pushMsgOne(groupid, msg)
+        return "suc"
+
+    def ppStatics(self, bindRet, groupid):
+        """分层
+        """
+        # 初始化层级
+        pp_static = [0,0,0,0,0,0]
+
+        db = interMysql.Connect('osu')
+        sql = '''
+            SELECT username, pp FROM user2 where username in %s and time>=%s
+        '''
+        username = [r["osuname"] for r in bindRet]
+        rs = db.query(sql, [tuple(username), self.today_date()])
+        for r in rs:
+            pp = float(r["pp"])
+            if pp < 1000:
+                pp_static[0] += 1
+            elif pp < 2000:
+                pp_static[1] += 1
+            elif pp < 3100:
+                pp_static[2] += 1
+            elif pp < 4500:
+                pp_static[3] += 1
+            elif pp < 6000:
+                pp_static[4] += 1
+            else:
+                pp_static[5] += 1
+
+        cnt = len(rs)
+        msg = ""
+        msg += "0~1k:   %s人(%s%%)\n" % (pp_static[0], round(pp_static[0]/cnt*100))
+        msg += "1~2k:   %s人(%s%%)\n" % (pp_static[1], round(pp_static[1]/cnt*100))
+        msg += "2~3.1k:   %s人(%s%%)\n" % (pp_static[2], round(pp_static[2]/cnt*100))
+        msg += "3.1k~4.5k:   %s人(%s%%)\n" % (pp_static[3], round(pp_static[3]/cnt*100))
+        msg += "4.5k~6k:   %s人(%s%%)\n" % (pp_static[4], round(pp_static[4]/cnt*100))
+        msg += ">6k:   %s人(%s%%)"   % (pp_static[5], round(pp_static[5]/cnt*100))
+        return msg
 
 
     def getBindNum(self, qqids):

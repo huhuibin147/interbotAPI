@@ -256,6 +256,24 @@ def scancallback(**kw):
     ret = b.scanPlayers(groupid, users)
     return ret
 
+@app.route('/ppcheck', methods=['POST'])
+@appTools.deco()
+def ppcheck(**kw):
+    b = botHandler.botHandler()
+    ret = b.groupPpCheck(kw["groupid"])
+    return ret
+
+@app.route('/ppcheckcallback', methods=['POST'])
+@appTools.deco()
+def ppcheckcallback(**kw):
+    logging.info('ppcheckcallback....')
+    ret = kw["ret"]
+    users = json.loads(ret)
+    groupid = kw["callbackargs"]
+    b = botHandler.botHandler()
+    ret = b.scanPlayers2(groupid, users)
+    return ret
+
 @app.route('/days', methods=['POST'])
 @appTools.deco(autoOusInfoKey='osuname', rawinput=1)
 def days(**kw):
