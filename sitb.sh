@@ -10,7 +10,7 @@ start(){
 }
 
 stop(){
-    ps aux|grep python|grep $1|awk '{print $2}'|xargs kill
+    ps aux|grep python|grep $1|awk '{print $2}'|xargs kill -9
     echo "$1 stop..."
 }
 
