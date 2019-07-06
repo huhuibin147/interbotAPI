@@ -1013,12 +1013,15 @@ class botHandler():
         return ret
 
     def countBindDiff(self, ret, qqids):
-        bindusers = [int(r["qq"]) for r in ret]
+        bindusers = []
+        for r in ret:
+            if r["qq"]:
+                bindusers.append(int(r["qq"]))
         n = set(qqids) - set(list(bindusers))
         n2 = set(qqids) & set(list(bindusers))
         diffRet = []
         for r in ret:
-            if int(r["qq"]) in n2:
+            if r["qq"] and int(r["qq"]) in n2:
                 diffRet.append(r)
         diff = len(qqids) - len(n)
         return diff, diffRet
