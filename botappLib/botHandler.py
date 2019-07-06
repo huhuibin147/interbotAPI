@@ -409,7 +409,7 @@ class botHandler():
         )
         # 供外部smoke使用
         kv = {
-            "stars": round(ojson['stars'], 2), 
+            "stars": ojson['stars'], 
             "rank": rank
         }
         return out, kv
