@@ -94,7 +94,7 @@ def mybp(**kw):
         if not recinfo:
             res = "别复读好马!"
         else:
-            res, kv = b.getRctppResNew(recinfo[int(x)-1])
+            res, kv = b.getRctppRes(recinfo[int(x)-1])
             # 执行管理逻辑
             b.rctppSmoke(kw["groupid"], kw["qqid"], kv)
     else:
