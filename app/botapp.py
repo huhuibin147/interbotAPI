@@ -238,6 +238,12 @@ def sleep(**kw):
     pushTools.pushSmokeCmd(kw["groupid"], kw["qqid"], ts)
     return ""
 
+@app.route('/kill', methods=['POST'])
+@appTools.deco()
+def kill(**kw):
+    pushTools.pushKickCmd(kw["groupid"], kw["atqq"])
+    return "%s已经狗带了" % kw["atqq"]
+
 @app.route('/playerscheck', methods=['POST'])
 @appTools.deco()
 def playerscheck(**kw):
