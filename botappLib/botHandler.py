@@ -132,10 +132,10 @@ class botHandler():
         extendSs = self.convert2oppaiArgs(rinfo['mods'])
         ojsonSs = self.oppai2json(bid, extendSs)
 
-        res = self.formatRctpp2(ojson, recinfo['rank'], rinfo['acc'], 
+        res, kv  = self.formatRctpp2(ojson, recinfo['rank'], rinfo['acc'], 
             ojsonFc['pp'], ojsonSs['pp'], bid, fcacc, recinfo['countmiss'])
 
-        return res
+        return res, kv 
 
     def getRctppResNew(self, recinfo):
         # rec计算
@@ -157,7 +157,7 @@ class botHandler():
         res, kv = self.formatRctpp2New(ojson, recinfo['rank'], rinfo['acc'], 
             fcpp, sspp, bid, fcacc, recinfo['countmiss'], pp)
 
-        return res, kv
+        return res, kv 
 
     def getRctppBatchRes(self, recinfos):
         """批量版本
@@ -361,7 +361,7 @@ class botHandler():
         if 'DT' in modstr or 'NC' in modstr:
             bpm = rawbpm * 1.5
         elif 'HT' in modstr:
-            bpm = rawbpm / 0.75
+            bpm = rawbpm * 0.75
         return round(bpm)
 
     def formatRctpp2(self, ojson, rank, acc, ppfc, ppss, bid, fcacc, miss):
@@ -407,8 +407,13 @@ class botHandler():
             missStr = missStr,
             bpm = bpm
         )
+        # 供外部smoke使用
+        kv = {
+            "stars": round(ojson['stars'], 2), 
+            "rank": rank
+        }
+        return out, kv
 
-        return out
 
     def formatRctpp2New(self, ojson, rank, acc, ppfc, ppss, bid, fcacc, miss, pp):
         """格式化rctpp输出"""

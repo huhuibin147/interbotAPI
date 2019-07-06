@@ -33,7 +33,10 @@ def rctpp(**kw):
     if not recinfo:
         res = "没有最近游戏记录,绑定用户为%s" % osuname
     else:
-        res = b.getRctppRes(recinfo[0])
+        res, kv  = b.getRctppRes(recinfo[0])
+        # 执行管理逻辑
+        b.rctppSmoke(kw["groupid"], kw["qqid"], kv)
+    rank_tab.upload_rec(osuid, kw["groupid"])
     return res
 
 @app.route('/rctppnew', methods=['POST'])

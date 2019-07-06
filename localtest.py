@@ -6,7 +6,7 @@ import requests
 
 centerURL = 'http://127.0.0.1:10005/'
 
-cmd = 'rank'
+cmd = 'ppcheck'
 
 if len(sys.argv) > 1:
     msg = sys.argv[1]
