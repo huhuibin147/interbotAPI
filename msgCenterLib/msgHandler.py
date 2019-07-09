@@ -197,6 +197,8 @@ class msgHandler():
             msgf = msg.replace('*r', '')
         effmsg = msgf[msgf.find(cmd):]
         l = effmsg.split(' ')
+        if not l:
+            l = effmsg.split('\r\n')
         if len(l) > 1:
             args = l[1:]
         args = list(filter(lambda x: x != '', args))
