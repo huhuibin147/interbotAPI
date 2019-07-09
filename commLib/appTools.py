@@ -36,7 +36,7 @@ def deco(**kw):
                     qqid = kwargs['qqid'] if not kwargs.get('atqq') else kwargs['atqq']
                     osuinfo = getOsuInfo(qqid)
                     if not osuinfo:
-                        return "你倒是绑定啊.jpg"
+                        return "请使用¡setid认证绑定.jpg"
                     for k in autokeys:
                         kwargs['autoOusInfoKey'][k] = osuinfo[k]
                 else:
