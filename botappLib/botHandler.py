@@ -1188,3 +1188,46 @@ class botHandler():
         if not ret:
             return None
         return ret
+
+    def set_id_content_cmd(self, osuname, content):
+        n = self.get_id_cmd_num(osuname)
+        if n == None:
+            n = ''
+        else:
+            n += 1
+        cmd = 'interbot%s' % n
+        self.set_id_cmd_to_db(cmd, content)
+        return cmd
+
+    def get_id_cmd_num(self, osuname):
+        conn = interMysql.Connect('osu2')
+        sql = '''SELECT cmd FROM cmdRef where cmd like %s order by id desc limit 1'''
+        ret = conn.query(sql, (osuname+'%', ))
+        logging.info('ret:%s', ret)
+        if not ret:
+            return None
+        cmd = ret[0]['cmd']
+        n = cmd[len(osuname):]
+        if not n:
+            return 0
+        else:
+            return int(n)
+
+    def set_id_cmd_to_db(self, cmd, content):
+        try:
+            db = interMysql.Connect('osu2')
+            sql = '''
+                INSERT INTO cmdRef(cmd, reply) VALUES(%s, %s)
+            '''
+            db.execute(sql, [cmd, content])
+            sql2 = '''
+                INSERT INTO permission(ptype, gtype, cmd, groupid)
+                VALUES(%s, %s, %s, %s)
+            '''
+            # 默认权限组2
+            db.execute(sql2, [2,2,cmd,2])
+            db.commit()
+        except:
+            db.rollback()
+            logging.exception('cmd[%s]插入失败', cmd)
+

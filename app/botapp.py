@@ -369,6 +369,20 @@ def joinroom(**kw):
 def privatetest(**kw):
     return 'interbot偷偷cue了你一下！'
 
+@app.route('/setcontent', methods=['POST'])
+@appTools.deco(autoOusInfoKey='osuname', rawinput=1)
+def setcontent(**kw):
+    b = botHandler.botHandler()
+    osuname = kw['autoOusInfoKey']['osuname']
+    if kw['iargs']:
+        content = kw['iargs'][0]
+    else:
+        return '请输入内容，¡xx xxxx'
+    if content[:2] == '\r\n':
+        content = content[2:]
+    cmd = b.set_id_content_cmd(osuname, content)
+    res = '设置成功，当前编号为%s' % cmd
+    return res
 
 @app.route('/sttest', methods=['POST'])
 @appTools.deco()
