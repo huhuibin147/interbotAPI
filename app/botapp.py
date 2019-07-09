@@ -381,7 +381,7 @@ def setcontent(**kw):
     if content[:2] == '\r\n':
         content = content[2:]
     cmd = b.set_id_content_cmd(osuname, content)
-    res = '设置成功，当前编号为%s' % cmd
+    res = '设置成功，生成指令为[%s]' % cmd
     return res
 
 @app.route('/sttest', methods=['POST'])
