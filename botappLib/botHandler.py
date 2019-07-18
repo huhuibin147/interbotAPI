@@ -1195,7 +1195,7 @@ class botHandler():
             n = ''
         else:
             n += 1
-        cmd = 'interbot%s' % n
+        cmd = '%s%s' % (osuname, n)
         self.set_id_cmd_to_db(cmd, content)
         return cmd
 
