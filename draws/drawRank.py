@@ -256,7 +256,7 @@ def drawR(mapjson, rankjson, userjson):
     f = '/static/interbot/image/%s' % p
     d.save(f)
     # 压缩
-    os.system('pngquant %s' % f)
+    os.system('pngquant -f %s' % f)
     logging.info('[%s]榜单生成成功!' % pfs)
     return pfs
 
