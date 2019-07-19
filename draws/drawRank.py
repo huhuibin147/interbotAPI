@@ -252,9 +252,13 @@ def drawR(mapjson, rankjson, userjson):
 
     n = random.randint(0, 100)
     p = 'rank%s.png' % n
-    d.save('/static/interbot/image/%s' % p)
-    logging.info('榜单生成成功!')
-    return p
+    pfs = 'rank%s-fs8.png' % n
+    f = '/static/interbot/image/%s' % p
+    d.save(f)
+    # 压缩
+    os.system('pngquant %s' % f)
+    logging.info('[%s]榜单生成成功!' % pfs)
+    return pfs
 
 def start(bid='847314', groupid='614892339', hid=1, mods=-1, uid='8505303'):
     mapjson,rankjson = draw_data.map_ranks_info(str(bid), groupid, hid, mods)
