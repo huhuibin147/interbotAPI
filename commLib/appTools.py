@@ -14,6 +14,7 @@ def deco(**kw):
     autoOusInfoKey = kw.get('autoOusInfoKey')
     # 不用使用输入代替用户名查询绑定
     rawinput = kw.get('rawinput')
+    autouseatqq = kw.get('autouseatqq', True)
 
     def inner(func):
 
@@ -33,7 +34,9 @@ def deco(**kw):
                 inputs = "" if not kwargs['iargs'] else ' '.join(kwargs['iargs'])
                 autokeys = autoOusInfoKey.split(',')
                 if not inputs or rawinput:
-                    qqid = kwargs['qqid'] if not kwargs.get('atqq') else kwargs['atqq']
+                    qqid = kwargs['qqid']
+                    if autouseatqq and kwargs.get('atqq'):
+                        qqid = kwargs['atqq']
                     osuinfo = getOsuInfo(qqid)
                     if not osuinfo:
                         return "请使用¡setid认证绑定.jpg"

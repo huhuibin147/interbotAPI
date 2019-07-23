@@ -370,7 +370,7 @@ def privatetest(**kw):
     return 'interbot偷偷cue了你一下！'
 
 @app.route('/setcontent', methods=['POST'])
-@appTools.deco(autoOusInfoKey='osuname', rawinput=1)
+@appTools.deco(autoOusInfoKey='osuname', rawinput=1, autouseatqq=False)
 def setcontent(**kw):
     b = botHandler.botHandler()
     osuname = kw['autoOusInfoKey']['osuname']
