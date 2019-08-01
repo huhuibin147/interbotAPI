@@ -1231,3 +1231,12 @@ class botHandler():
             db.rollback()
             logging.exception('cmd[%s]插入失败', cmd)
 
+    def get_best_map_rec_from_db(self, bid, uid):
+        db = interMysql.Connect('osu')
+        sql = '''
+            SELECT * from recinfo where uid=%s and bid=%s
+        '''
+        ret = db.query(sql, [bid, uid])
+        if not ret:
+            return None
+        return ret[0]

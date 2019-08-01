@@ -101,6 +101,22 @@ def mybp(**kw):
         res = "你倒是绑定啊.jpg"
     return res
 
+@app.route('/bestmaprec', methods=['POST'])
+@appTools.deco(autoOusInfoKey='osuid,osuname', rawinput=1)
+def bestmaprec(**kw):
+    if not kw['iargs']:
+        return "请输入bid！"
+    bid = kw['iargs'][0]
+    osuid = kw['autoOusInfoKey']['osuid']
+    b = botHandler.botHandler()
+    res = b.get_best_map_rec_from_db(osuid, bid)
+    if not res:
+        return "你连成绩都没有，快去打一个上传！"
+    recinfo = json.loads(res["recjson"])
+    res, kv = b.getRctppRes(recinfo)
+    return res
+
+
 @app.route('/bbp', methods=['POST'])
 @appTools.deco(autoOusInfoKey='osuid,osuname')
 def bbp(**kw):
