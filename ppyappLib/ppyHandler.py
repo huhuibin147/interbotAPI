@@ -192,7 +192,7 @@ class ppyHandler():
             last_visit = datetime.strptime(last_visit_utc, '%Y-%m-%d %H:%M:%S') + timedelta(hours=8)
             last_visit_str = datetime.strftime(last_visit, '%Y-%m-%d %H:%M')
 
-        follower_count = ret["follower_count"][0]
+        follower_count = ret["follower_count"]
         avatar = ret["avatar_url"]
         join_days = (datetime.now()-datetime.strptime(join_time, '%Y-%m-%d')).days
         pp_days_incr = round(float(pp) / join_days, 2)

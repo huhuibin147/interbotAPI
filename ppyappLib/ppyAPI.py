@@ -89,7 +89,8 @@ def apiv2RefreshToken(refreshtoken, updatedb=1, **kw):
         'grant_type': 'refresh_token',
         'client_id': '19',
         'client_secret': '46SmWQ2TyF5FMECwHrblTZ2oiYq4yyAbOH5BDDS7',
-        'refresh_token': refreshtoken
+        'refresh_token': refreshtoken,
+        "redirect_uri": "http://interbot.cn/apiv2/auth"
     }
     ret = -1
     res = requests.post(url, headers=header, data=params)
