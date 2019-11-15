@@ -48,7 +48,8 @@ class apivHandler():
             "grant_type": "authorization_code",
             "client_id": self.client_id,
             "client_secret": self.client_secret,
-            "code": code
+            "code": code,
+            "redirect_uri": "http://interbot.cn/apiv2/auth"
         }
         rs = requests.post(apiUrl, params)
 
