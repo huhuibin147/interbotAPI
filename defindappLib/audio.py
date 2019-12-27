@@ -8,6 +8,9 @@ from commLib import pushTools
 def entry(context):
     """语音姬
     """
+    # 已被提供者收回！
+    return
+
     if context['message_type'] != 'group':
         return
 
