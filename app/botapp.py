@@ -35,7 +35,9 @@ def rctpp(**kw):
     else:
         res, kv  = b.getRctppRes(recinfo[0])
         # 执行管理逻辑
-        b.rctppSmoke(kw["groupid"], kw["qqid"], kv)
+        smoke_res = b.rctppSmoke(kw["groupid"], kw["qqid"], kv)
+        if smoke_res:
+            res += f'\n>>{smoke_res}<<'
     rank_tab.upload_rec(osuid, kw["groupid"])
     return res
 
@@ -71,7 +73,7 @@ def rctpps(**kw):
     return res
 
 @app.route('/mybp', methods=['POST'])
-@appTools.deco()
+@appTools.deco(autoOusInfoKey='osuid,osuname')
 def mybp(**kw):
     x = "1" if not kw['iargs'] else kw['iargs'][0]
     if int(x) < 0 or int(x) > 100:
@@ -96,7 +98,9 @@ def mybp(**kw):
         else:
             res, kv = b.getRctppRes(recinfo[int(x)-1])
             # 执行管理逻辑
-            b.rctppSmoke(kw["groupid"], kw["qqid"], kv)
+            smoke_res = b.rctppSmoke(kw["groupid"], kw["qqid"], kv)
+            if smoke_res:
+                res += f'\n>>{smoke_res}<<'
     else:
         res = "你倒是绑定啊.jpg"
     return res

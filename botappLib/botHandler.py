@@ -382,20 +382,22 @@ class botHandler():
 
         mapInfo = self.getOsuBeatMapInfo(bid)
         bpm = self.factBpm(float(mapInfo['bpm']), ojson['mods_str'])
+        ar = round(ojson['ar'], 2)
+        acc = round(acc, 2)
  
         out = outp.format(
             artist = mapInfo['artist'],
             title = mapInfo['title'],
             version = mapInfo['version'],
             creator = mapInfo['creator'],
-            ar = round(ojson['ar'], 2),
+            ar = ar,
             cs = ojson['cs'],
             od = round(ojson['od'], 2),
             hp = ojson['hp'],
             stars = round(ojson['stars'], 2),
             combo = ojson['combo'],
             max_combo = ojson['max_combo'],
-            acc = round(acc, 2),
+            acc = acc,
             mods_str = ojson['mods_str'],
             pp = round(ojson['pp'], 2),
             rank = rank,
@@ -410,7 +412,9 @@ class botHandler():
         # 供外部smoke使用
         kv = {
             "stars": ojson['stars'], 
-            "rank": rank
+            "rank": rank,
+            "ar": ar,
+            "acc": acc
         }
         return out, kv
 
@@ -850,6 +854,7 @@ class botHandler():
             新人群
                 5.6星 0.01*10分钟
                 6.0星 0.01*20分钟
+                ar > 9.7 & acc < 90%  0.1*60分钟
             进阶群
                 6.51-8.00 评级A以下 0.01*10分钟
                 8.01-20.00 fail    0.01*20分钟
@@ -857,13 +862,25 @@ class botHandler():
         flag = 0
         stars = kv["stars"]
         rank = kv["rank"]
+        acc = kv["acc"]
+        ar = kv["ar"]
+        logging.info(kv)
+        ts = 0
+        res_mark = []
         if int(groupid) == Config.GROUPID["XINRENQUN"]:
             if stars > 5.6:
                 if stars < 6:
-                    ts = (stars - 5.6) * 10 * 6000
+                    ts += (stars - 5.6) * 10 * 6000
                 else:
-                    ts = (stars - 5.6) * 20 * 6000
+                    ts += (stars - 5.6) * 20 * 6000
+                res_mark.append('超星法')
                 flag = 1
+            
+            if ar > 9.7 and acc < 90:
+                ts += (ar - 9.7) * 36000
+                res_mark.append('高ar法')
+                flag = 1
+
         elif int(groupid) == Config.GROUPID["JINJIEQUN"]:
             if 8.0 > stars > 6.5:
                 if rank.lower() in ("b", "c", 'd', 'f'):
@@ -875,6 +892,9 @@ class botHandler():
                     flag = 1
         if flag:
             pushTools.pushSmokeCmd(groupid, qq, ts)
+            res = f'因触犯{"".join(res_mark)}入狱'
+            return res
+        return
 
     def groupPlayerCheck(self, groupid):
         """群检测机制
