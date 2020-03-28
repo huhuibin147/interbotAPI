@@ -11,6 +11,7 @@ from io import TextIOWrapper
 from commLib import cmdRouter
 from commLib import mods
 from commLib import Config
+from commLib import interRedis
 from commLib import interMysql
 from commLib import pushTools
 from botappLib import healthCheck
@@ -880,6 +881,16 @@ class botHandler():
                 ts += (ar - 9.7) * 36000
                 res_mark.append('高ar法')
                 flag = 1
+            
+            if ts > 0:
+                # 记录时间
+                rds = interRedis.connect('osu2')
+                nowts = time.time()
+                endts = nowts + ts
+                key = f'SMOKE_TS_{groupid}|{qq}'
+                v = json.dumps({'nowts': nowts, 'endts': endts, 'ts': ts})
+                logging.info('key:%s,v:%s,ts:%s', key, v, ts)
+                rds.setex(key, v, int(ts))
 
         elif int(groupid) == Config.GROUPID["JINJIEQUN"]:
             if 8.0 > stars > 6.5:

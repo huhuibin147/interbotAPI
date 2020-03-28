@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import yaml
 import json
+import time
+import random
 import logging
 import requests
 from flask import Flask
@@ -104,6 +106,58 @@ def mybp(**kw):
     else:
         res = "你倒是绑定啊.jpg"
     return res
+
+
+@app.route('/boom', methods=['POST'])
+@appTools.deco()
+def boom_check(**kw):
+    qqid = kw['qqid']
+    atqq = kw['atqq']
+    groupid = kw['groupid']
+    # 群限定
+    if int(groupid) != Config.GROUPID["XINRENQUN"]:
+        return ''
+    rds = interRedis.connect('osu2')
+    key = f'SMOKE_TS_{groupid}|{atqq}'
+    rs = rds.get(key)
+    if not rs:
+        return ''
+    # 越狱概率
+    if random.random() >= 0.5:
+        rds.delete(key)
+        return f'在{qqid}的帮助下{atqq}越狱成功!'
+    
+    v = json.loads(rs)
+    nowts = time.time()
+    ts = v['ts']
+    endts = v['endts']
+    # 已经释放出狱
+    if nowts >= endts:
+        return
+    
+    # 重新计算入狱时间
+    leftts = endts - nowts
+    ts = leftts + leftts*0.5
+    endts += leftts*0.5
+    v = json.dumps({'nowts': nowts, 'endts': endts, 'ts': ts})
+    rds.setex(key, v, int(ts))
+    rds.expire(key, int(ts))
+
+    # 帮凶承担一半时间
+    ts2 = ts * 0.5
+    endts2 = nowts + ts2
+    key2 =  f'SMOKE_TS_{groupid}|{qqid}'
+    v2 = json.dumps({'nowts': nowts, 'endts': endts2, 'ts': ts2})
+    rds.setex(key2, v2, int(ts2))
+    rds.expire(key2, int(ts2))
+
+    time.sleep(0.5)
+    pushTools.pushSmokeCmd(groupid, atqq, ts)
+    pushTools.pushSmokeCmd(groupid, qqid, ts2)
+
+    s = f'检测到越狱行为，{qqid}尝试解救{atqq}失败，双双入狱'
+    return s
+
 
 @app.route('/bestmaprec', methods=['POST'])
 @appTools.deco(autoOusInfoKey='osuid,osuname', rawinput=1)
