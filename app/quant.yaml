@@ -1,0 +1,6 @@
+quant:
+  name: api
+  version: v0.1
+  listen: 11020
+  comment: quant api
+  model: quant
