@@ -398,7 +398,7 @@ class botHandler():
             stars = round(ojson['stars'], 2),
             combo = ojson['combo'],
             max_combo = ojson['max_combo'],
-            acc = round(acc, 2),
+            acc = acc,
             mods_str = ojson['mods_str'],
             pp = round(ojson['pp'], 2),
             rank = rank,
@@ -892,15 +892,15 @@ class botHandler():
                 logging.info('key:%s,v:%s,ts:%s', key, v, ts)
                 rds.setex(key, v, int(ts))
 
-        #elif int(groupid) == Config.GROUPID["JINJIEQUN"]:
-        #    if 8.0 > stars > 6.5:
-        #        if rank.lower() in ("b", "c", 'd', 'f'):
-        #            ts = (stars - 6.5) * 10 * 6000
-        #            flag = 1
-        #    elif 20.0 > stars > 8.0:
-        #        if rank.lower() in ("f", ):
-        #            ts = (stars - 8) * 20 * 6000
-        #            flag = 1
+        elif int(groupid) == Config.GROUPID["JINJIEQUN"]:
+            if 8.0 > stars > 6.5:
+                if rank.lower() in ("b", "c", 'd', 'f'):
+                    ts = (stars - 6.5) * 10 * 6000
+                    flag = 1
+            elif 20.0 > stars > 8.0:
+                if rank.lower() in ("f", ):
+                    ts = (stars - 8) * 20 * 6000
+                    flag = 1
         if flag:
             pushTools.pushSmokeCmd(groupid, qq, ts)
             res = f'因触犯{"".join(res_mark)}入狱'
@@ -1116,6 +1116,7 @@ class botHandler():
                 tth = eval(count300)+eval(count50)+eval(count100)
                 self.insert_user(username,in_pp,acc1,pc,rank,tth,osuid)
                 logging.info('[%s]插入成功', uid)
+                time.sleep(0.5)
             except:
                 logging.exception('[%s]插入失败' % uid)
 
@@ -1212,7 +1213,7 @@ class botHandler():
         return ret
 
     def get_usernames_by_uid(self, uids):
-        conn = interMysql.Connect('osu')
+        conn = interMysql.Connect('osu2')
         sql = 'SELECT osuid,osuname FROM user where osuid in (%s)'
         sql = sql % (','.join(map(lambda x:'%s', uids)))
         ret = conn.query(sql, uids)
