@@ -23,6 +23,7 @@ class autoRefreshTokenJob(jobCenter.jobCenter):
         for u in users:
             logging.info('dealing.. %s', u)
             ppyAPI.apiv2RefreshToken(u["refreshtoken"], qq=u["qq"], groupid=u["groupid"])
+            time.sleep(1)
 
     def getUsers(self):
         db = interMysql.Connect('osu2')
