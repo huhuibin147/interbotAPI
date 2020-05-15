@@ -78,13 +78,20 @@ def rctpps(**kw):
     return res
 
 @app.route('/mybp', methods=['POST'])
-@appTools.deco(autoOusInfoKey='osuid,osuname')
+@appTools.deco()
 def mybp(**kw):
-    x = "1" if not kw['iargs'] else kw['iargs'][0]
-    if int(x) < 0 or int(x) > 100:
-        x = "1"
+    qqid = kw['qqid'] if not kw['atqq'] else kw['atqq']
+    if not kw['iargs']:
+        x = 1  
+    else:
+        input0 = kw['iargs'][0]
+        args0 = input0.replace(f'[CQ:at,qq={qqid}]', '')
+        x = int(args0) if args0.isdigit() else 1
+
+    if x < 0 or x > 100:
+        x = 1
     b = botHandler.botHandler()
-    osuinfo = b.getOsuInfo2(kw['qqid'])
+    osuinfo = b.getOsuInfo2(qqid)
     logging.info(osuinfo)
     smoke_res = None
     if osuinfo:
@@ -102,7 +109,7 @@ def mybp(**kw):
         if not recinfo:
             res = "别复读好马!"
         else:
-            res, kv = b.getRctppRes(recinfo[int(x)-1])
+            res, kv = b.getRctppRes(recinfo[x-1])
             # 执行管理逻辑
             smoke_res = b.rctppSmoke(kw["groupid"], kw["qqid"], kv, iswarn=1)
             if smoke_res:
