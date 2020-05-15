@@ -533,7 +533,7 @@ def randmap(**kw):
     if not s1:
         s1 = 4
     if not s2:
-        s2 = 6
+        s2 = 5.6
     if not s3:
         s3 = 5
 
