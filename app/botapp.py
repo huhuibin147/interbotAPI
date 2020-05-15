@@ -191,14 +191,29 @@ def bestmaprec(**kw):
 @app.route('/bbp', methods=['POST'])
 @appTools.deco(autoOusInfoKey='osuid,osuname')
 def bbp(**kw):
-    b = botHandler.botHandler()
-    osuid = kw['autoOusInfoKey']['osuid']
-    osuname = kw['autoOusInfoKey'].get('osuname')
+    qqid = kw['qqid'] if not kw['atqq'] else kw['atqq']
+    if not kw['iargs']:
+        x = 1  
+    else:
+        input0 = kw['iargs'][0]
+        args0 = input0.replace(f'[CQ:at,qq={qqid}]', '')
+        x = int(args0) if args0.isdigit() else 1
 
-    recinfo = b.getRecBp(osuid, "5")
+    if x < 1 or x > 100:
+        x = 1
+
+    b = botHandler.botHandler()
+    osuinfo = b.getOsuInfo2(qqid)
+    if osuinfo:
+        osuid = osuinfo['osuid']
+        osuname = osuinfo['osuname']
+    else:
+        return "你倒是绑定啊.jpg"
+
+    recinfo = b.getRecBp(osuid, "100")
     if not recinfo:
         return "没有Bp,下一个!!"
-    res = b.bbpOutFormat(recinfo, osuname)
+    res = b.bbpOutFormat(recinfo[x-1:x+4], osuname, x)
     return res
 
 @app.route('/test', methods=['POST'])

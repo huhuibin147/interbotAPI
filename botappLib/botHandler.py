@@ -652,19 +652,19 @@ class botHandler():
                 dbMapInfo = {}
         return dbMapInfo
 
-    def bbpOutFormat(self, bp5, ousname):
+    def bbpOutFormat(self, bp5, ousname, offset=0):
         """bbp输出格式化
         """
         s_msg = "%s's bp!!\n" % ousname
         for i,r in enumerate(bp5[0:5]):
-            msg = 'bp{x},{pp}pp,{acc}%,{rank},+{mod}'
+            msg = 'bp{x}, {pp}pp,{acc:.2f}%,{rank},+{mod}'
             c50 = float(r['count50'])
             c100 = float(r['count100'])
             c300 = float(r['count300'])
             cmiss = float(r['countmiss'])
             acc = round((c50*50+c100*100+c300*300)/(c50+c100+c300+cmiss)/300*100, 2)
             msg = msg.format(
-                x=i+1,
+                x=i+offset,
                 pp=round(float(r['pp'])),
                 acc=acc,rank=r['rank'],
                 mod=','.join(mods.getMod(int(r['enabled_mods'])))
