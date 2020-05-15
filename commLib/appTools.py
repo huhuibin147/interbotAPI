@@ -39,7 +39,7 @@ def deco(**kw):
                         qqid = kwargs['atqq']
                     osuinfo = getOsuInfo(qqid)
                     if not osuinfo:
-                        return "请使用¡setid认证绑定.jpg"
+                        return "您未绑定bot，发送!oauth，然后点击链接登录账号进行绑定(友情提示不要点别人的"
                     for k in autokeys:
                         kwargs['autoOusInfoKey'][k] = osuinfo[k]
                 else:
