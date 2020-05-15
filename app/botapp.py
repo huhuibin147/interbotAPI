@@ -516,6 +516,31 @@ def sttest_start(func, qqid, groupid, step):
     return end
 
 
+
+@app.route('/randmap', methods=['POST'])
+@appTools.deco()
+def randmap(**kw):
+    s1, s2, s3 = None, None, None
+    if len(kw['iargs']) >= 1:
+        s1 = float(kw['iargs'][0])
+        if len(kw['iargs']) > 1:
+            s2 = float(kw['iargs'][1])
+        if len(kw['iargs']) > 2:
+            s3 = float(kw['iargs'][2])
+            if s3 > 50:
+                s3 = 5
+
+    if not s1:
+        s1 = 4
+    if not s2:
+        s2 = 6
+    if not s3:
+        s3 = 5
+
+    b = botHandler.botHandler()
+    res = b.random_maps(s1, s2, s3)
+    return res
+
 if __name__ == '__main__':
     app.run(threaded=True)
     

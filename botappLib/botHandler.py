@@ -1278,3 +1278,28 @@ class botHandler():
         if not ret:
             return None
         return ret[0]
+    
+    def random_maps(self, minstar, maxstar, limit):
+        x = random.uniform(minstar, maxstar)
+        maps = self.get_maps_by_stars(x, limit)
+        if not maps:
+            return "暂无推荐，请换个难度重试！"
+
+        out = f"随机推图  本次推荐星级:{maps[0]['stars']:.1f}*\n"
+        for i, r in enumerate(maps):
+            out += f'[{i+1}] {r["artist"]} - {r["title"]} [{r["version"]}] '
+            out += f'Beatmap by {r["creator"]}\n'
+            out += f'https://osu.ppy.sh/b/{r["bid"]}\n'
+        return out[:-1]
+        
+
+
+    def get_maps_by_stars(self, minstar, limit):
+        db = interMysql.Connect('osu')
+        sql = '''
+            SELECT bid, source, artist, title, version, creator, stars
+            FROM beatmap where stars >= %s limit %s
+        '''
+        ret = db.query(sql, [minstar, limit])
+        return ret
+
