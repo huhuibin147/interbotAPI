@@ -849,8 +849,11 @@ class botHandler():
             db.rollback()
             logging.error(traceback.format_exc())
 
-    def rctppSmoke(self, groupid, qq, kv):
+    def rctppSmoke(self, groupid, qq, kv, iswarn=0):
         """超星机制
+        Args:
+            iswarn:
+                提醒模式
         规则：
             新人群
                 5.6星 0.01*10分钟
@@ -902,9 +905,12 @@ class botHandler():
         #             ts = (stars - 8) * 20 * 6000
         #             flag = 1
         if flag:
-            pushTools.pushSmokeCmd(groupid, qq, ts)
-            res = f'因触犯{"".join(res_mark)}入狱'
-            return res
+            if iswarn:
+                return "".join(res_mark)
+            else:
+                pushTools.pushSmokeCmd(groupid, qq, ts)
+                res = f'因触犯{"".join(res_mark)}入狱'
+                return res
         return
 
     def groupPlayerCheck(self, groupid):

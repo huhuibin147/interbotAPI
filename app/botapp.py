@@ -32,15 +32,18 @@ def rctpp(**kw):
     osuname = kw['autoOusInfoKey']['osuname']
     recinfo = b.getRecInfo(osuid, "1")
     logging.info(recinfo)
+    smoke_res = None
     if not recinfo:
         res = "没有最近游戏记录,绑定用户为%s" % osuname
     else:
         res, kv  = b.getRctppRes(recinfo[0])
         # 执行管理逻辑
-        smoke_res = b.rctppSmoke(kw["groupid"], kw["qqid"], kv)
+        smoke_res = b.rctppSmoke(kw["groupid"], kw["qqid"], kv, iswarn=1)
         if smoke_res:
             res += f'\n>>{smoke_res}<<'
     rank_tab.upload_rec(osuid, kw["groupid"])
+    if smoke_res:
+        return f'由于触发本群限制，请私聊查询，触犯法律:{smoke_res}'
     return res
 
 @app.route('/rctppnew', methods=['POST'])
@@ -83,6 +86,7 @@ def mybp(**kw):
     b = botHandler.botHandler()
     osuinfo = b.getOsuInfo2(kw['qqid'])
     logging.info(osuinfo)
+    smoke_res = None
     if osuinfo:
         osuid = osuinfo['osuid']
 
@@ -100,11 +104,13 @@ def mybp(**kw):
         else:
             res, kv = b.getRctppRes(recinfo[int(x)-1])
             # 执行管理逻辑
-            smoke_res = b.rctppSmoke(kw["groupid"], kw["qqid"], kv)
+            smoke_res = b.rctppSmoke(kw["groupid"], kw["qqid"], kv, iswarn=1)
             if smoke_res:
                 res += f'\n>>{smoke_res}<<'
     else:
         res = "你倒是绑定啊.jpg"
+    if smoke_res:
+        return f'由于触发本群限制，请私聊查询，触犯法律:{smoke_res}'
     return res
 
 
