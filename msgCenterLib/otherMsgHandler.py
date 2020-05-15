@@ -17,6 +17,9 @@ class oMsgHandler():
         if self.context["post_type"] == "notice":
             self.noticeMsg()
 
+        elif self.context["post_type"] == "request":
+            self.requestMsg()
+
         return rs
     
     def noticeMsg(self):
@@ -35,8 +38,17 @@ class oMsgHandler():
         elif self.context["notice_type"] == "group_increase":
             self.group_increase()
 
+        return
+    
+    def requestMsg(self):
+        logging.info("requestrequestrequestrequest!!!!")
+        # 群限制
+        logging.info('self.context:%s', self.context)
+        group_id = self.context["group_id"]
+        if group_id not in list(Config.GROUPID.values()):
+            return
         # 加群处理
-        elif slef.context["notice_type"] == "request":
+        if self.context["notice_type"] == "request":
             if self.context["request_type"] == "group" and self.context["sub_type"] == "add":
                 self.group_request()
 
@@ -55,7 +67,7 @@ class oMsgHandler():
     
     def group_increase(self):
         # 活动回流级别做提示
-        msg = "cy让我来欢迎新人！"
+        msg = "cy让我来欢迎新人！先仔细读下公告，有问题直接@管理@管理@管理！"
         pushTools.pushMsgOne(self.context["group_id"], msg)
 
     def group_request(self):
