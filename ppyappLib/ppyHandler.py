@@ -4,6 +4,8 @@ import traceback
 import random
 import re
 import json
+import requests
+from html.parser import HTMLParser
 from commLib import mods
 from datetime import datetime, timedelta
 from ppyappLib import ppyAPI
@@ -314,4 +316,21 @@ class ppyHandler():
             rs = '%sw' % int(n/10000)
         return rs
 
-
+    def get_user_page(self, uid, name, page):
+        kw = {
+            'uid': uid
+        }
+        res = ppyAPI.apiRoute('userpage', **kw)
+        if len(res) < 1:
+            return 'support都没有,先氪金好吧!'
+        result = (res).replace('<br />','\n')
+        repatt = re.compile(r'<.*?>')
+        result = re.sub(repatt,'',result)
+        result = HTMLParser().unescape(result)
+        pagesize = 250
+        total = (len(result)+pagesize)//pagesize
+        if page > total:
+            page = total
+        s_msg = name+"'s userpage   "
+        s_msg = s_msg + '第%s页,共%s页\n'%(str(page),str(total))
+        return s_msg + result[pagesize*(page-1):pagesize*page]

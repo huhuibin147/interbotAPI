@@ -20,7 +20,8 @@ ref = {
     'bp': 'https://osu.ppy.sh/api/get_user_best?k=%s&u={uid}&m={mode}&limit={limit}' % OSU_API_KEY,
     'beatmap': 'https://osu.ppy.sh/api/get_beatmaps?k=%s&b={bid}' % OSU_API_KEY,
     'skill': 'http://osuskills.com/user/{osuname}',
-    'skillvs': 'http://osuskills.com/user/{osuname}/vs/{vsosuname}'
+    'skillvs': 'http://osuskills.com/user/{osuname}/vs/{vsosuname}',
+    'userpage': 'https://osu.ppy.sh/pages/include/profile-userpage.php?u={uid}'
 }
 
 
@@ -31,7 +32,10 @@ def apiRoute(api, **kw):
     res = requests.get(url)
     logging.info('apiRoute url:%s|status:%s|res:%s', url, res, res.text)
     if res.status_code == 200 and res.text:
-        ret = json.loads(res.text)
+        try:
+            ret = json.loads(res.text)
+        except:
+            return res.text
 
     return ret
 
@@ -72,7 +76,6 @@ def apiv2Req(endponit, token, refreshtoken, isrefresh=1, **kw):
             if isrefresh:
                 rs = apiv2RefreshToken(refreshtoken, **kw)
                 if rs not in (-1, -2):
-                    access_token = rs
                     logging.info('token刷新成功！')
                     return apiv2Req(endponit, rs, refreshtoken, isrefresh=0, **kw)
 

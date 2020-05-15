@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
+import re
 import yaml
 import json
 import logging
@@ -7,6 +8,7 @@ from flask import Flask
 from flask import request
 from commLib import appTools
 from ppyappLib import ppyHandler
+from botappLib import botHandler
 
 with open('./app/ppyapp.yaml', encoding='utf8') as f:
     config = yaml.load(f)
@@ -83,6 +85,33 @@ def osuskillvs(**kw):
     pyh = ppyHandler.ppyHandler()
     ret = pyh.skillVsInfo(osuname, vsosuname)
     return ret
+
+@app.route('/upage', methods=['POST'])
+@appTools.deco(rawinput=True)
+def upage(**kw):
+    qqid = kw['qqid'] if not kw['atqq'] else kw['atqq']
+    if not kw['iargs']:
+        x = 1  
+    else:
+        input0 = kw['iargs'][0]
+        args0 = input0.replace(f'[CQ:at,qq={qqid}]', '')
+        x = int(args0) if args0.isdigit() else 1
+    
+    b = botHandler.botHandler()
+    osuinfo = b.getOsuInfo2(qqid)
+    if osuinfo:
+        osuid = osuinfo['osuid']
+        osuname = osuinfo['osuname']
+    else:
+        return "你倒是绑定啊.jpg"
+
+    if int(x) < 0:
+        x = 1
+    pyh = ppyHandler.ppyHandler()
+    ret = pyh.get_user_page(osuid, osuname, x)
+    return ret
+
+
 
 if __name__ == '__main__':
     app.run(threaded=True)
