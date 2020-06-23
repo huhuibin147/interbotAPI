@@ -31,9 +31,9 @@ class QuantHandler():
         return False
         
 
-    def get_real_time_api_info(self, outtype=1):
+    def get_real_time_api_info(self, args='0'):
         api = real_time_api.RealTimeApi()
-        r = api.main(outtype=outtype)
+        r = api.main(args)
         return r
 
     def out_html(self, data):

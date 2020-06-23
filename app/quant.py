@@ -20,11 +20,12 @@ app = Flask(__name__)
 @app.route('/info', methods=['GET'])
 def getRealTimeInfo(**kw):
     tk = request.args.get('tk')
-    outtype = int(request.args.get('o', 1))
+    args = request.args.get('o', '0')
+    logging.info('args:%s', args)
     obj = quantHandler.QuantHandler()
     if not obj.check_token(tk):
         return ''
-    r = obj.get_real_time_api_info(outtype)
+    r = obj.get_real_time_api_info(args)
     rs = obj.out_html(r)
     return rs
 
