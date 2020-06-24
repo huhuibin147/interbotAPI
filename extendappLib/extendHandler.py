@@ -68,7 +68,7 @@ class extendHandler():
         pp, pp2, maxpp = self.checkUser(osuid, osuname)
         if not pp:
             return '你在逗我把,哪来的pp???'
-        return '%s\npp:%spp\ninter手算:%spp\n目前潜力:%spp' % (osuname, pp, pp2, maxpp)
+        return '%s\npp:%spp\n薛定谔的屁屁:%spp\n薛定谔的潜力:%spp' % (osuname, pp, pp2, maxpp)
 
     def choiceMap(self, osuid):
         '''低端推荐pp图'''
