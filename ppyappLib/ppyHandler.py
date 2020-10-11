@@ -225,7 +225,7 @@ class ppyHandler():
         bp1_stars = bp1_mapInfo["difficultyrating"][:3]
 
         rs += '{username}\n'.format(username=username)
-        # rs += '[CQ:image,cache=0,file={avatar}]\n'.format(avatar=avatar)
+        rs += '[CQ:image,cache=0,file={avatar}]\n'.format(avatar=avatar)
         rs += '{pp}pp ({pp_days_incr}/day)\n'.format(pp=int(pp), pp_days_incr=pp_days_incr)
         rs += '{pc}pc ({pc_days_incr}/day)\n'.format(pc=pc, pc_days_incr=pc_days_incr)
         rs += '{tth}tth ({tth_pc_incr}/pc)\n'.format(tth=total_hits_str, tth_pc_incr=tth_pc_incr_str)
