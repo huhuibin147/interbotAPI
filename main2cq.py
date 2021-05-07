@@ -11,7 +11,8 @@ from cqhttp import CQHttp
 # from tornado.ioloop import IOLoop
 from commLib import cmdRouter
 
-bot = CQHttp(api_root='http://inter4.com:5700/')
+bot = CQHttp(api_root='http://127.0.0.1:5700/')
+#bot = CQHttp(api_root='http://82.156.24.224:5700/')
 
 centerURL = 'http://inter1.com/center/msg'
 

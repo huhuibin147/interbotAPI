@@ -16,5 +16,5 @@ class aliveJob(jobCenter.jobCenter):
             os.system("sh loopUtil.sh %s" % ser)
 
     def getServers(self):
-        sers = ["apiapp1", "apiapp2", "apiv", "ppyapp1", "sysapp1", "defindapp1", "msgCenter1", "quant"]
+        sers = ["apiapp1", "apiv", "ppyapp1", "sysapp1", "defindapp1", "msgCenter1", "quant", "botapp1", "baseapp1", "extendapp1"]
         return sers

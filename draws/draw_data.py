@@ -7,7 +7,8 @@ from draws import score
 from botappLib import botHandler
 from commLib import interRequest
 
-bloodcat_bg = 'http://bloodcat.com/osu/i/%s'
+#bloodcat_bg = 'http://bloodcat.com/osu/i/%s'
+bloodcat_bg = 'https://assets.ppy.sh/beatmaps/%s/covers/cover.jpg'
 bg_path = 'image/bg/'
 img_path = 'image/userimg/'
 
