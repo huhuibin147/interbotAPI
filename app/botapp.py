@@ -405,7 +405,7 @@ def rank(**kw):
         bid = kw['iargs'][0]
         osuid = kw['autoOusInfoKey']['osuid']
         p = drawRank.start(bid, kw["groupid"], hid=1, mods=-1, uid=osuid)
-        return "[CQ:image,cache=0,file=http://139.199.10.126/itbimage/%s]" % p
+        return "[CQ:image,cache=0,file=http://interbot.cn/itbimage/%s]" % p
     except:
         logging.exception("rank error")
         return "fail..."
