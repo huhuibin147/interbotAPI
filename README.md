@@ -1,5 +1,5 @@
 ## interbotAPI  
-#### python3+go-cqhttp+api模式的QQBot  
+#### python3+go-cqhttp+api的QQBot  
   
 
 ## 构成
@@ -37,8 +37,7 @@ xxx需要同名,yaml做端口配置
 
 在mariadb中配置,cmdRef  
 
-  
-  
+## 其他  
 
 热寂的QQ群: 863935563  
 
