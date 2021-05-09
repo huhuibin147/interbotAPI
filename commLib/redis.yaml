@@ -2,14 +2,16 @@ osu2:
   host: 127.0.0.1
   port: 6379
   db: 0
+  pwd: '123456654'
 
 inter4:
-  host: 'inter4.com'
+  host: '127.0.0.1'
   port: 6379
   db: 0
+  pwd: '123456654'
 
 inter1:
-  host: 'inter1.com'
+  host: '127.0.0.1'
   port: 6379
   db: 0
   pwd: '123456654'
