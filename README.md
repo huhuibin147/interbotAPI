@@ -1,20 +1,43 @@
-# interbotAPI<br>
-## 简介
-基于微服务思想由API为核心的，基于python3+酷Q+httpAPI的QQBot<br>
-
+## interbotAPI  
+#### python3+go-cqhttp+api的QQBot  
+  
 
 ## 构成
-* **main2cq** <br> 
-   处理消息的接收，分发，返回；分发往指定消息中心msgCenter，返回分http同步返回和异步websocket返回<br>
-* **msgCenter** <br> 
-   消息处理中心：命令自动转发，对接相应的服务，内置权限控制，命令以及选项自动提取<br>
-* **itb.sh** <br>
-   用于启动服务的简易框架启动脚本
+#### main2cq
 
-## 编写方法
-* app+yaml，flask形式的服务
-* 配置命令与路由，使用mariadb
-* 新增节点需要做从库，用于自动路由
+专门对接cqhttp，作为第一层转接点，做收发处理  
+1. 同步处理: 将消息分发到msgCenter后同步返回结果，功能单一  
+2. 异步处理: 提供额外cqapi的功能，由websocket封装，可外部主动发起  
+   
+#### msgCenter 
 
-<br><br>
+消息处理中心，专注消息本身  
+由mariadb配置命令与路由，对接功能服务api  
+
+1. 命令抽取,路由转发
+2. 权限控制,黑白名单处理
+3. at与私聊自动格式转换
+   
+#### itb.sh 
+
+用于启动服务的简易框架启动脚本  
+
+## 开发方式
+#### itb方式的flask服务 
+
+此方式则需要遵循固定规则  
+app目录下启动入口,xxx.py+xxx.yaml  
+xxx需要同名,yaml做端口配置  
+
+#### 自由接入方式
+
+实现提供http接口的服务即可  
+
+#### 配置命令
+
+在mariadb中配置,cmdRef  
+
+## 其他  
+
+热寂的QQ群: 863935563  
 
