@@ -5,7 +5,8 @@ import redis
 config = {
     'host': '127.0.0.1',
     'port': 6379,
-    'db': 0
+    'db': 0,
+    'pwd': '123456654'
 }
 
 def connect(node=None):

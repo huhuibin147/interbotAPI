@@ -369,7 +369,8 @@ class botHandler():
         """格式化rctpp输出"""
         outp = '{artist} - {title} [{version}] \n'
         outp += 'Beatmap by {creator} \n'
-        outp += '[ar{ar} cs{cs} od{od} hp{hp}  bpm{bpm}]\n\n'
+        outp += '[ar{ar} cs{cs} od{od} hp{hp}  bpm{bpm}]\n'
+        outp += '[CQ:image,cache=0,file=https://b.ppy.sh/thumb/{sid}l.jpg]'
         outp += 'stars: {stars}* | {mods_str} \n'
         outp += '{combo}x/{max_combo}x | {acc}% | {rank} \n\n'
         outp += '{acc}%: {pp}pp\n'
@@ -408,7 +409,8 @@ class botHandler():
             fcacc = fcacc,
             miss = miss,
             missStr = missStr,
-            bpm = bpm
+            bpm = bpm,
+            sid = mapInfo["beatmapset_id"]
         )
         # 供外部smoke使用
         kv = {

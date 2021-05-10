@@ -11,8 +11,8 @@ from cqhttp import CQHttp
 # from tornado.ioloop import IOLoop
 from commLib import cmdRouter
 
-#bot = CQHttp(api_root='http://127.0.0.1:5700/')
-bot = CQHttp(api_root='http://xfs.com:5700/')
+bot = CQHttp(api_root='http://127.0.0.1:5700/')
+#bot = CQHttp(api_root='http://xfs.com:5700/')
 
 centerURL = 'http://inter1.com/center/msg'
 
@@ -62,7 +62,8 @@ def msgHandler(bot, context):
         bot.send(context, res.text)
 
 def wsgiMain():
-    bot.run(host='0.0.0.0', port=8887)
+    #bot.run(host='0.0.0.0', port=8887)
+    bot.run(host='0.0.0.0', port=8889)
 
 
 # 主线程
