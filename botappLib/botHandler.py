@@ -370,7 +370,7 @@ class botHandler():
         outp = '{artist} - {title} [{version}] \n'
         outp += 'Beatmap by {creator} \n'
         outp += '[ar{ar} cs{cs} od{od} hp{hp}  bpm{bpm}]\n'
-        outp += '[CQ:image,cache=0,file=https://b.ppy.sh/thumb/{sid}l.jpg]'
+        outp += Config.bg_thumb
         outp += 'stars: {stars}* | {mods_str} \n'
         outp += '{combo}x/{max_combo}x | {acc}% | {rank} \n\n'
         outp += '{acc}%: {pp}pp\n'
@@ -660,6 +660,28 @@ class botHandler():
         s_msg = "%s's bp!!\n" % ousname
         for i,r in enumerate(bp5[0:5]):
             msg = 'bp{x}, {pp}pp,{acc:.2f}%,{rank},+{mod}'
+            c50 = float(r['count50'])
+            c100 = float(r['count100'])
+            c300 = float(r['count300'])
+            cmiss = float(r['countmiss'])
+            acc = round((c50*50+c100*100+c300*300)/(c50+c100+c300+cmiss)/300*100, 2)
+            msg = msg.format(
+                x=i+offset,
+                pp=round(float(r['pp'])),
+                acc=acc,rank=r['rank'],
+                mod=','.join(mods.getMod(int(r['enabled_mods'])))
+            )
+            s_msg = s_msg + msg + '\n'
+        return s_msg[:-1]
+
+    def bbpOutFormat2(self, bp5, ousname, offset=0):
+        """bbp输出格式化
+        """
+        s_msg = "%s's bp!!\n" % ousname
+        for i,r in enumerate(bp5[0:3]):
+            mapInfo = self.getOsuBeatMapInfo(r["beatmap_id"])
+            msg = Config.bg_thumb.format(sid=mapInfo["beatmapset_id"])
+            msg += 'bp{x}, {pp}pp,{acc:.2f}%,{rank},+{mod}'
             c50 = float(r['count50'])
             c100 = float(r['count100'])
             c300 = float(r['count300'])
