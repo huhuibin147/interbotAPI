@@ -972,7 +972,7 @@ class botHandler():
         n2 = len(ExLimits)
 
         msg = "本群人数[%s],绑定用户数[%s],占比[%s%%],超限人数[%s]" % (a, n, p, n2) 
-        if n2:
+        if n2 > 0:
             msg += '\n超限列表:\n'
             for r in ExLimits:
                 msg += '%s(%spp)\n' % (r["username"], r["pp"])
@@ -991,7 +991,7 @@ class botHandler():
             limit_pp = 0
 
         if not limit_pp:
-            return 0
+            return []
             
         db = interMysql.Connect('osu')
         sql = '''
