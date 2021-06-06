@@ -444,6 +444,13 @@ def up(**kw):
     osuid = kw['autoOusInfoKey']['osuid']
     return rank_tab.upload_rec(osuid, kw["groupid"])
 
+@app.route('/uploadrec2', methods=['POST'])
+@appTools.deco(autoOusInfoKey='osuid', rawinput=1)
+def up2(**kw):
+    osuid = kw['autoOusInfoKey']['osuid']
+    rank_tab.upload_rec(osuid, kw["groupid"])
+    return ""
+
 @app.route('/nbp', methods=['POST'])
 @appTools.deco(autoOusInfoKey='osuid,osuname', rawinput=1)
 def nbp(**kw):
