@@ -58,7 +58,7 @@ def save_rec(uid, groupid, hid=1, limit=1):
     # 最新rec成绩优化
     newRec = score.rec_highscore(newRec)
     # 提取rec
-    inRec = score.check_rec(bids, newRec)
+    inRec = score.check_rec(bids, newRec, uid)
     if not inRec:
         logging.info('无新成绩！')
         return '你还要再刚一点.JPG'

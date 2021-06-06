@@ -108,13 +108,13 @@ def bind_group_irc(osuname, groupid, qq):
         return -1
 
 
-def check_rec(bids, rec):
+def check_rec(bids, rec, uid):
     # 提取新记录成绩
     conn = interMysql.Connect('osu')
     sql = '''
-        SELECT bid, score, mods from recinfo where bid in (%s)
+        SELECT bid, score, mods from recinfo where bid in (%s) and uid = %s
     '''
-    sql = sql % (','.join(map(lambda x:'%s', bids)))
+    sql = sql % (','.join(map(lambda x:'%s', bids)), uid)
     ret = conn.query(sql, bids)
     if not ret:
         # 成绩过滤
