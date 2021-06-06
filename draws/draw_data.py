@@ -49,7 +49,7 @@ def cal_bg_url(bid, sid):
     #从sayobot处下载
     try:
         filename = ""
-        search_file_url = f"https://api.sayobot.cn/v2/beatmapinfo?K={bid}"
+        search_file_url = f"https://api.sayobot.cn/v2/beatmapinfo?K={sid}"
         r = interRequest.interReq()
         info = r.get(search_file_url)
         map = json.loads(info.text)
