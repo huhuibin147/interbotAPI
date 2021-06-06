@@ -29,17 +29,45 @@ def get_user_stats(uid='8505303'):
         return {}
     return ret[0]
 
-def check_bg(bid='1028215'):
+def check_bg(bid='1028215', sid='480609'):
     for i in range(3):
         if not os.path.exists(bg_path+bid+'.jpg'):
-            down_bg(bid)
+            down_bg(bid, sid)
         else:
             return 1
     return 0
 
-def down_bg(bid='1028215'):
+def down_bg(bid='1028215', sid='480609'):
     iq = interRequest.interReq()
-    return iq.down_image(iname=bid, url=bloodcat_bg % bid, path=bg_path)
+    #计算出url
+    bgUrl = cal_bg_url(bid, sid)
+    if bgUrl == 0:
+        return 0
+    return iq.down_image(iname=bid, url=bgUrl, path=bg_path)
+
+def cal_bg_url(bid, sid):
+    #从sayobot处下载
+    try:
+        filename = ""
+        search_file_url = f"https://api.sayobot.cn/v2/beatmapinfo?K={bid}"
+        r = interRequest.interReq()
+        info = r.get(search_file_url)
+        map = json.loads(info.text)
+        for r in map["data"]["bid_data"]:
+            if str(r["bid"]) == bid:
+                filename = r["bg"]
+                break
+        else:
+            return 0
+        
+        bgUrl = f"https://dl.sayobot.cn/beatmaps/files/{sid}/{filename}"
+        logging.info(f"bid:{bid}, sid:{sid}, file url:{bgUrl}")
+        return bgUrl
+
+    except:
+        logging.error(f"down bid:{bid} fail")
+    return 0
+
 
 def check_img(uids, isup=0):
     downlist = []

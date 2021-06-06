@@ -80,7 +80,7 @@ class DrawRec():
 
 def drawR(mapjson, rankjson, userjson):
     # skin
-    bg_e = draw_data.check_bg(mapjson['beatmap_id'])
+    bg_e = draw_data.check_bg(mapjson['beatmap_id'], mapjson['beatmapset_id'])
     bg = '%s.jpg'%mapjson['beatmap_id'] if bg_e else 'newgame_background.png' 
     back_icon = 'menu-back-0.png'
     mod_icon = 'selection-mode.png'
@@ -142,8 +142,8 @@ def drawR(mapjson, rankjson, userjson):
     d = DrawRec()
 
     # 第一层bg
-    d.add_items(isresize=True, path='image/bg/default.jpg')
-    #d.add_items(isresize=False, path='image/bg/%s'%bg)
+    # d.add_items(isresize=True, path='image/bg/default.jpg')
+    d.add_items(isresize=True, path='image/bg/%s'%bg)
     # title黑层
     d.add_items2(songselecttop)
     # 更新提示
