@@ -61,7 +61,7 @@ class ppyHandler():
             values = value.findall(res)
             if not values:
                 return '抓取不到相关信息!!'
-            skills = ['Stamina', 'Tenacity', 'Agility', 'Accuracy', 'Precision', 'Reaction', 'Memory', 'Reading']
+            skills = ['Stamina', 'Tenacity', 'Agility', 'Accuracy', 'Precision', 'Reaction']
             #skills_list = list(map(lambda x,y:x+y ,skills,values))
             for i,s in enumerate(skills):
                 val = int(values[i])
@@ -90,7 +90,7 @@ class ppyHandler():
             values = value.findall(res)
             if not values:
                 return '那个破网站连不上,你们还是去床上解决吧!!'
-            skills = ['Stamina', 'Tenacity', 'Agility', 'Accuracy', 'Precision', 'Reaction', 'Memory', 'Reading']
+            skills = ['Stamina', 'Tenacity', 'Agility', 'Accuracy', 'Precision', 'Reaction']
             s_msg = '%s vs %s\n'%(uid, uid2)
             for i,s in enumerate(skills):
                 v1 = int(values[i])
