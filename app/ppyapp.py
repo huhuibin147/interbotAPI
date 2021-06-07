@@ -45,6 +45,16 @@ def recent(**kw):
     ret = pyh.getRecent(uid, mode, limit)
     return json.dumps(ret)
 
+@app.route('/get_scores', methods=['POST'])
+@appTools.deco()
+def getScores(**kw):
+    uid = kw.get('osuid')
+    bid = kw.get('bid')
+    limit = kw.get('limit', 10)
+    pyh = ppyHandler.ppyHandler()
+    ret = pyh.getScores(uid, bid, limit)
+    return json.dumps(ret)
+
 @app.route('/oppai', methods=['POST'])
 @appTools.deco()
 def oppai(**kw):

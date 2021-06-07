@@ -16,6 +16,7 @@ apiv2FailWord = 'unauthorized'
 
 ref = {
     'recent': 'https://osu.ppy.sh/api/get_user_recent?k=%s&u={uid}&m={mode}&limit={limit}' % OSU_API_KEY,
+    'get_scores': 'https://osu.ppy.sh/api/get_scores?k=%s&u={uid}&b={bid}&limit={limit}' % OSU_API_KEY,
     'userinfo': 'https://osu.ppy.sh/api/get_user?k=%s&u={uid}' % OSU_API_KEY,
     'bp': 'https://osu.ppy.sh/api/get_user_best?k=%s&u={uid}&m={mode}&limit={limit}' % OSU_API_KEY,
     'beatmap': 'https://osu.ppy.sh/api/get_beatmaps?k=%s&b={bid}' % OSU_API_KEY,

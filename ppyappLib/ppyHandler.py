@@ -29,6 +29,15 @@ class ppyHandler():
         logging.info(kw)
         return ppyAPI.apiRoute('recent', **kw)
     
+    def getScores(self, uid, bid, limit=10):
+        kw = {
+            'uid': uid,
+            'bid': bid,
+            'limit': limit
+        }
+        logging.info(kw)
+        return ppyAPI.apiRoute('get_scores', **kw)
+    
     def getOsuUserInfo(self, uid):
         kw = {'uid': uid}
         logging.info(kw)

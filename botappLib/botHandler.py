@@ -62,6 +62,18 @@ class botHandler():
         )
         return json.loads(ret)
 
+    def getBestInfo(self, osuid, bid, limit):
+        """取osu用户最好成绩
+        Args:
+            osuid
+            bid
+            limit
+        """
+        ret = cmdRouter.invoke(
+            '!ubest', {"osuid": osuid, "bid": bid, "limit": limit}
+        )
+        return json.loads(ret)
+
     def getRecBp(self, osuid, limit):
         """取osu用户bp信息
         Args:

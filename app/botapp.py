@@ -180,11 +180,17 @@ def bestmaprec(**kw):
     bid = kw['iargs'][0]
     osuid = kw['autoOusInfoKey']['osuid']
     b = botHandler.botHandler()
-    res = b.get_best_map_rec_from_db(osuid, bid)
+    # res = b.get_best_map_rec_from_db(osuid, bid)
+    # if not res:
+    #     return "你连成绩都没有，快去打一个上传！"
+    # recinfo = json.loads(res["recjson"])
+
+    res = b.getBestInfo(osuid, bid, "1")
     if not res:
-        return "你连成绩都没有，快去打一个上传！"
-    recinfo = json.loads(res["recjson"])
-    res, kv = b.getRctppRes(recinfo)
+        return "你倒是打一下啊!"
+    recinfo = res[0]
+    recinfo["beatmap_id"] = bid
+    res, _ = b.getRctppRes(recinfo)
     return res
 
 
