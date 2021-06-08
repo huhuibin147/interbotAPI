@@ -758,7 +758,7 @@ class botHandler():
                 todaybp.append(bp)
             i = i + 1
 
-        if len(bp) == 0:
+        if len(todaybp) == 0:
             return "你太菜了!一个bp都没更新!!"
 
         mtext = "%s today's bp：\n" % uid
