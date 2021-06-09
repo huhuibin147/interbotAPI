@@ -1344,19 +1344,19 @@ class botHandler():
         pp = float(apiUserInfo[0]['pp_raw'])
         username = apiUserInfo[0]['username']
         avg_pps = self.get_bpmsg_pp_avg(pp-20, pp+20)
-        bpinfo = self.getRecBp(osuid, "10")
+        bpinfo = self.getRecBp(osuid, "5")
         s = f"{username}'s pp指数\n"
         s += f"统计分段 {pp-20:.0f}pp~{pp+20:.0f}pp\n"
         diff = 0
         for i, r in enumerate(bpinfo):
             avg_pp = float(avg_pps[i]["pp"])
             u_pp = float(r["pp"])
-            s += f"{i+1}.{u_pp:.0f}pp | {avg_pp:.0f}pp({(u_pp-avg_pp):.1f}pp)\n"
+            s += f"{i+1}. {u_pp:.0f}pp -- {avg_pp:.0f}pp ({(u_pp-avg_pp):+.0f})\n"
             diff += u_pp-avg_pp
         if diff >= 0:
-            s += f"高于均值，累积差:{diff:.1f}pp"
+            s += f"高于均值,累积差: {diff:.1f}pp"
         else:
-            s += f"低于均值，累积差:{diff:.1f}pp"
+            s += f"低于均值,累积差: {diff:.1f}pp"
         return s
 
     def get_bpmsg_pp_avg(self, ppMin, ppMax):
