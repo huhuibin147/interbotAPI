@@ -582,6 +582,17 @@ def randmap(**kw):
     res = b.random_maps(s1, s2, s3)
     return res
 
+
+@app.route('/avgpp', methods=['POST'])
+@appTools.deco(autoOusInfoKey='osuid')
+def avgpp(**kw):
+    osuid = kw['autoOusInfoKey']['osuid']
+    b = botHandler.botHandler()
+    res = b.avg_pp_count(osuid)
+    return res
+
+
+
 if __name__ == '__main__':
     app.run(threaded=True)
     

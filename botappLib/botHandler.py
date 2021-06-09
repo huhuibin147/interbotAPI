@@ -1339,3 +1339,35 @@ class botHandler():
         ret = db.query(sql, [minstar, limit])
         return ret
 
+    def avg_pp_count(self, osuid):
+        apiUserInfo = self.getOsuInfoFromAPI(osuid)
+        pp = float(apiUserInfo[0]['pp_raw'])
+        username = apiUserInfo[0]['username']
+        avg_pps = self.get_bpmsg_pp_avg(pp-20, pp+20)
+        bpinfo = self.getRecBp(osuid, "10")
+        s = f"{username}'s pp指数\n"
+        s += f"统计分段 {pp-20:.0f}pp~{pp+20:.0f}pp\n"
+        diff = 0
+        for i, r in enumerate(bpinfo):
+            avg_pp = float(avg_pps[i]["pp"])
+            u_pp = float(r["pp"])
+            s += f"{i+1}.{u_pp:.0f}pp | {avg_pp:.0f}pp({(u_pp-avg_pp):.1f}pp)\n"
+            diff += u_pp-avg_pp
+        if diff >= 0:
+            s += f"高于均值，累积差:{diff:.1f}pp"
+        else:
+            s += f"低于均值，累积差:{diff:.1f}pp"
+        return s
+
+    def get_bpmsg_pp_avg(self, ppMin, ppMax):
+        db = interMysql.Connect('osu')
+        sql = '''
+            SELECT bp_rank, avg(score_pp) pp
+            FROM bpmsg
+            where user_pp >= %s and user_pp<=%s 
+            GROUP BY bp_rank
+            ORDER BY bp_rank
+        '''
+        ret = db.query(sql, [ppMin, ppMax])
+        return ret
+
