@@ -461,6 +461,11 @@ def up(**kw):
 def up2(**kw):
     osuid = kw['autoOusInfoKey']['osuid']
     rank_tab.upload_rec(osuid, kw["groupid"])
+    b = botHandler.botHandler()
+    recinfo = b.getRecInfo(osuid, "1")
+    if recinfo:
+        res, kv  = b.getRctppRes(recinfo[0])
+        b.rctppSmoke(kw["groupid"], kw["qqid"], kv, iswarn=0)
     return ""
 
 @app.route('/nbp', methods=['POST'])

@@ -913,12 +913,12 @@ class botHandler():
                     ts += (stars - 5.6) * 10 * 6000
                 else:
                     ts += (stars - 5.6) * 20 * 6000
-                res_mark.append('超星法')
+                res_mark.append('超星法(>5.6*)')
                 flag = 1
             
             if ar > 9.7 and acc < 90:
                 ts += (ar - 9.7) * 36000
-                res_mark.append('高ar法')
+                res_mark.append('高ar法(ar>9.7&acc<90)')
                 flag = 1
             
             if ts > 0:
