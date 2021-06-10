@@ -461,11 +461,36 @@ def up(**kw):
 def up2(**kw):
     osuid = kw['autoOusInfoKey']['osuid']
     rank_tab.upload_rec(osuid, kw["groupid"])
+    return ""
+
+@app.route('/re', methods=['POST'])
+@appTools.deco(autoOusInfoKey='osuid', rawinput=1)
+def re(**kw):
+    osuid = kw['autoOusInfoKey']['osuid']
+    rank_tab.upload_rec(osuid, kw["groupid"])
     b = botHandler.botHandler()
     recinfo = b.getRecInfo(osuid, "1")
     if recinfo:
         res, kv  = b.getRctppRes(recinfo[0])
-        b.rctppSmoke(kw["groupid"], kw["qqid"], kv, iswarn=0)
+        smoke = b.rctppSmoke(kw["groupid"], kw["qqid"], kv, iswarn=0)
+        if smoke:
+            return smoke
+    return ""
+
+@app.route('/pr', methods=['POST'])
+@appTools.deco(autoOusInfoKey='osuid', rawinput=1)
+def pr(**kw):
+    osuid = kw['autoOusInfoKey']['osuid']
+    rank_tab.upload_rec(osuid, kw["groupid"])
+    b = botHandler.botHandler()
+    recinfo = b.getRecInfo(osuid, "50")
+    for r in recinfo:
+        if r["rank"] == "F":
+            continue
+        res, kv  = b.getRctppRes(recinfo[0])
+        smoke = b.rctppSmoke(kw["groupid"], kw["qqid"], kv, iswarn=0)
+        if smoke:
+            return smoke
     return ""
 
 @app.route('/nbp', methods=['POST'])
