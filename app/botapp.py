@@ -190,7 +190,13 @@ def bestmaprec(**kw):
         return "你倒是打一下啊!"
     recinfo = res[0]
     recinfo["beatmap_id"] = bid
-    res, _ = b.getRctppRes(recinfo)
+    res, kv = b.getRctppRes(recinfo)
+    # 执行管理逻辑
+    smoke_res = b.rctppSmoke(kw["groupid"], kw["qqid"], kv, iswarn=1)
+    if smoke_res:
+        res += f'\n>>{smoke_res}<<'
+    if smoke_res:
+        return f'由于触发本群限制，请私聊查询，触犯法律:{smoke_res}'
     return res
 
 
