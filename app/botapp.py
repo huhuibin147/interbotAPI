@@ -491,6 +491,7 @@ def pr(**kw):
         smoke = b.rctppSmoke(kw["groupid"], kw["qqid"], kv, iswarn=0)
         if smoke:
             return smoke
+        break
     return ""
 
 @app.route('/nbp', methods=['POST'])
