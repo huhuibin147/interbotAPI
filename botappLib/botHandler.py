@@ -129,7 +129,7 @@ class botHandler():
             {"osuname": osuname, "vsosuname": vsosuname})
         return ret
 
-    def getRctppRes(self, recinfo):
+    def getRctppRes(self, recinfo, showdate=None):
         # rec计算
         bid = recinfo['beatmap_id']
         rinfo = self.exRecInfo(recinfo)
@@ -146,7 +146,7 @@ class botHandler():
         ojsonSs = self.oppai2json(bid, extendSs)
 
         res, kv  = self.formatRctpp2(ojson, recinfo['rank'], rinfo['acc'], 
-            ojsonFc['pp'], ojsonSs['pp'], bid, fcacc, recinfo['countmiss'])
+            ojsonFc['pp'], ojsonSs['pp'], bid, fcacc, recinfo['countmiss'], showdate)
 
         return res, kv 
 
@@ -377,7 +377,7 @@ class botHandler():
             bpm = rawbpm * 0.75
         return round(bpm)
 
-    def formatRctpp2(self, ojson, rank, acc, ppfc, ppss, bid, fcacc, miss):
+    def formatRctpp2(self, ojson, rank, acc, ppfc, ppss, bid, fcacc, miss, showdate=None):
         """格式化rctpp输出"""
         outp = '{artist} - {title} [{version}] \n'
         outp += 'Beatmap by {creator} \n'
@@ -389,6 +389,8 @@ class botHandler():
         outp += '{fcacc}%: {ppfc}pp\n'
         outp += '100.0%: {ppss}pp\n'
         outp += '{missStr}\n'
+        if showdate:
+            outp += f'{showdate}\n'
         outp += 'https://osu.ppy.sh/b/{bid}'
 
         missStr = self.missReply(miss, acc, ojson['ar'], 
