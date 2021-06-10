@@ -487,7 +487,7 @@ def pr(**kw):
     for r in recinfo:
         if r["rank"] == "F":
             continue
-        res, kv  = b.getRctppRes(recinfo[0])
+        res, kv  = b.getRctppRes(r)
         smoke = b.rctppSmoke(kw["groupid"], kw["qqid"], kv, iswarn=0)
         if smoke:
             return smoke
