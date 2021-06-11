@@ -190,7 +190,7 @@ def bestmaprec(**kw):
         return "你倒是打一下啊!"
     recinfo = res[0]
     recinfo["beatmap_id"] = bid
-    res, kv = b.getRctppRes(recinfo, recinfo["date"])
+    res, kv = b.getRctppRes(recinfo)
     # 执行管理逻辑
     smoke_res = b.rctppSmoke(kw["groupid"], kw["qqid"], kv, iswarn=1)
     if smoke_res:
