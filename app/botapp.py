@@ -64,17 +64,33 @@ def rctppnew(**kw):
     return res
 
 @app.route('/rctpps', methods=['POST'])
-@appTools.deco(autoOusInfoKey='osuid,osuname')
+@appTools.deco(autoOusInfoKey='osuid,osuname', rawinput=1)
 def rctpps(**kw):
     b = botHandler.botHandler()
     osuid = kw['autoOusInfoKey']['osuid']
     osuname = kw['autoOusInfoKey']['osuname']
-    recinfo = b.getRecInfo(osuid, "5")
-    logging.info(recinfo)
-    if not recinfo:
-        res = "没有最近游戏记录,绑定用户为%s" % osuname
+
+    qqid = kw['qqid'] if not kw['atqq'] else kw['atqq']
+    if not kw['iargs']:
+        x = 0  
     else:
-        res = b.getRctppBatchRes(recinfo)
+        input0 = kw['iargs'][0]
+        args0 = input0.replace(f'[CQ:at,qq={qqid}]', '')
+        x = int(args0) if args0.isdigit() else 0
+
+    if x < 0 or x > 100:
+        x = 0
+    
+    recinfo = b.getRecInfo(osuid, str(x+3))
+    if not recinfo:
+        return "没有最近游戏记录,绑定用户为%s" % osuname
+    
+    if x > len(recinfo):
+        x = len(recinfo) - 3
+    if x < 0:
+        x = 0
+
+    res = b.getRctppBatchRes2(recinfo[x:x+3])
     return res
 
 @app.route('/mybp', methods=['POST'])
