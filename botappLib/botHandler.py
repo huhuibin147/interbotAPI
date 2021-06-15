@@ -585,7 +585,7 @@ class botHandler():
         """格式化rctpp简版输出"""
         outp = ''
         outp += Config.bg_thumb
-        outp += '[{stars}* ar{ar} bpm{bpm}] {mods_str}\n'
+        outp += '[{stars}* ar{ar:.1f} bpm{bpm:.0f}] {mods_str}\n'
         outp += '{combo}x/{max_combo}({miss}x) | {acc:.1f}% | {rank} \n'
         outp += '{pp:.0f}pp | {ppfc:.0f}pp | {ppss:.0f}pp'
 

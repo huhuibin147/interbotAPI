@@ -70,7 +70,7 @@ class ppyHandler():
             values = value.findall(res)
             if not values:
                 return '抓取不到相关信息!!'
-            skills = ['Stamina', 'Tenacity', 'Agility', 'Accuracy', 'Precision', 'Reaction', 'Memory', 'Reading']
+            skills = ['Stamina', 'Tenacity', 'Agility', 'Accuracy', 'Precision', 'Reaction']
             #skills_list = list(map(lambda x,y:x+y ,skills,values))
             for i,s in enumerate(skills):
                 val = int(values[i])
