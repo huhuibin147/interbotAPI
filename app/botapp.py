@@ -187,6 +187,22 @@ def boom_check(**kw):
     s = f'检测到越狱行为，{qqid}尝试解救{atqq}失败，双双入狱'
     return s
 
+@app.route('/score', methods=['POST'])
+@appTools.deco(autoOusInfoKey='osuid,osuname', rawinput=1)
+def score(**kw):
+    if not kw['iargs']:
+        return ""
+    bid = kw['iargs'][0]
+    osuid = kw['autoOusInfoKey']['osuid']
+    b = botHandler.botHandler()
+
+    res = b.getBestInfo(osuid, bid, "1")
+    if not res:
+        return ""
+    recinfo = res[0]
+    recinfo["beatmap_id"] = bid
+    rank_tab.upload_best_rec(osuid, kw["groupid"], [recinfo])
+    return ""
 
 @app.route('/bestmaprec', methods=['POST'])
 @appTools.deco(autoOusInfoKey='osuid,osuname', rawinput=1)
@@ -207,6 +223,7 @@ def bestmaprec(**kw):
     recinfo = res[0]
     recinfo["beatmap_id"] = bid
     res, kv = b.getRctppRes(recinfo)
+    rank_tab.upload_best_rec(osuid, kw["groupid"], [recinfo])
     # 执行管理逻辑
     smoke_res = b.rctppSmoke(kw["groupid"], kw["qqid"], kv, iswarn=1)
     if smoke_res:

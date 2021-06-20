@@ -42,6 +42,34 @@ def filter_rec(uid, rec):
     return bids
 
 
+def save_rec_by_rec(uid, groupid, rec, hid=1, limit=1):
+    o = ppyHandler.ppyHandler()
+    
+    bids = [rec[0]["beatmap_id"]]
+    # 提取rec
+    inRec = score.check_rec(bids, rec, uid)
+    if not inRec:
+        logging.info('无新成绩！')
+        return '你还要再刚一点.JPG'
+    # 从库中过滤bids 
+    inbids = [r['beatmap_id'] for r in inRec]
+    inbids = score.filter_beatmapid(inbids)
+    logging.info('查询bids列表:%s'%str(inbids))
+    if inbids:
+        mapsinfo = [o.getOsuBeatMapInfo(b) for b in inbids]
+        map_args = score.args_format('map', mapsinfo)
+        score.map2db(map_args)
+
+    rec_args = score.args_format('rec', inRec)
+    score.rec2db(rec_args)
+
+    rec1 = copy.deepcopy(inRec)
+    rec2 = copy.deepcopy(inRec)
+    # 总榜临时处理
+    score.map_rank(rec1, groupid, hid=1, rtype=1)
+
+    score.map_rank(rec2, groupid, hid=1, rtype=2)
+    return 'upload success!'
 
 def save_rec(uid, groupid, hid=1, limit=1):
     o = ppyHandler.ppyHandler()
@@ -100,6 +128,14 @@ def upload_rec(uid, groupid, limit=2):
         logging.exception("up error")
         return "error.."
 
+def upload_best_rec(uid, groupid, rec):
+    try:
+        ret = save_rec_by_rec(uid, groupid, rec)
+        logging.info('up success')
+        return ret
+    except:
+        logging.exception("up error")
+        return "error.."
 
 
 def get_rankinfo(uid, groupid, bid, hid=1, mod=-1):
