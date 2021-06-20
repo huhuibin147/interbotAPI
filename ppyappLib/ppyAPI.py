@@ -71,14 +71,14 @@ def apiv2Req(endponit, token, refreshtoken, isrefresh=1, **kw):
         if apiv2FailWord not in res.text:
             ret = json.loads(res.text)
             return ret
-        else:
-            ret = -2
-            logging.info('token失效')
-            if isrefresh:
-                rs = apiv2RefreshToken(refreshtoken, **kw)
-                if rs not in (-1, -2):
-                    logging.info('token刷新成功！')
-                    return apiv2Req(endponit, rs, refreshtoken, isrefresh=0, **kw)
+            
+    ret = -2
+    logging.info('token失效')
+    if isrefresh:
+        rs = apiv2RefreshToken(refreshtoken, **kw)
+        if rs not in (-1, -2):
+            logging.info('token刷新成功！')
+            return apiv2Req(endponit, rs, refreshtoken, isrefresh=0, **kw)
 
     return ret
 
