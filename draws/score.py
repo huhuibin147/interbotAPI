@@ -112,7 +112,7 @@ def check_rec(bids, rec, uid):
     # 提取新记录成绩
     conn = interMysql.Connect('osu')
     sql = '''
-        SELECT bid, score, mods from recinfo where bid in (%s) and uid = %s
+        SELECT bid, score, mods from recinfo where bid in (%s) and uid = '%s'
     '''
     sql = sql % (','.join(map(lambda x:'%s', bids)), uid)
     ret = conn.query(sql, bids)
