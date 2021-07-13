@@ -1,0 +1,7 @@
+hello1:
+  name: api
+  version: v0.1
+  listen: 30010
+  comment: test api
+  model: hello
+
