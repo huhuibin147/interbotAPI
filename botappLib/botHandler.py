@@ -998,7 +998,7 @@ class botHandler():
                     ts += (stars - 5.6) * 10 * 6000
                 else:
                     ts += (stars - 5.6) * 20 * 6000
-                res_mark.append('超星法(>5.6*)')
+                res_mark.append(f'超星法(>5.6*)，你打了{stars:.1f}*')
                 flag = 1
             
             # if ar > 9.7 and acc < 90:
