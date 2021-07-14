@@ -1243,7 +1243,7 @@ class botHandler():
                 tth = eval(count300)+eval(count50)+eval(count100)
                 self.insert_user(username,in_pp,acc1,pc,rank,tth,osuid)
                 logging.info('[%s]插入成功', uid)
-                time.sleep(0.5)
+                time.sleep(2)
             except:
                 logging.exception('[%s]插入失败' % uid)
 
