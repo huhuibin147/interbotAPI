@@ -357,6 +357,12 @@ class ppyHandler():
             per_t = soup.find_all(class_="performance-table")
 
             s = f"{osuname}'s pp+\n"
+            uinfo = self.getOsuUserInfo(osuname)
+            raw_pp = float(uinfo[0]['pp_raw'])
+            ppp = per_t[0].find_all('th')[1].text
+            diff = float(ppp.replace(',', '').replace('pp', '')) - raw_pp
+            s += f"{ppp}-{raw_pp:,.0f}pp({diff:+.0f}pp)\n"
+
             for i, r in enumerate(per_t[0].find_all("td")):
                 if "Sum" in r.text:
                     break

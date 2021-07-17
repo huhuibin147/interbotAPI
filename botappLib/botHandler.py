@@ -129,6 +129,14 @@ class botHandler():
             {"osuname": osuname, "vsosuname": vsosuname})
         return ret
 
+    def getPpplusInfo(self, osuname):
+        """取pp+信息
+        Args:
+            osuname
+        """
+        ret = cmdRouter.invoke('!ppplus', {"osuname": osuname})
+        return ret
+
     def getRctppRes(self, recinfo, showdate=None):
         # rec计算
         bid = recinfo['beatmap_id']
