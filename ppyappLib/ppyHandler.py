@@ -13,6 +13,8 @@ from baseappLib import baseHandler
 from botappLib import botHandler
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
+from bs4 import BeautifulSoup
+
 
 class ppyHandler():
 
@@ -343,3 +345,26 @@ class ppyHandler():
         s_msg = name+"'s userpage   "
         s_msg = s_msg + '第%s页,共%s页\n'%(str(page),str(total))
         return s_msg + result[pagesize*(page-1):pagesize*page]
+
+    def get_pp_plus_info(self, osuname):
+        try:
+            url = f"https://syrin.me/pp+/u/{osuname}/"
+            res = requests.get(url, timeout=120)
+            if not res:
+                return '网络异常!!'
+            
+            soup = BeautifulSoup(res.content, 'html.parser', from_encoding='utf-8')
+            per_t = soup.find_all(class_="performance-table")
+
+            s = f"{osuname}'s pp+\n"
+            for i, r in enumerate(per_t[0].find_all("td")):
+                if "Sum" in r.text:
+                    break
+                s += r.text
+                if i % 2 != 0:
+                    s += "\n"
+            return s[:-1]
+        except:
+            logging.error(traceback.format_exc())
+            return '那个破网站连不上!!'
+

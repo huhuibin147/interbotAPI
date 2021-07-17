@@ -662,6 +662,15 @@ def avgpp(**kw):
     return res
 
 
+@app.route('/ppplus', methods=['POST'])
+@appTools.deco(autoOusInfoKey='osuname')
+def ppplus(**kw):
+    b = ppyHandler.ppyHandler()
+    osuname = kw['autoOusInfoKey']['osuname']
+    res = b.get_pp_plus_info(osuname)
+    return res
+
+
 
 if __name__ == '__main__':
     app.run(threaded=True)

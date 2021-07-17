@@ -9,3 +9,4 @@ websockets
 asyncio
 apscheduler
 redis
+beautifulsoup4
