@@ -25,7 +25,7 @@ class msgHandler():
             t.start()
 
             # 兼容私聊
-            if self.context['message_type'] == 'private':
+            if self.context['message_type'] in ('private', 'guild'):
                 self.isPrivate = 1
                 self.context['group_id'] = -1
 
