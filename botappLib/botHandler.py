@@ -1300,7 +1300,11 @@ class botHandler():
             u_db_info = self.get_user_fromDB(osuname, days)
             if u_db_info:
                 info = u_db_info[0]
-                add_pp = str(round(in_pp - float(info["pp"]),2))
+                add_pp = round(in_pp - float(info["pp"]),2)
+                if add_pp >= 0:
+                    add_pp = '+'+str(add_pp)
+                else:
+                    add_pp = str(add_pp)
                 add_rank = info["rank"] - int(rank)
                 if add_rank >= 0:
                     add_rank = '+'+str(add_rank)
@@ -1314,7 +1318,7 @@ class botHandler():
                 add_pc = str(int(pc) - int(info["pc"]))
                 add_tth = str(tth - int(info["tth"]))
                 times = info["time"].strftime('%Y-%m-%d')
-                d = username+'\n'+pp+'pp(+'+add_pp+')\n'+'rank: '+rank+'('+add_rank+')\n'+'acc  : '+acc+'%('+add_acc+')\n'+'pc    : '+pc+'pc(+'+add_pc+')\n'+'tth   : '+tth_w+'w(+'+add_tth+')\n'+times
+                d = username+'\n'+pp+'pp('+add_pp+')\n'+'rank: '+rank+'('+add_rank+')\n'+'acc  : '+acc+'%('+add_acc+')\n'+'pc    : '+pc+'pc(+'+add_pc+')\n'+'tth   : '+tth_w+'w(+'+add_tth+')\n'+times
             else:
                 d = username+'\n'+pp+'pp(+0)\n'+'rank: '+rank+'(+0)\n'+'acc : '+acc+'%(+0)\n'+'pc  : '+pc+'pc(+0)\n'+'tth  : '+tth_w+'w(+0)\n'+str(datetime.date.today())
 
