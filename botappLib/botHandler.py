@@ -164,19 +164,24 @@ class botHandler():
         rinfo = self.exRecInfo(recinfo)
         extend = self.convert2oppaiArgs(**rinfo) 
         ojson = self.oppai2json(bid, extend)
-        pp = self.get_pp_from_str(self.ppy_tools_pp(bid, self.convert2oppaiArgsNew(**rinfo)))
+        # pp = self.get_pp_from_str(self.ppy_tools_pp(bid, self.convert2oppaiArgsNew(**rinfo)))
+        newppMap = self.ppy_tools_pp(bid, self.convert2oppaiArgsNew(**rinfo))
+        pp = newppMap.get("pp")
+        star = newppMap.get("difficulty_attributes", {}).get("star_rating")
 
         # fc计算
         fcacc = self.calFcacc(recinfo)
         extendFc = self.convert2oppaiArgs(rinfo['mods'], fcacc)
-        fcpp = self.get_pp_from_str(self.ppy_tools_pp(bid, self.convert2oppaiArgsNew(rinfo['mods'], fcacc)))
+        fcppMap = self.ppy_tools_pp(bid, self.convert2oppaiArgsNew(rinfo['mods'], fcacc))
+        fcpp = fcppMap.get("pp")
 
         # ac计算
         extendSs = self.convert2oppaiArgs(rinfo['mods'])
-        sspp = self.get_pp_from_str(self.ppy_tools_pp(bid, self.convert2oppaiArgsNew(rinfo['mods'])))
+        ssppMap = self.ppy_tools_pp(bid, self.convert2oppaiArgsNew(rinfo['mods']))
+        sspp = ssppMap.get("pp")
 
         res, kv = self.formatRctpp2New(ojson, recinfo['rank'], rinfo['acc'], 
-            fcpp, sspp, bid, fcacc, recinfo['countmiss'], pp)
+            fcpp, sspp, bid, fcacc, recinfo['countmiss'], pp, star)
 
         return res, kv 
 
@@ -239,6 +244,7 @@ class botHandler():
         totalppfc = 0
         totalppss = 0
         totalacc = 0
+        # 需要切换到新的上 to-do
         for i, recinfo in enumerate(recinfos):
             # rec计算
             bid = recinfo['beatmap_id']
@@ -299,15 +305,16 @@ class botHandler():
                 self.downOsufile(bid, compulsiveWrite=1)
 
             path = Config.PP_TOOLS_PATH
-            cmd = 'dotnet %s/PerformanceCalculator.dll simulate osu /data/osufile/%s.osu %s' % (path, bid, extend)
+            cmd = 'dotnet %s/PerformanceCalculator.dll simulate osu /data/osufile/%s.osu -j %s' % (path, bid, extend)
             ret = os.popen(cmd)
             res = ret.read()
             logging.info('bid[%s],extend[%s]', bid, extend)
-            return res
+            logging.info(res)
+            return json.loads(res)
         except:
+            logging.error(traceback.format_exc())
             if recusion == 0:
                 return self.oppai2json(bid, extend, recusion=1)
-            logging.error(traceback.format_exc())
             return {}
     
     def ppy_tools_difficulty(self, bid, extend=''):
@@ -490,11 +497,12 @@ class botHandler():
         return out, kv
 
 
-    def formatRctpp2New(self, ojson, rank, acc, ppfc, ppss, bid, fcacc, miss, pp):
+    def formatRctpp2New(self, ojson, rank, acc, ppfc, ppss, bid, fcacc, miss, pp, stars):
         """格式化rctpp输出"""
         outp = '{artist} - {title} [{version}] \n'
         outp += 'Beatmap by {creator} \n'
-        outp += '[ar{ar} cs{cs} od{od} hp{hp}  bpm{bpm}]\n\n'
+        outp += '[ar{ar} cs{cs} od{od} hp{hp}  bpm{bpm}]\n'
+        outp += Config.bg_thumb
         outp += 'stars: {stars}* | {mods_str} \n'
         outp += '{combo}x/{max_combo}x | {acc}% | {rank} \n\n'
         outp += '{acc}%: {pp}pp\n'
@@ -504,29 +512,31 @@ class botHandler():
         outp += 'https://osu.ppy.sh/b/{bid}'
 
         mapInfo = self.getOsuBeatMapInfo(bid)
-        if not ojson['mods_str']:
-            stars = mapInfo['difficultyrating']
-        else:
-            stars = self.ppy_tools_difficulty(bid, ojson['mods_str'])
-            if stars == -1:
-                stars = mapInfo['difficultyrating']
+        # if not ojson['mods_str']:
+        #     stars = mapInfo['difficultyrating']
+        # else:
+        #     stars = self.ppy_tools_difficulty(bid, ojson['mods_str'])
+        #     if stars == -1:
+        #         stars = mapInfo['difficultyrating']
 
+        stars = round(float(stars), 2)
         missStr = self.missReply(miss, acc, ojson['ar'], 
             ojson['combo'], ojson['max_combo'], stars)
 
         bpm = self.factBpm(float(mapInfo['bpm']), ojson['mods_str'])
+        ar = round(ojson['ar'], 2)
+        pp = round(pp, 2)
  
-        stars_2 = round(float(stars), 2)
         out = outp.format(
             artist = mapInfo['artist'],
             title = mapInfo['title'],
             version = mapInfo['version'],
             creator = mapInfo['creator'],
-            ar = round(ojson['ar'], 2),
+            ar = ar,
             cs = ojson['cs'],
             od = round(ojson['od'], 2),
             hp = ojson['hp'],
-            stars = stars_2,
+            stars = stars,
             combo = ojson['combo'],
             max_combo = ojson['max_combo'],
             acc = round(acc, 2),
@@ -539,12 +549,15 @@ class botHandler():
             fcacc = fcacc,
             miss = miss,
             missStr = missStr,
-            bpm = bpm
+            bpm = bpm,
+            sid = mapInfo["beatmapset_id"]
         )
         # 供外部smoke使用
         kv = {
-            "stars": stars_2, 
-            "rank": rank
+            "stars": stars, 
+            "rank": rank,
+            "ar": ar,
+            "acc": acc
         }
         return out, kv
 
@@ -985,7 +998,7 @@ class botHandler():
                 提醒模式
         规则：
             新人群
-                5.6星 0.01*10分钟
+                5.7星 0.01*10分钟
                 6.0星 0.01*20分钟
                 ar > 9.7 & acc < 90%  0.1*60分钟
             进阶群
@@ -1001,12 +1014,12 @@ class botHandler():
         ts = 0
         res_mark = []
         if int(groupid) == Config.GROUPID["XINRENQUN"]:
-            if stars > 5.6:
+            if stars > 5.7:
                 if stars < 6:
-                    ts += (stars - 5.6) * 10 * 6000
+                    ts += (stars - 5.7) * 10 * 6000
                 else:
-                    ts += (stars - 5.6) * 20 * 6000
-                res_mark.append(f'超星法(>5.6*)，你打了{stars:.1f}*')
+                    ts += (stars - 5.7) * 20 * 6000
+                res_mark.append(f'超星法(>5.7*)，你打了{stars:.1f}*')
                 flag = 1
             
             # if ar > 9.7 and acc < 90:

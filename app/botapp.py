@@ -59,8 +59,12 @@ def rctppnew(**kw):
     else:
         res, kv = b.getRctppResNew(recinfo[0])
         # 执行管理逻辑
-        b.rctppSmoke(kw["groupid"], kw["qqid"], kv)
+        smoke_res = b.rctppSmoke(kw["groupid"], kw["qqid"], kv, iswarn=1)
+        if smoke_res:
+            res += f'\n>>{smoke_res}<<'
     rank_tab.upload_rec(osuid, kw["groupid"])
+    if smoke_res:
+        return f'由于触发本群限制，请私聊查询，触犯法律:{smoke_res}'
     return res
 
 @app.route('/rctpps', methods=['POST'])
@@ -125,7 +129,7 @@ def mybp(**kw):
         if not recinfo:
             res = "别复读好马!"
         else:
-            res, kv = b.getRctppRes(recinfo[x-1])
+            res, kv = b.getRctppResNew(recinfo[x-1])
             # 执行管理逻辑
             smoke_res = b.rctppSmoke(kw["groupid"], kw["qqid"], kv, iswarn=1)
             if smoke_res:
@@ -222,7 +226,7 @@ def bestmaprec(**kw):
         return "你倒是打一下啊!"
     recinfo = res[0]
     recinfo["beatmap_id"] = bid
-    res, kv = b.getRctppRes(recinfo)
+    res, kv = b.getRctppResNew(recinfo)
     rank_tab.upload_best_rec(osuid, kw["groupid"], [recinfo])
     # 执行管理逻辑
     smoke_res = b.rctppSmoke(kw["groupid"], kw["qqid"], kv, iswarn=1)
