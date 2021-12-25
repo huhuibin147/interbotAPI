@@ -172,16 +172,18 @@ class botHandler():
         # fc计算
         fcacc = self.calFcacc(recinfo)
         extendFc = self.convert2oppaiArgs(rinfo['mods'], fcacc)
+        ojsonFc = self.oppai2json(bid, extendFc)
         fcppMap = self.ppy_tools_pp(bid, self.convert2oppaiArgsNew(rinfo['mods'], fcacc))
         fcpp = fcppMap.get("pp")
 
         # ac计算
         extendSs = self.convert2oppaiArgs(rinfo['mods'])
+        ojsonSs = self.oppai2json(bid, extendSs)
         ssppMap = self.ppy_tools_pp(bid, self.convert2oppaiArgsNew(rinfo['mods']))
         sspp = ssppMap.get("pp")
 
         res, kv = self.formatRctpp2New(ojson, recinfo['rank'], rinfo['acc'], 
-            fcpp, sspp, bid, fcacc, recinfo['countmiss'], pp, star)
+            fcpp, sspp, bid, fcacc, recinfo['countmiss'], pp, star, ojsonFc['pp'], ojsonSs['pp'])
 
         return res, kv 
 
@@ -497,17 +499,17 @@ class botHandler():
         return out, kv
 
 
-    def formatRctpp2New(self, ojson, rank, acc, ppfc, ppss, bid, fcacc, miss, pp, stars):
+    def formatRctpp2New(self, ojson, rank, acc, ppfc, ppss, bid, fcacc, miss, pp, stars, oldfcpp, oldsspp):
         """格式化rctpp输出"""
         outp = '{artist} - {title} [{version}] \n'
         outp += 'Beatmap by {creator} \n'
         outp += '[ar{ar} cs{cs} od{od} hp{hp}  bpm{bpm}]\n'
         outp += Config.bg_thumb
-        outp += 'stars: {stars}* | {mods_str} \n'
+        outp += 'stars: {stars}*({oldstar}*) | {mods_str} \n'
         outp += '{combo}x/{max_combo}x | {acc}% | {rank} \n\n'
-        outp += '{acc}%: {pp}pp\n'
-        outp += '{fcacc}%: {ppfc}pp\n'
-        outp += '100.0%: {ppss}pp\n'
+        outp += '{acc}%: {pp}pp({oldpp}pp)\n'
+        outp += '{fcacc}%: {ppfc}pp({oldfcpp}pp)\n'
+        outp += '100.0%: {ppss}pp({oldsspp}pp)\n'
         outp += '{missStr}\n'
         outp += 'https://osu.ppy.sh/b/{bid}'
 
@@ -525,7 +527,6 @@ class botHandler():
 
         bpm = self.factBpm(float(mapInfo['bpm']), ojson['mods_str'])
         ar = round(ojson['ar'], 2)
-        pp = round(pp, 2)
  
         out = outp.format(
             artist = mapInfo['artist'],
@@ -537,20 +538,24 @@ class botHandler():
             od = round(ojson['od'], 2),
             hp = ojson['hp'],
             stars = stars,
+            oldstar = round(ojson['stars'], 2),
             combo = ojson['combo'],
             max_combo = ojson['max_combo'],
             acc = round(acc, 2),
             mods_str = ojson['mods_str'],
-            pp = pp,
+            pp = int(round(pp, 0)),
             rank = rank,
-            ppfc = round(ppfc, 2),
-            ppss = round(ppss, 2),
+            ppfc = int(round(ppfc, 0)),
+            ppss = int(round(ppss, 0)),
             bid = bid,
             fcacc = fcacc,
             miss = miss,
             missStr = missStr,
             bpm = bpm,
-            sid = mapInfo["beatmapset_id"]
+            sid = mapInfo["beatmapset_id"],
+            oldpp = int(round(ojson['pp'], 0)),
+            oldfcpp = int(round(oldfcpp, 0)),
+            oldsspp = int(round(oldsspp, 0)),
         )
         # 供外部smoke使用
         kv = {
