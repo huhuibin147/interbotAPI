@@ -173,8 +173,10 @@ class botHandler():
         fcacc = self.calFcacc(recinfo)
         extendFc = self.convert2oppaiArgs(rinfo['mods'], fcacc)
         ojsonFc = self.oppai2json(bid, extendFc)
-        fcppMap = self.ppy_tools_pp(bid, self.convert2oppaiArgsNew(rinfo['mods'], fcacc))
+        fcppMap = self.ppy_tools_pp(bid, self.convert2oppaiArgsNew(rinfo['mods'], fcacc, 
+                            int(newppMap['performance_attributes']['max_combo']), 0, rinfo['count100'], rinfo['count50']))
         fcpp = fcppMap.get("pp")
+        fcCalAcc = fcppMap.get("score", {}).get("accuracy")
 
         # ac计算
         extendSs = self.convert2oppaiArgs(rinfo['mods'])
@@ -183,7 +185,7 @@ class botHandler():
         sspp = ssppMap.get("pp")
 
         res, kv = self.formatRctpp2New(ojson, recinfo['rank'], rinfo['acc'], 
-            fcpp, sspp, bid, fcacc, recinfo['countmiss'], pp, star, ojsonFc['pp'], ojsonSs['pp'])
+            fcpp, sspp, bid, fcCalAcc, recinfo['countmiss'], pp, star, ojsonFc['pp'], ojsonSs['pp'])
 
         return res, kv 
 
@@ -389,7 +391,7 @@ class botHandler():
             os.system('curl https://osu.ppy.sh/osu/{0} > /data/osufile/{0}.osu'.format(bid))
         return
 
-    def convert2oppaiArgs(self, mods='', acc='', cb='', miss=''):
+    def convert2oppaiArgs(self, mods='', acc='', cb='', miss='', **kwargs):
         """oppai参数转换"""
         args = ''
         if mods:
@@ -402,7 +404,7 @@ class botHandler():
             args += '%sm' % miss
         return args
 
-    def convert2oppaiArgsNew(self, mods='', acc='', cb='', miss=''):
+    def convert2oppaiArgsNew(self, mods='', acc='', cb='', miss='', count100='', count50='', **kwargs):
         """oppai参数转换"""
         args = ''
         for i in range(0, len(mods), 2):
@@ -413,6 +415,10 @@ class botHandler():
             args += '-c %s ' % cb
         if miss:
             args += '-X %s ' % miss
+        if count100:
+            args += '-G %s ' % count100
+        if count50:
+            args += '-M %s ' % count50
         return args
 
     def exRecInfo(self, rec):
@@ -420,16 +426,19 @@ class botHandler():
         mod = mods.getMod(rec['enabled_mods'])
         if 'NONE' in mod:
             mod.remove('NONE')
+        logging.info(rec)
         ret = {
             "mods": ''.join(mod),
             "acc": mods.get_acc(rec['count300'], rec['count100'], rec['count50'], rec['countmiss']),
             "cb": rec['maxcombo'],
-            "miss": rec['countmiss']
+            "miss": rec['countmiss'],
+            "count100": rec['count100'],
+            "count50": rec['count50'],
         }
         return ret
 
     def calFcacc(self, rec):
-        acc = mods.get_acc(rec['count300'], rec['count100'], rec['count50'], 0)
+        acc = mods.get_acc(int(rec['count300'])+int(rec['countmiss']), rec['count100'], rec['count50'], 0)
         return acc
 
     def factBpm(self, rawbpm, modstr):
@@ -527,6 +536,7 @@ class botHandler():
 
         bpm = self.factBpm(float(mapInfo['bpm']), ojson['mods_str'])
         ar = round(ojson['ar'], 2)
+        fcacc = round(fcacc, 2)
  
         out = outp.format(
             artist = mapInfo['artist'],
