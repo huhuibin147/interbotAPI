@@ -147,7 +147,7 @@ def drawRec(mapjson, recinfo, bestinfo, userjson, **kw):
     d.add_text(788, 700, 'Performance:%spp'%pp, font_size=16, ttype='en')
     d.add_text(788, 720, 'Accuracy:%s%%'%acc, font_size=16, ttype='en')
     d.add_text(788, 740, 'Lv%s'%level, font_size=16, ttype='en')
-    if lv_left > 0:
+    if lv_left > 0.1:
         d.add_items2(level_bar, 840, 745, isresize=True, width=int(lv_left*200), height=14)
     d.add_items2(level_bar_bg, 840, 745)
 
