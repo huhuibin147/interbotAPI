@@ -103,9 +103,9 @@ def drawRec(mapjson, recinfo, bestinfo, userjson, **kw):
     diff_approach = kw['ar'] if kw.get("ar") else mapjson.get('diff_approach','') #AR
     diff_overall = kw['od'] if kw.get("od") else mapjson.get('diff_overall','') #OD
     diff_drain = kw['hp'] if kw.get("hp") else mapjson.get('diff_drain','') #HP
-    count_normal = mapjson.get('count_normal', 0)
-    count_slider = mapjson.get('count_slider', 0)
-    count_spinner = mapjson.get('count_spinner', 0)
+    count_normal = int(mapjson.get('count_normal', 0))
+    count_slider = int(mapjson.get('count_slider', 0))
+    count_spinner = int(mapjson.get('count_spinner', 0))
 
 
     m, s = divmod(int(mapjson.get('total_length')), 60)
@@ -154,7 +154,7 @@ def drawRec(mapjson, recinfo, bestinfo, userjson, **kw):
     d.add_text(35, 0, '%s %s - %s [%s]'%(source,artist,title,version), font_size=25, ttype='cn')
     d.add_items2(selection_approved, 7, 3)
     d.add_text(40, 30, '作者: %s'%(creator), font_size=16, ttype='cn')
-    d.add_text(5, 50, '长度: %s  BPM: %s  物件数: %s'%(hit_length,bpm,max_combo), font_size=18, ttype='cn')
+    d.add_text(5, 50, '长度: %s  BPM: %s  物件数: %s'%(hit_length,bpm,count_normal+count_slider+count_spinner), font_size=18, ttype='cn')
     d.add_text(5, 75, '圈数: %s 滑条数: %s 转盘数: %s'%(count_normal,count_slider,count_spinner), font_size=16, ttype='cn')
     d.add_text(5, 100, 'CS:%s AR:%s OD:%s HP:%s Star:%s★'%(diff_size,diff_approach,diff_overall,diff_drain,difficultyrating), font_size=16, ttype='en')
 
