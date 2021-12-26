@@ -1521,11 +1521,16 @@ class botHandler():
 
         # 铺面信息
         mapinfos = ppyIns.getOsuBeatMapInfo(bid)
+        if not mapinfos:
+            return "找不到铺面信息"
         mapjson = mapinfos[0]
 
         # 最佳成绩
         bestinfos = ppyIns.getScores(osuid, bid, limit=1)
-        bestinfo = bestinfos[0]
+        if not bestinfos:
+            bestinfo = recinfo
+        else:
+            bestinfo = bestinfos[0]
 
         # rec计算
         rinfo = self.exRecInfo(recinfo)
@@ -1565,8 +1570,15 @@ class botHandler():
             "bpm": bpm
         }
 
+        kv = {
+            "stars": star, 
+            "rank": recinfo["rank"],
+            "ar": ojson['ar'],
+            "acc": rinfo['acc']
+        }
+
         pfs = drawReplay.drawRec(mapjson, recinfo, bestinfo, userjson, **kwargs)
-        return pfs
+        return pfs, kv
 
 
 

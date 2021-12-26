@@ -74,7 +74,12 @@ def rctppdraw(**kw):
     osuid = kw['autoOusInfoKey']['osuid']
     osuname = kw['autoOusInfoKey']['osuname']
     try:
-        p = b.drawRctpp(osuid, osuname)
+        p, kv = b.drawRctpp(osuid, osuname)
+        # 执行管理逻辑
+        smoke_res = b.rctppSmoke(kw["groupid"], kw["qqid"], kv, iswarn=1)
+        if smoke_res:
+            return f'由于触发本群限制，请私聊查询，触犯法律:{smoke_res}'
+        # rank_tab.upload_rec(osuid, kw["groupid"])
         return "[CQ:image,cache=0,file=http://interbot.cn/itbimage/%s]" % p
     except:
         logging.exception("rctppdraw error")
