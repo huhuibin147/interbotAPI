@@ -117,7 +117,7 @@ def drawRec(mapjson, recinfo, bestinfo, userjson, **kw):
 
     # 头像download
     me = userjson.get('user_id', '')
-    draw_data.check_img([me])
+    draw_data.check_img([me], isup=1)
     
     d = drawRank.DrawRec()
 
@@ -147,7 +147,8 @@ def drawRec(mapjson, recinfo, bestinfo, userjson, **kw):
     d.add_text(788, 700, 'Performance:%spp'%pp, font_size=16, ttype='en')
     d.add_text(788, 720, 'Accuracy:%s%%'%acc, font_size=16, ttype='en')
     d.add_text(788, 740, 'Lv%s'%level, font_size=16, ttype='en')
-    d.add_items2(level_bar, 840, 745, isresize=True, width=int(lv_left*200), height=14)
+    if lv_left > 0:
+        d.add_items2(level_bar, 840, 745, isresize=True, width=int(lv_left*200), height=14)
     d.add_items2(level_bar_bg, 840, 745)
 
     # 曲子信息
@@ -170,7 +171,7 @@ def drawRec(mapjson, recinfo, bestinfo, userjson, **kw):
     rank = 'D' if bestinfo['rank'] == 'F' else bestinfo['rank']
     d.add_items(x=20, y=590, path='image/userimg/%s.jpg'%me, isresize=True, width=60, height=60)
     d.add_items(rank_x%rank, 80, 595)
-    d.add_text(120, 590, f"{uname}  #{round(float(bestinfo['pp']))}pp", font_size=25, ttype='en')
+    d.add_text(120, 590, f"{uname}  #{round(float(bestinfo.get('pp', kw['pp'])))}pp", font_size=25, ttype='en')
     d.add_text(120, 620, f"得分: {int(bestinfo['score']):,}    ({int(bestinfo['maxcombo']):,}x)", font_size=20, ttype='cn')
     d.add_text(450-20*len(mds_l), 597, '%s'%(m_str), font_size=20, ttype='en')
     acc = mods.get_acc(bestinfo['count300'], bestinfo['count100'], bestinfo['count50'], bestinfo['countmiss'])
