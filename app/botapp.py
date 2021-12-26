@@ -67,6 +67,19 @@ def rctppnew(**kw):
         return f'由于触发本群限制，请私聊查询，触犯法律:{smoke_res}'
     return res
 
+@app.route('/rctppdraw', methods=['POST'])
+@appTools.deco(autoOusInfoKey='osuid,osuname')
+def rctppdraw(**kw):
+    b = botHandler.botHandler()
+    osuid = kw['autoOusInfoKey']['osuid']
+    osuname = kw['autoOusInfoKey']['osuname']
+    try:
+        p = b.drawRctpp(osuid, osuname)
+        return "[CQ:image,cache=0,file=http://interbot.cn/itbimage/%s]" % p
+    except:
+        logging.exception("rctppdraw error")
+        return "fail..."
+
 @app.route('/rctpps', methods=['POST'])
 @appTools.deco(autoOusInfoKey='osuid,osuname', rawinput=1)
 def rctpps(**kw):

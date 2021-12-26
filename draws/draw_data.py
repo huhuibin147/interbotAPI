@@ -43,7 +43,7 @@ def down_bg(bid='1028215', sid='480609'):
     bgUrl = cal_bg_url(bid, sid)
     if bgUrl == 0:
         return 0
-    return iq.down_image(iname=bid, url=bgUrl, path=bg_path)
+    return iq.down_image(iname=bid, url=bgUrl, path=bg_path, verify=False)
 
 def cal_bg_url(bid, sid):
     #从sayobot处下载
@@ -51,7 +51,7 @@ def cal_bg_url(bid, sid):
         filename = ""
         search_file_url = f"https://api.sayobot.cn/v2/beatmapinfo?K={sid}"
         r = interRequest.interReq()
-        info = r.get(search_file_url)
+        info = r.get(search_file_url, verify=False)
         map = json.loads(info.text)
         for r in map["data"]["bid_data"]:
             if str(r["bid"]) == bid:
@@ -65,7 +65,7 @@ def cal_bg_url(bid, sid):
         return bgUrl
 
     except:
-        logging.error(f"down bid:{bid} fail")
+        logging.exception(f"down bid:{bid} fail")
     return 0
 
 

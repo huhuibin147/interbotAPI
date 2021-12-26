@@ -3,6 +3,11 @@ import requests
 import json
 import logging
 
+# 关闭安全告警
+requests.packages.urllib3.disable_warnings()
+
+
+
 class interReq():
 
 
@@ -21,20 +26,20 @@ class interReq():
         self.timeout = timeout
 
 
-    def post(self, url, params=None):
-        res = requests.post(url=url, data=params, timeout=self.timeout, headers=self.headers)
+    def post(self, url, params=None, verify=True):
+        res = requests.post(url=url, data=params, timeout=self.timeout, headers=self.headers, verify=verify)
         return res
 
-    def get(self, url):
-        res = requests.get(url=url, timeout=self.timeout, headers=self.headers) 
+    def get(self, url, verify=True):
+        res = requests.get(url=url, timeout=self.timeout, headers=self.headers, verify=verify) 
         return res
 
 
-    def down_image(self, iname, url, path=None):
+    def down_image(self, iname, url, path=None, verify=True):
         # 此方法暂留  未修改
         if not url:
             return 0
-        ir = requests.get(url=url)
+        ir = requests.get(url=url, verify=verify)
         path = path+iname+'.jpg' if path else 'image/%s.png' % iname
         if ir.status_code == 200:
             with open(path, 'wb') as f:

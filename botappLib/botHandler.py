@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+import sys
+sys.path.append('./')
+
 import os
 import re
 import time
@@ -16,6 +19,9 @@ from commLib import interMysql
 from commLib import pushTools
 from botappLib import healthCheck
 from ppyappLib import ppyHandler
+from draws import drawReplay
+
+
 
 class botHandler():
 
@@ -281,7 +287,7 @@ class botHandler():
         avgAcc = round(totalacc/l, 2)
         avgPp = round(totalpp/l, 0)
         
-        ret += f"{avgStars}* - {avgAcc:.1f}% - {avgPp:.0f}pp"
+        ret += f"{avgStars}* - {avgAcc:.1f}% - {avgPp:.0f}pp (ps:这个是老算法)"
         return ret
 
     def oppai(self, bid, extend=''):
@@ -553,19 +559,19 @@ class botHandler():
             max_combo = ojson['max_combo'],
             acc = round(acc, 2),
             mods_str = ojson['mods_str'],
-            pp = int(round(pp, 0)),
+            pp = round(pp),
             rank = rank,
-            ppfc = int(round(ppfc, 0)),
-            ppss = int(round(ppss, 0)),
+            ppfc = round(ppfc),
+            ppss = round(ppss),
             bid = bid,
             fcacc = fcacc,
             miss = miss,
             missStr = missStr,
             bpm = bpm,
             sid = mapInfo["beatmapset_id"],
-            oldpp = int(round(ojson['pp'], 0)),
-            oldfcpp = int(round(oldfcpp, 0)),
-            oldsspp = int(round(oldsspp, 0)),
+            oldpp = round(ojson['pp']),
+            oldfcpp = round(oldfcpp),
+            oldsspp = round(oldsspp),
         )
         # 供外部smoke使用
         kv = {
@@ -1496,3 +1502,74 @@ class botHandler():
         ret = db.query(sql, [ppMin, ppMax])
         return ret
 
+    def drawRctpp(self, osuid, osuname):
+
+        ppyIns = ppyHandler.ppyHandler()
+
+        # 最近游戏记录
+        recinfos = ppyIns.getRecent(osuid, limit="1")
+        if not recinfos:
+            return "没有最近游戏记录,绑定用户为%s" % osuname
+        recinfo = recinfos[0]
+        bid = recinfo["beatmap_id"]
+        
+        # 用户信息
+        userinfos = ppyIns.getOsuUserInfo(osuid)
+        if not userinfos:
+            return "找不到[%s]的用户信息" % osuname
+        userjson = userinfos[0]
+
+        # 铺面信息
+        mapinfos = ppyIns.getOsuBeatMapInfo(bid)
+        mapjson = mapinfos[0]
+
+        # 最佳成绩
+        bestinfos = ppyIns.getScores(osuid, bid, limit=1)
+        bestinfo = bestinfos[0]
+
+        # rec计算
+        rinfo = self.exRecInfo(recinfo)
+        # oppai算铺面信息
+        extend = self.convert2oppaiArgs(**rinfo) 
+        ojson = self.oppai2json(bid, extend)
+        bpm = self.factBpm(float(mapjson['bpm']), ojson['mods_str'])
+
+        # osu-tools计算
+        newppMap = self.ppy_tools_pp(bid, self.convert2oppaiArgsNew(**rinfo))
+        pp = newppMap.get("pp")
+        star = newppMap.get("difficulty_attributes", {}).get("star_rating")
+
+        # fc计算
+        fcacc = self.calFcacc(recinfo)
+        fcppMap = self.ppy_tools_pp(bid, self.convert2oppaiArgsNew(rinfo['mods'], fcacc, 
+                            int(newppMap['performance_attributes']['max_combo']), 0, rinfo['count100'], rinfo['count50']))
+        fcpp = fcppMap.get("pp")
+        fcCalAcc = fcppMap.get("score", {}).get("accuracy")
+
+        # ac计算
+        ssppMap = self.ppy_tools_pp(bid, self.convert2oppaiArgsNew(rinfo['mods']))
+        sspp = ssppMap.get("pp")
+
+        # 时长与物件数计算
+        # to-do
+
+        kwargs = {
+            "pp": float(pp),
+            "fcpp": float(fcpp),
+            "acpp": float(sspp),
+            "ar": round(ojson['ar'], 2),
+            "cs": round(ojson['cs'], 2),
+            "od": round(ojson['od'], 2),
+            "hp": round(ojson['hp'], 2),
+            "star": round(star, 2),
+            "bpm": bpm
+        }
+
+        pfs = drawReplay.drawRec(mapjson, recinfo, bestinfo, userjson, **kwargs)
+        return pfs
+
+
+
+if __name__ == "__main__":
+    b = botHandler()
+    # b.drawRctpp(osuid="11788070", osuname="interbot")

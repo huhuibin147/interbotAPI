@@ -57,7 +57,7 @@ class DrawRec():
 
     def add_items2(self, fname, x=0, y=0, **kwargs):
         # UI元素或者使用默认路径外的 
-        path_pref = self.ui if not kwargs.get('path', None) else path
+        path_pref = self.ui if not kwargs.get('path', None) else kwargs['path']
         path = '%s/%s' % (path_pref, fname)
         self.add_items(x=x, y=y, path=path, **kwargs)
 
