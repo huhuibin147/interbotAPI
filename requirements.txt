@@ -1,7 +1,8 @@
 cqhttp
 flask
 pymysql
-PyYAML==3.12
+# PyYAML==3.12
+PyYAML
 tornado
 requests
 DBUtils==1.3
