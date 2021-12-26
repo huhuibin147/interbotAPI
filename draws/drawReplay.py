@@ -152,7 +152,7 @@ def drawRec(mapjson, recinfo, bestinfo, userjson, **kw):
     d.add_items2(level_bar_bg, 840, 745)
 
     # 曲子信息
-    d.add_text(35, 0, '%s %s - %s [%s]'%(source,artist,title,version), font_size=25, ttype='cn')
+    d.add_text(35, 0, '%s (%s) - %s [%s]'%(source,artist,title,version), font_size=25, ttype='cn')
     d.add_items2(selection_approved, 7, 3)
     d.add_text(40, 30, '作者: %s'%(creator), font_size=16, ttype='cn')
     d.add_text(5, 50, '长度: %s  BPM: %s  物件数: %s'%(hit_length,bpm,count_normal+count_slider+count_spinner), font_size=18, ttype='cn')
@@ -182,10 +182,10 @@ def drawRec(mapjson, recinfo, bestinfo, userjson, **kw):
     d.draw_rectangle(x=20, y=240, width=600, height=300, fill=(0, 0, 0, 90))
 
     # 分数icon
-    d.add_items(hit100_icon, 40, 320)
-    d.add_items(hit50_icon, 40, 380)
-    d.add_items(hit100k_icon, 350, 320)
-    d.add_items(hit0_icon, 350, 350)
+    d.add_items(hit100_icon, 40, 315)
+    d.add_items(hit50_icon, 40, 375)
+    d.add_items(hit100k_icon, 350, 315)
+    d.add_items(hit0_icon, 377, 365, isresize=True, width=78, height=78)
     d.add_items(maxcb_icon, 40, 440)
     d.add_items(acc_icon, 330, 440)
 
