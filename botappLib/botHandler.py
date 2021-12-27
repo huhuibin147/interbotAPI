@@ -1502,37 +1502,43 @@ class botHandler():
         ret = db.query(sql, [ppMin, ppMax])
         return ret
 
-    def drawRctpp(self, osuid, osuname):
-
+    def drawRctpp(self, osuid="", osuname="", recinfo={}, userjson={}, mapjson={}, bestinfo={}):
         ppyIns = ppyHandler.ppyHandler()
-
         # 最近游戏记录
-        recinfos = ppyIns.getRecent(osuid, limit="1")
-        if not recinfos:
-            return "没有最近游戏记录,绑定用户为%s" % osuname
-        recinfo = recinfos[0]
+        if not recinfo:
+            recinfos = ppyIns.getRecent(osuid, limit="1")
+            if not recinfos:
+                return "没有最近游戏记录,绑定用户为%s" % osuname
+            recinfo = recinfos[0]
         bid = recinfo["beatmap_id"]
         
         # 用户信息
-        userinfos = ppyIns.getOsuUserInfo(osuid)
-        if not userinfos:
-            return "找不到[%s]的用户信息" % osuname
-        userjson = userinfos[0]
+        if not userjson:
+            userinfos = ppyIns.getOsuUserInfo(osuid)
+            if not userinfos:
+                return "找不到[%s]的用户信息" % osuname
+            userjson = userinfos[0]
 
         # 铺面信息
-        mapinfos = ppyIns.getOsuBeatMapInfo(bid)
-        if not mapinfos:
-            return "找不到铺面信息"
-        mapjson = mapinfos[0]
+        if not mapjson:
+            mapinfos = ppyIns.getOsuBeatMapInfo(bid)
+            if not mapinfos:
+                return "找不到铺面信息"
+            mapjson = mapinfos[0]
 
         # 最佳成绩
-        bestinfos = ppyIns.getScores(osuid, bid, limit=1)
-        if not bestinfos:
-            bestinfo = recinfo
-        else:
-            bestinfo = bestinfos[0]
+        if not bestinfo:
+            bestinfos = ppyIns.getScores(osuid, bid, limit=1)
+            if not bestinfos:
+                bestinfo = recinfo
+            else:
+                bestinfo = bestinfos[0]
 
+        return self.drawReplayRes(recinfo, bestinfo, mapjson, userjson)
+
+    def drawReplayRes(self, recinfo, bestinfo, mapjson, userjson):
         # rec计算
+        bid = recinfo["beatmap_id"]
         rinfo = self.exRecInfo(recinfo)
         # oppai算铺面信息
         extend = self.convert2oppaiArgs(**rinfo) 

@@ -158,6 +158,49 @@ def mybp(**kw):
         return f'由于触发本群限制，请私聊查询，触犯法律:{smoke_res}'
     return res
 
+@app.route('/mybpdraw', methods=['POST'])
+@appTools.deco()
+def mybpdraw(**kw):
+    qqid = kw['qqid'] if not kw['atqq'] else kw['atqq']
+    if not kw['iargs']:
+        x = 1  
+    else:
+        input0 = kw['iargs'][0]
+        args0 = input0.replace(f'[CQ:at,qq={qqid}]', '')
+        x = int(args0) if args0.isdigit() else 1
+
+    if x < 0 or x > 100:
+        x = 1
+    b = botHandler.botHandler()
+    osuinfo = b.getOsuInfo2(qqid)
+    logging.info(osuinfo)
+    smoke_res = None
+    if osuinfo:
+        osuid = osuinfo['osuid']
+        osuname = osuinfo['osuname']
+
+        key = 'OSU2_USERBP:%s'
+        rds = interRedis.connect('osu2')
+        rdsRs = rds.get(key % osuid)
+        if not rdsRs:
+            recinfo = b.getRecBp(osuid, "100")
+            rds.setex(key % osuid, json.dumps(recinfo), 900)
+        else:
+            recinfo = json.loads(rdsRs)
+
+        if not recinfo:
+            res = "别复读好马!"
+        else:
+            p, kv = b.drawRctpp(osuid, osuname, recinfo=recinfo[x-1], bestinfo=recinfo[x-1])
+            res = "[CQ:image,cache=0,file=http://interbot.cn/itbimage/%s]" % p
+            # 执行管理逻辑
+            smoke_res = b.rctppSmoke(kw["groupid"], kw["qqid"], kv, iswarn=1)
+    else:
+        res = "你倒是绑定啊.jpg"
+    if smoke_res:
+        return f'由于触发本群限制，请私聊查询，触犯法律:{smoke_res}'
+    return res
+
 
 @app.route('/boom', methods=['POST'])
 @appTools.deco()
@@ -252,6 +295,37 @@ def bestmaprec(**kw):
         res += f'\n>>{smoke_res}<<'
     if smoke_res:
         return f'由于触发本群限制，请私聊查询，触犯法律:{smoke_res}'
+    return res
+
+@app.route('/bestmaprecdraw', methods=['POST'])
+@appTools.deco(autoOusInfoKey='osuid,osuname', rawinput=1)
+def bestmaprecdraw(**kw):
+    if not kw['iargs']:
+        return "请输入bid！"
+    bid = kw['iargs'][0]
+    osuid = kw['autoOusInfoKey']['osuid']
+    osuname = kw['autoOusInfoKey']['osuname']
+    b = botHandler.botHandler()
+    # res = b.get_best_map_rec_from_db(osuid, bid)
+    # if not res:
+    #     return "你连成绩都没有，快去打一个上传！"
+    # recinfo = json.loads(res["recjson"])
+    try:
+        res = b.getBestInfo(osuid, bid, "1")
+        if not res:
+            return "你倒是打一下啊!"
+        recinfo = res[0]
+        recinfo["beatmap_id"] = bid
+        p, kv = b.drawRctpp(osuid, osuname, recinfo=recinfo, bestinfo=recinfo)
+        res = "[CQ:image,cache=0,file=http://interbot.cn/itbimage/%s]" % p
+        # rank_tab.upload_best_rec(osuid, kw["groupid"], [recinfo])
+        # 执行管理逻辑
+        smoke_res = b.rctppSmoke(kw["groupid"], kw["qqid"], kv, iswarn=1)
+        if smoke_res:
+            return f'由于触发本群限制，请私聊查询，触犯法律:{smoke_res}'
+    except:
+        logging.exception("")
+        return "fail..."
     return res
 
 
