@@ -184,9 +184,10 @@ def drawR(mapjson, rankjson, userjson):
     d.add_items2(level_bar_bg, 840, 745)
 
     # 曲子信息
+    bid = mapjson['beatmap_id']
     d.add_text(35, 0, '%s (%s) - %s [%s]'%(source,artist,title,version), font_size=25, ttype='cn')
     d.add_items2(selection_approved, 7, 3)
-    d.add_text(40, 30, '作者: %s'%(creator), font_size=16, ttype='cn')
+    d.add_text(40, 30, '作者: %s   [bid: %s]'%(creator, bid), font_size=16, ttype='cn')
     d.add_text(5, 50, '长度: %s  BPM: %s  物件数: %s'%(hit_length,bpm,count_normal+count_slider+count_spinner), font_size=18, ttype='cn')
     d.add_text(5, 75, '圈数: %s 滑条数: %s 转盘数: %s'%(count_normal,count_slider,count_spinner), font_size=16, ttype='cn')
     d.add_text(5, 100, 'CS:%s AR:%s OD:%s HP:%s Star:%s★'%(diff_size,diff_approach,diff_overall,diff_drain,difficultyrating), font_size=16, ttype='en')

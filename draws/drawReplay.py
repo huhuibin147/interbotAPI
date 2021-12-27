@@ -6,22 +6,32 @@ sys.path.append('./')
 import os
 import logging
 import random
-from PIL import Image, ImageDraw, ImageFont
 from draws import draw_data, drawRank
 from commLib import mods
-from botappLib import botHandler
-from ppyappLib import ppyHandler
-
-pre = 'draws/'
-default_skin = '%s/New!+game!' % pre
-osu_ui = '%s/osu!ui/Resources' % pre
-font_cn = '%s/font/msyh.ttc' % pre
-font_alp = '%s/font/Aller_Rg_MODFIED.ttf' % pre
 
 
 
 
-def drawRec(mapjson, recinfo, bestinfo, userjson, **kw):
+skin_map = {
+    1: {
+        "path": "draws/New!+game!",
+        "hit100_icon": {"y":315},
+        "hit50_icon": {"y":375},
+        "hit100k_icon": {"y":315},
+        "hit0_icon": {"x":377,"y":365,"isresize":True,"width":78,"height":78},
+    },
+
+    2: {
+        "path": "draws/Umaru",
+        "hit100_icon": {"y":315-30},
+        "hit50_icon": {"y":375-30},
+        "hit100k_icon": {"y":315-30},
+        "hit0_icon": {"x":377,"y":365+15,"isresize":True,"width":58,"height":58},
+    }
+}
+
+
+def drawRec(mapjson, recinfo, bestinfo, userjson, debug=0, **kw):
     """
     kwargs:
         pp, fcpp, acpp
@@ -119,7 +129,9 @@ def drawRec(mapjson, recinfo, bestinfo, userjson, **kw):
     me = userjson.get('user_id', '')
     draw_data.check_img([me], isup=1)
     
-    d = drawRank.DrawRec()
+    skin_idx = random.randint(1, len(skin_map))
+    conf = skin_map[skin_idx]
+    d = drawRank.DrawRec(skin=conf["path"])
 
     # 第一层bg
     d.add_items(isresize=True, path='image/bg/%s'%bg, factor=0.95)
@@ -152,9 +164,10 @@ def drawRec(mapjson, recinfo, bestinfo, userjson, **kw):
     d.add_items2(level_bar_bg, 840, 745)
 
     # 曲子信息
+    bid = mapjson['beatmap_id']
     d.add_text(35, 0, '%s (%s) - %s [%s]'%(source,artist,title,version), font_size=25, ttype='cn')
     d.add_items2(selection_approved, 7, 3)
-    d.add_text(40, 30, '作者: %s'%(creator), font_size=16, ttype='cn')
+    d.add_text(40, 30, '作者: %s   [bid: %s]'%(creator, bid), font_size=16, ttype='cn')
     d.add_text(5, 50, '长度: %s  BPM: %s  物件数: %s'%(hit_length,bpm,count_normal+count_slider+count_spinner), font_size=18, ttype='cn')
     d.add_text(5, 75, '圈数: %s 滑条数: %s 转盘数: %s'%(count_normal,count_slider,count_spinner), font_size=16, ttype='cn')
     d.add_text(5, 100, 'CS:%s AR:%s OD:%s HP:%s Star:%s★'%(diff_size,diff_approach,diff_overall,diff_drain,difficultyrating), font_size=16, ttype='en')
@@ -182,10 +195,10 @@ def drawRec(mapjson, recinfo, bestinfo, userjson, **kw):
     d.draw_rectangle(x=20, y=240, width=600, height=300, fill=(0, 0, 0, 90))
 
     # 分数icon
-    d.add_items(hit100_icon, 40, 315)
-    d.add_items(hit50_icon, 40, 375)
-    d.add_items(hit100k_icon, 350, 315)
-    d.add_items(hit0_icon, 377, 365, isresize=True, width=78, height=78)
+    d.add_items(hit100_icon, 40, **conf["hit100_icon"])
+    d.add_items(hit50_icon, 40, **conf["hit50_icon"])
+    d.add_items(hit100k_icon, 350, **conf["hit100k_icon"])
+    d.add_items(hit0_icon, **conf["hit0_icon"])
     d.add_items(maxcb_icon, 40, 440)
     d.add_items(acc_icon, 330, 440)
 
@@ -221,7 +234,7 @@ def drawRec(mapjson, recinfo, bestinfo, userjson, **kw):
     for idx, s in enumerate(acc_str):
         if s == '.':
             d.add_items(score_dot_icon, acc_start_x+idx*35, 480)
-            acc_start_x -= 25 # 去掉间隙
+            acc_start_x -= 10 # 去掉间隙
         else:
             d.add_items(score_icon%s, acc_start_x+idx*35, 480)
 
@@ -234,8 +247,7 @@ def drawRec(mapjson, recinfo, bestinfo, userjson, **kw):
         mds_l2.remove('NONE')
     rank2 = 'D' if recinfo['rank'] == 'F' else recinfo['rank']
 
-    bid = mapjson['beatmap_id']
-    d.add_text(1180, 30, f"bid: {bid}", font_size=25, ttype='en')
+    # d.add_text(1180, 30, f"bid: {bid}", font_size=25, ttype='en')
     d.add_items(ranking_icon, 1000, 10) # 右上角 ranking
     d.add_items(replay_icon, 920, 470, factor=0.8) # replay
     d.add_items(rank_icon%rank2, 920, 100) # 评分
@@ -258,18 +270,20 @@ def drawRec(mapjson, recinfo, bestinfo, userjson, **kw):
     for idx, s in enumerate(str(round(kw["acpp"]))):
         d.add_items(score_icon%s, 980+idx*30, 600)
 
-    
-    # d.RecImg.show()
+    if debug:
+        d.RecImg.show()
+        return ""
 
-    uid = userjson.get('user_id', '')
-    p = 'rctpp-%s.png' % uid
-    pfs = 'rctpp-%s-fs8.png' % uid
-    f = '/static/interbot/image/%s' % p
-    d.save(f)
-    # 压缩
-    os.system('pngquant -f %s' % f)
-    logging.info('[%s]成绩生成成功!' % pfs)
-    return pfs
+    else:
+        uid = userjson.get('user_id', '')
+        p = 'rctpp-%s.png' % uid
+        pfs = 'rctpp-%s-fs8.png' % uid
+        f = '/static/interbot/image/%s' % p
+        d.save(f)
+        # 压缩
+        os.system('pngquant -f %s' % f)
+        logging.info('[%s]成绩生成成功!' % pfs)
+        return pfs
 
 
 if __name__ == "__main__":
@@ -300,5 +314,5 @@ if __name__ == "__main__":
         "acpp": 180.514,
     }
 
-    drawRec(mapjson, recinfo, recinfo, userjson, **kwargs)
+    drawRec(mapjson, recinfo, recinfo, userjson, debug=1, **kwargs)
 
