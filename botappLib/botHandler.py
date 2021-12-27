@@ -460,7 +460,7 @@ class botHandler():
         outp = '{artist} - {title} [{version}] \n'
         outp += 'Beatmap by {creator} \n'
         outp += '[ar{ar} cs{cs} od{od} hp{hp}  bpm{bpm}]\n'
-        outp += Config.bg_thumb
+        outp += Config.bg_thumb + '\n'
         outp += 'stars: {stars}* | {mods_str} \n'
         outp += '{combo}x/{max_combo}x | {acc}% | {rank} \n\n'
         outp += '{acc}%: {pp}pp\n'
@@ -519,7 +519,7 @@ class botHandler():
         outp = '{artist} - {title} [{version}] \n'
         outp += 'Beatmap by {creator} \n'
         outp += '[ar{ar} cs{cs} od{od} hp{hp}  bpm{bpm}]\n'
-        outp += Config.bg_thumb
+        outp += Config.bg_thumb + '\n'
         outp += 'stars: {stars}*({oldstar}*) | {mods_str} \n'
         outp += '{combo}x/{max_combo}x | {acc}% | {rank} \n\n'
         outp += '{acc}%: {pp}pp({oldpp}pp)\n'

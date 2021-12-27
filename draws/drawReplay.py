@@ -234,6 +234,8 @@ def drawRec(mapjson, recinfo, bestinfo, userjson, **kw):
         mds_l2.remove('NONE')
     rank2 = 'D' if recinfo['rank'] == 'F' else recinfo['rank']
 
+    bid = mapjson['beatmap_id']
+    d.add_text(1180, 30, f"bid: {bid}", font_size=25, ttype='en')
     d.add_items(ranking_icon, 1000, 10) # 右上角 ranking
     d.add_items(replay_icon, 920, 470, factor=0.8) # replay
     d.add_items(rank_icon%rank2, 920, 100) # 评分

@@ -7,6 +7,7 @@ from PIL import Image, ImageDraw, ImageFont
 from draws import draw_data 
 from commLib import mods
 from botappLib import botHandler
+from ppyappLib import ppyHandler
 
 pre = 'draws/'
 default_skin = '%s/New!+game!' % pre
@@ -100,16 +101,18 @@ def drawR(mapjson, rankjson, userjson):
 
     # 用户信息
     uname = userjson.get('username', '')
-    pp = round(float(userjson.get('pp', 0)),2)
-    acc = userjson.get('acc', '')
-    level = userjson.get('level', '99')
-    rank = userjson.get('rank', '')
+    pp = f"{float(userjson.get('pp_raw', 0)):,.0f}"
+    acc = round(float(userjson.get('accuracy', 0)), 2)
+    lv = float(userjson.get('level', 0))
+    level = int(lv)
+    lv_left = lv - level # 小数位，经验条
+    rank = userjson.get('pp_rank', 0)
     umod = 'mode-osu-small.png'
 
     #曲子信息
-    title = mapjson.get('title','')
+    title = mapjson.get('title_unicode','')
     source = mapjson.get('source','')
-    artist = mapjson.get('artist','')
+    artist = mapjson.get('artist_unicode','')
     version = mapjson.get('version','')
     creator = mapjson.get('creator','')
     bpm = mapjson.get('bpm','')
@@ -119,6 +122,9 @@ def drawR(mapjson, rankjson, userjson):
     diff_approach = mapjson.get('diff_approach','') #AR
     diff_overall = mapjson.get('diff_overall','') #OD
     diff_drain = mapjson.get('diff_drain','') #HP
+    count_normal = int(mapjson.get('count_normal', 0))
+    count_slider = int(mapjson.get('count_slider', 0))
+    count_spinner = int(mapjson.get('count_spinner', 0))
 
     m, s = divmod(int(mapjson.get('total_length')), 60)
     h, m = divmod(m, 60)
@@ -130,7 +136,7 @@ def drawR(mapjson, rankjson, userjson):
     # 头像download
     uids = [list(r.keys())[0] for r in rankjson]
     check_uids = uids[:12]
-    me = userjson.get('osuid', '')
+    me = userjson.get('user_id', '')
     if me not in uids:
         check_uids.append(me)
         me_idx = -1
@@ -173,15 +179,20 @@ def drawR(mapjson, rankjson, userjson):
     d.add_text(788, 700, 'Performance:%spp'%pp, font_size=16, ttype='en')
     d.add_text(788, 720, 'Accuracy:%s%%'%acc, font_size=16, ttype='en')
     d.add_text(788, 740, 'Lv:%s'%level, font_size=16, ttype='en')
-    d.add_items2(level_bar, 840, 750, isresize=True, width=100, height=14)
-    d.add_items2(level_bar_bg, 840, 750)
+    if lv_left > 0.1:
+        d.add_items2(level_bar, 840, 745, isresize=True, width=int(lv_left*200), height=14)
+    d.add_items2(level_bar_bg, 840, 745)
 
     # 曲子信息
-    d.add_text(40, 0, '%s (%s) - %s [%s]'%(source,artist,title,version), font_size=25, ttype='cn')
-    d.add_items2(selection_approved, 7, 0)
-    d.add_text(40, 26, '作者: %s'%(creator), font_size=16, ttype='cn')
-    d.add_text(5, 45, '长度: %s  BPM: %s  物件数: %s'%(hit_length,bpm,max_combo), font_size=18, ttype='cn')
-    d.add_text(5, 68, 'CS:%s AR:%s OD:%s HP:%s Stars:%s'%(diff_size,diff_approach,diff_overall,diff_drain,difficultyrating), font_size=14, ttype='en')
+    d.add_text(35, 0, '%s (%s) - %s [%s]'%(source,artist,title,version), font_size=25, ttype='cn')
+    d.add_items2(selection_approved, 7, 3)
+    d.add_text(40, 30, '作者: %s'%(creator), font_size=16, ttype='cn')
+    d.add_text(5, 50, '长度: %s  BPM: %s  物件数: %s'%(hit_length,bpm,count_normal+count_slider+count_spinner), font_size=18, ttype='cn')
+    d.add_text(5, 75, '圈数: %s 滑条数: %s 转盘数: %s'%(count_normal,count_slider,count_spinner), font_size=16, ttype='cn')
+    d.add_text(5, 100, 'CS:%s AR:%s OD:%s HP:%s Star:%s★'%(diff_size,diff_approach,diff_overall,diff_drain,difficultyrating), font_size=16, ttype='en')
+
+    bid = mapjson['beatmap_id']
+    d.add_text(1180, 30, f"bid: {bid}", font_size=25, ttype='en')
 
     # 榜区域
     nums = len(uids)
@@ -263,5 +274,7 @@ def drawR(mapjson, rankjson, userjson):
 
 def start(bid='847314', groupid='614892339', hid=1, mods=-1, uid='8505303'):
     mapjson,rankjson = draw_data.map_ranks_info(str(bid), groupid, hid, mods)
-    userjson = draw_data.get_user_stats(uid)
+    ppyIns = ppyHandler.ppyHandler()
+    userjson = ppyIns.getOsuUserInfo(uid)[0]
+    mapjson = ppyIns.getOsuBeatMapInfo(bid)[0]
     return drawR(mapjson,rankjson,userjson)
