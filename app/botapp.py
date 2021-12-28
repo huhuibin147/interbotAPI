@@ -54,6 +54,7 @@ def rctppnew(**kw):
     osuname = kw['autoOusInfoKey']['osuname']
     recinfo = b.getRecInfo(osuid, "1")
     logging.info(recinfo)
+    smoke_res = None
     if not recinfo:
         res = "没有最近游戏记录,绑定用户为%s" % osuname
     else:
