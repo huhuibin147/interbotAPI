@@ -775,6 +775,17 @@ def ppplus(**kw):
     return res
 
 
+@app.route('/summary', methods=['POST'])
+@appTools.deco(autoOusInfoKey='osuid,osuname')
+def annual_summary(**kw):
+    b = botHandler.botHandler()
+    osuid = kw['autoOusInfoKey']['osuid']
+    osuname = kw['autoOusInfoKey']['osuname']
+    res = b.annual_sammry(osuid, osuname)
+    return res
+
+
+
 
 if __name__ == '__main__':
     app.run(threaded=True)

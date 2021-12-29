@@ -1586,8 +1586,97 @@ class botHandler():
         pfs = drawReplay.drawRec(mapjson, recinfo, bestinfo, userjson, **kwargs)
         return pfs, kv
 
+    def annual_sammry(self, osuid, osuname):
+        
+        db = interMysql.Connect('osu')
+        sql = '''
+            SELECT * FROM `recinfo` where lastdate >='2021-01-01' and lastdate <= '2022-01-01' and uid=%s
+        '''
+        ret = db.query(sql, [osuid])
+
+        # ret = [{'id': 66315, 'groupid': None, 'hid': '1', 'bid': '893696', 'uid': '11788070', 'score': '101945', 'maxcombo': 50, 'mods': 1, 
+        # 'playdate': datetime.datetime(2021, 2, 28, 8, 8, 54), 'lastdate': datetime.datetime(2021, 2, 28, 16, 9, 7), 
+        # 'rank': 'F', 'recjson': '{"beatmap_id": "893696", "score": "101945", "maxcombo": "50", "count50": "8", "count100": "86", "count300": "126", "countmiss": "40", "countkatu": "22", "countgeki": "7", "perfect": "0", "enabled_mods": "0", "user_id": "11788070", "date": "2021-02-28 08:08:54", "rank": "F"}'}, {'id': 66333, 'groupid': None, 'hid': '1', 'bid': '1056207', 'uid': '11788070', 'score': '2365370', 'maxcombo': 465, 'mods': 1, 'playdate': datetime.datetime(2021, 7, 19, 14, 4, 20), 'lastdate': datetime.datetime(2021, 7, 19, 22, 4, 48), 'rank': 'B', 'recjson': '{"beatmap_id": "1056207", "score": "2365370", "maxcombo": "465", "count50": "2", "count100": "37", "count300": "356", "countmiss": "1", "countkatu": "13", "countgeki": "76", "perfect": "0", "enabled_mods": "1", "user_id": "11788070", "date": "2021-07-19 14:04:20", "rank": "B", "score_id": "3778314483"}'}, {'id': 320631, 'groupid': None, 'hid': '1', 'bid': '1717986', 'uid': '11788070', 'score': '3670625', 'maxcombo': 442, 'mods': 1, 'playdate': datetime.datetime(2021, 6, 12, 15, 6, 18), 'lastdate': datetime.datetime(2021, 6, 12, 23, 6, 47), 'rank': 'C', 'recjson': '{"beatmap_id": "1717986", "score": "3670625", "maxcombo": "442", "count50": "19", "count100": "183", "count300": "746", "countmiss": "11", "countkatu": "86", "countgeki": "126", "perfect": "0", "enabled_mods": "1", "user_id": "11788070", "date": "2021-06-12 15:06:18", "rank": "C", "score_id": "3715881542"}'}, {'id': 399363, 'groupid': None, 'hid': '1', 'bid': '1925014', 'uid': '11788070', 'score': '242496', 'maxcombo': 102, 'mods': 1, 'playdate': datetime.datetime(2021, 2, 28, 9, 48, 7), 'lastdate': datetime.datetime(2021, 2, 28, 17, 48, 18), 'rank': 'F', 'recjson': '{"beatmap_id": "1925014", "score": "242496", "maxcombo": "102", "count50": "8", "count100": "95", "count300": "277", "countmiss": "39", "countkatu": "44", "countgeki": "53", "perfect": "0", "enabled_mods": "1", "user_id": "11788070", "date": "2021-02-28 09:48:07", "rank": "F"}'}]
+
+        tt = len(ret)
+        if tt < 1:
+            return "无上传记录!"
+
+        rankNum = {}
+        score_tt = 0
+        acc_tt = 0
+        max_cb = 0
+        one_miss_tt = 0
+        miss_tt = 0
+        cb_tt = 0
+        modNum = {}
+        dayNum = {}
+        flag_t_0_6 = 0
+        lastTime0_6 = datetime.datetime(year=2021, month=1, day=1, hour=0, minute=0, second=0)
+        lastTime6_24 = datetime.datetime(year=2021, month=1, day=1, hour=0, minute=0, second=0)
+        lastTime0_6_d = None
+        lastTime6_24_d = None
+
+        for r in ret:
+            m = json.loads(r['recjson'])
+            rankNum[m['rank']] = rankNum.get(m['rank'], 0) + 1
+            score_tt += int(m['score'])
+            m['acc'] = mods.get_acc(m['count300'], m['count100'], m['count50'], m['countmiss'])
+            acc_tt += m['acc']
+            if int(m['maxcombo']) > max_cb:
+                max_cb = int(m['maxcombo'])
+            if m['countmiss'] == "1":
+                one_miss_tt += 1
+            cb_tt += int(m['maxcombo'])
+            miss_tt += int(m['countmiss'])
+            mod = mods.getMod(m['enabled_mods'])
+            for mo in mod:
+                modNum[mo] = modNum.get(mo, 0) + 1
+            t = datetime.datetime.strptime(m['date'], "%Y-%m-%d %H:%M:%S")
+            d = t.date()
+
+            t2 = datetime.datetime(year=2021, month=1, day=1, hour=t.hour, minute=t.minute, second=t.second)
+            
+            dayNum[d] = dayNum.get(d, 0) + 1
+            if t.hour <= 6:
+                if t2.timestamp() > lastTime0_6.timestamp():
+                    lastTime0_6 = t2
+                    lastTime0_6_d = t
+                    flag_t_0_6 = 1
+            else:
+                if t2.timestamp() > lastTime6_24.timestamp():
+                    lastTime6_24 = t2
+                    lastTime6_24_d = t
+            
+        acc_avg = acc_tt / tt
+
+        s = f"{osuname}的2021年度总结\n"
+        s += f"上传总数：{tt}\n"
+        s += f"总得分：{score_tt:,}\n"
+        s += f"平均Acc：{acc_avg:.1f}%\n"
+        s += f"最大Combo：{max_cb}\n"
+        s += f"累计cb总数：{cb_tt:,}\n"
+        s += f"累计Miss总数：{miss_tt:,}\n"
+        s += f"1miss的图的总数：{one_miss_tt}\n"
+
+        modNum_s = sorted(modNum.items(), key=lambda x:x[1], reverse=True)
+        s += f"最爱的mod：{modNum_s[0][0]}({modNum_s[0][1]}次)\n"
+
+        lastTime = lastTime0_6_d if flag_t_0_6 else lastTime6_24_d
+        s += f"最晚的那天：{str(lastTime)}\n"
+
+        dayNum_s = sorted(dayNum.items(), key=lambda x:x[1], reverse=True)
+        s += f"查的最多的一天是：{dayNum_s[0][0]}({dayNum_s[0][1]}次)\n"
+
+        s += f"总rank分布："
+        for k in sorted(rankNum):
+            s += f"{k}:{rankNum[k]}  "
+
+        # print(s)
+        return s
 
 
 if __name__ == "__main__":
     b = botHandler()
     # b.drawRctpp(osuid="11788070", osuname="interbot")
+    b.annual_sammry(osuid = "11788070")
