@@ -1618,35 +1618,38 @@ class botHandler():
         lastTime6_24_d = None
 
         for r in ret:
-            m = json.loads(r['recjson'])
-            rankNum[m['rank']] = rankNum.get(m['rank'], 0) + 1
-            score_tt += int(m['score'])
-            m['acc'] = mods.get_acc(m['count300'], m['count100'], m['count50'], m['countmiss'])
-            acc_tt += m['acc']
-            if int(m['maxcombo']) > max_cb:
-                max_cb = int(m['maxcombo'])
-            if m['countmiss'] == "1":
-                one_miss_tt += 1
-            cb_tt += int(m['maxcombo'])
-            miss_tt += int(m['countmiss'])
-            mod = mods.getMod(m['enabled_mods'])
-            for mo in mod:
-                modNum[mo] = modNum.get(mo, 0) + 1
-            t = datetime.datetime.strptime(m['date'], "%Y-%m-%d %H:%M:%S")
-            d = t.date()
+            try:
+                m = json.loads(r['recjson'])
+                rankNum[m['rank']] = rankNum.get(m['rank'], 0) + 1
+                score_tt += int(m['score'])
+                m['acc'] = mods.get_acc(m['count300'], m['count100'], m['count50'], m['countmiss'])
+                acc_tt += m['acc']
+                if int(m['maxcombo']) > max_cb:
+                    max_cb = int(m['maxcombo'])
+                if m['countmiss'] == "1":
+                    one_miss_tt += 1
+                cb_tt += int(m['maxcombo'])
+                miss_tt += int(m['countmiss'])
+                mod = mods.getMod(m['enabled_mods'])
+                for mo in mod:
+                    modNum[mo] = modNum.get(mo, 0) + 1
+                t = datetime.datetime.strptime(m['date'], "%Y-%m-%d %H:%M:%S")
+                d = t.date()
 
-            t2 = datetime.datetime(year=2021, month=1, day=1, hour=t.hour, minute=t.minute, second=t.second)
-            
-            dayNum[d] = dayNum.get(d, 0) + 1
-            if t.hour <= 6:
-                if t2.timestamp() > lastTime0_6.timestamp():
-                    lastTime0_6 = t2
-                    lastTime0_6_d = t
-                    flag_t_0_6 = 1
-            else:
-                if t2.timestamp() > lastTime6_24.timestamp():
-                    lastTime6_24 = t2
-                    lastTime6_24_d = t
+                t2 = datetime.datetime(year=2021, month=1, day=1, hour=t.hour, minute=t.minute, second=t.second)
+                
+                dayNum[d] = dayNum.get(d, 0) + 1
+                if t.hour <= 5:
+                    if t2.timestamp() > lastTime0_6.timestamp():
+                        lastTime0_6 = t2
+                        lastTime0_6_d = t
+                        flag_t_0_6 = 1
+                else:
+                    if t2.timestamp() > lastTime6_24.timestamp():
+                        lastTime6_24 = t2
+                        lastTime6_24_d = t
+            except:
+                logging.exception("")
             
         acc_avg = acc_tt / tt
 
