@@ -1594,10 +1594,6 @@ class botHandler():
         '''
         ret = db.query(sql, [osuid])
 
-        # ret = [{'id': 66315, 'groupid': None, 'hid': '1', 'bid': '893696', 'uid': '11788070', 'score': '101945', 'maxcombo': 50, 'mods': 1, 
-        # 'playdate': datetime.datetime(2021, 2, 28, 8, 8, 54), 'lastdate': datetime.datetime(2021, 2, 28, 16, 9, 7), 
-        # 'rank': 'F', 'recjson': '{"beatmap_id": "893696", "score": "101945", "maxcombo": "50", "count50": "8", "count100": "86", "count300": "126", "countmiss": "40", "countkatu": "22", "countgeki": "7", "perfect": "0", "enabled_mods": "0", "user_id": "11788070", "date": "2021-02-28 08:08:54", "rank": "F"}'}, {'id': 66333, 'groupid': None, 'hid': '1', 'bid': '1056207', 'uid': '11788070', 'score': '2365370', 'maxcombo': 465, 'mods': 1, 'playdate': datetime.datetime(2021, 7, 19, 14, 4, 20), 'lastdate': datetime.datetime(2021, 7, 19, 22, 4, 48), 'rank': 'B', 'recjson': '{"beatmap_id": "1056207", "score": "2365370", "maxcombo": "465", "count50": "2", "count100": "37", "count300": "356", "countmiss": "1", "countkatu": "13", "countgeki": "76", "perfect": "0", "enabled_mods": "1", "user_id": "11788070", "date": "2021-07-19 14:04:20", "rank": "B", "score_id": "3778314483"}'}, {'id': 320631, 'groupid': None, 'hid': '1', 'bid': '1717986', 'uid': '11788070', 'score': '3670625', 'maxcombo': 442, 'mods': 1, 'playdate': datetime.datetime(2021, 6, 12, 15, 6, 18), 'lastdate': datetime.datetime(2021, 6, 12, 23, 6, 47), 'rank': 'C', 'recjson': '{"beatmap_id": "1717986", "score": "3670625", "maxcombo": "442", "count50": "19", "count100": "183", "count300": "746", "countmiss": "11", "countkatu": "86", "countgeki": "126", "perfect": "0", "enabled_mods": "1", "user_id": "11788070", "date": "2021-06-12 15:06:18", "rank": "C", "score_id": "3715881542"}'}, {'id': 399363, 'groupid': None, 'hid': '1', 'bid': '1925014', 'uid': '11788070', 'score': '242496', 'maxcombo': 102, 'mods': 1, 'playdate': datetime.datetime(2021, 2, 28, 9, 48, 7), 'lastdate': datetime.datetime(2021, 2, 28, 17, 48, 18), 'rank': 'F', 'recjson': '{"beatmap_id": "1925014", "score": "242496", "maxcombo": "102", "count50": "8", "count100": "95", "count300": "277", "countmiss": "39", "countkatu": "44", "countgeki": "53", "perfect": "0", "enabled_mods": "1", "user_id": "11788070", "date": "2021-02-28 09:48:07", "rank": "F"}'}]
-
         tt = len(ret)
         if tt < 1:
             return "无上传记录!"
@@ -1675,6 +1671,28 @@ class botHandler():
         for k in sorted(rankNum):
             s += f"{k}:{rankNum[k]}  "
 
+        sql2 = '''
+            SELECT * FROM `user2` where time>='2021-01-01' and osuid=%s order by time limit 1
+        '''
+        ret2 = db.query(sql2, [osuid])
+        if ret2:
+            u = ret2[0]
+            ppyIns = ppyHandler.ppyHandler()
+            userinfos = ppyIns.getOsuUserInfo(osuid)
+            if userinfos:
+                r = userinfos[0]
+                incr_pp = float(r['pp_raw']) - float(u['pp'])
+                incr_acc = float(r['accuracy']) - float(u['acc'])
+                incr_rank = int(r['pp_rank']) - int(u['rank'])
+                incr_pc = int(r['playcount']) - int(u['pc'])
+                incr_tth = int(r['count300']) + int(r['count100']) + int(r['count50']) - int(u['tth'])
+                s += f"\n今年你的pp增加了{incr_pp:.0f}pp({round(float(r['pp_raw'])):,}pp)\n" if incr_pp >= 0 else f"\n今年你的pp减少了{abs(incr_pp):.0f}pp({round(float(r['pp_raw'])):,}pp)\n"
+                s += f"今年你的acc增加了{incr_acc:.2f}%({float(r['accuracy']):.2f}%)\n" if incr_acc >= 0 else f"今年你的acc减少了{abs(incr_acc):.2f}%({float(r['accuracy']):.2f}%)\n"
+                s += f"今年你的排名上升了{abs(incr_rank):,}名({round(float(r['pp_rank'])):,})\n" if incr_rank < 0 else f"今年你的排名下降了{abs(incr_rank):,}名({round(float(r['pp_rank'])):,})\n"
+                s += f"今年你总共打了{incr_pc:,}pc\n"
+                s += f"今年你总共敲击了{incr_tth:,}下\n"
+                s += f"计算的时间起点：{u['time']}"
+
         # print(s)
         return s
 
@@ -1682,4 +1700,4 @@ class botHandler():
 if __name__ == "__main__":
     b = botHandler()
     # b.drawRctpp(osuid="11788070", osuname="interbot")
-    b.annual_sammry(osuid = "11788070")
+    b.annual_sammry(osuid = "11788070", osuname="interbot")
