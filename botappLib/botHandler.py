@@ -626,7 +626,7 @@ class botHandler():
     def formatRctpp4(self, ojson, rank, acc, ppfc, ppss, bid, fcacc, miss):
         """格式化rctpp简版输出"""
         outp = ''
-        outp += Config.bg_thumb
+        outp += Config.bg_thumb + '\n'
         outp += '[{stars}* ar{ar:.1f} bpm{bpm:.0f}] {mods_str}\n'
         outp += '{combo}x/{max_combo}({miss}x) | {acc:.1f}% | {rank} \n'
         outp += '{pp:.0f}pp | {ppfc:.0f}pp | {ppss:.0f}pp'
@@ -820,7 +820,7 @@ class botHandler():
         for i,r in enumerate(bp5[0:3]):
             mapInfo = self.getOsuBeatMapInfo(r["beatmap_id"])
             msg = Config.bg_thumb.format(sid=mapInfo["beatmapset_id"])
-            msg += 'bp{x}, {pp}pp,{acc:.2f}%,{rank},+{mod}'
+            msg += '\nbp{x}, {pp}pp,{acc:.2f}%,{rank},+{mod}'
             c50 = float(r['count50'])
             c100 = float(r['count100'])
             c300 = float(r['count300'])
