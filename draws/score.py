@@ -7,56 +7,61 @@ from commLib import mods
 
 def map2db(args):
     try:
+        ret = None
         conn = interMysql.Connect('osu')
-        sql = '''
-            INSERT into beatmap(bid, source, artist, title, version, creator, stars, addtime, mapjson) 
-            VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s)
-            ON DUPLICATE KEY UPDATE 
-            source=%s, artist=%s, title=%s, version=%s, creator=%s, stars=%s, addtime=%s, mapjson=%s
-        '''
-        ret = conn.executeMany(sql, args)
-        conn.commit()
-        logging.info('map入库记录 %s' % ret)
+        for arg in args:
+            sql = '''
+                INSERT into beatmap(bid, source, artist, title, version, creator, stars, addtime, mapjson) 
+                VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s)
+                ON DUPLICATE KEY UPDATE 
+                source=%s, artist=%s, title=%s, version=%s, creator=%s, stars=%s, addtime=%s, mapjson=%s
+            '''
+            ret = conn.execute(sql, arg)
+            conn.commit()
+            logging.info('map入库记录 %s' % ret)
         return ret
     except:
         conn.rollback()
-        traceback.print_exc()
+        logging.exception("")
 
 def rec2db(args):
     try:
+        ret = None
         conn = interMysql.Connect('osu')
-        sql = '''
-            INSERT into recinfo(hid, bid, uid, score, maxcombo, mods, playdate, lastdate, rank, recjson) 
-            VALUES(%s, %s, %s, %s, %s, %s, %s, now(), %s, %s)
-            ON DUPLICATE KEY UPDATE 
-            score=%s, maxcombo=%s, playdate=%s, lastdate=now(), rank=%s, recjson=%s
-        '''
-        ret = conn.executeMany(sql, args)
-        conn.commit()
-        logging.info('rec入库记录 %s' % ret)
+        for arg in args:
+            sql = '''
+                INSERT into recinfo(hid, bid, uid, score, maxcombo, mods, playdate, lastdate, rank, recjson) 
+                VALUES(%s, %s, %s, %s, %s, %s, %s, now(), %s, %s)
+                ON DUPLICATE KEY UPDATE 
+                score=%s, maxcombo=%s, playdate=%s, lastdate=now(), rank=%s, recjson=%s
+            '''
+            ret = conn.execute(sql, arg)
+            conn.commit()
+            logging.info('rec入库记录 %s' % ret)
         return ret
     except:
         conn.rollback()
-        traceback.print_exc()
+        logging.exception("")
 
 def rank2db(args):
     try:
         # print('入库参数:%s'%args)
+        ret = None
         conn = interMysql.Connect('osu')
-        sql = '''
-            INSERT into maprank(gid, hid, bid, uid, type, mods, lastdate, rankjson) 
-            VALUES(%s, %s, %s, %s, %s, %s, now(), %s)
-            ON DUPLICATE KEY UPDATE 
-            uid=%s, type=%s, lastdate=now(), rankjson=%s
-        '''
-        ret = conn.executeMany(sql, args)
-        conn.commit()
-        logging.info('rank入库记录 %s' % ret)
-        print('rank入库记录 %s' % ret)
+        for arg in args:
+            sql = '''
+                INSERT into maprank(gid, hid, bid, uid, type, mods, lastdate, rankjson) 
+                VALUES(%s, %s, %s, %s, %s, %s, now(), %s)
+                ON DUPLICATE KEY UPDATE 
+                uid=%s, type=%s, lastdate=now(), rankjson=%s
+            '''
+            ret = conn.execute(sql, arg)
+            conn.commit()
+            logging.info('rank入库记录 %s' % ret)
         return ret
     except:
         conn.rollback()
-        traceback.print_exc()
+        logging.exception("")
 
 def alias2db(cname, bid='', uid=''):
     try:
@@ -134,7 +139,7 @@ def check_rec(bids, rec, uid):
     # 单mod成绩比较
     for r in rec:
         if r['beatmap_id'] in ret_dict and int(r['enabled_mods']) in ret_dict[r['beatmap_id']]:
-            if int(r['score']) > int(ret_dict[r['beatmap_id']][int(r['enabled_mods'])]) or int(r['score']) > max_dict[r['beatmap_id']]:
+            if int(r['score']) >= int(ret_dict[r['beatmap_id']][int(r['enabled_mods'])]) or int(r['score']) >= max_dict[r['beatmap_id']]:
                 newRec.append(r)
         else:
             newRec.append(r)

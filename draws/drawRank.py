@@ -8,6 +8,7 @@ from draws import draw_data
 from commLib import mods
 from botappLib import botHandler
 from ppyappLib import ppyHandler
+from draws import score
 
 pre = 'draws/'
 default_skin = '%s/New!+game!' % pre
@@ -276,6 +277,12 @@ def drawR(mapjson, rankjson, userjson):
 def start(bid='847314', groupid='614892339', hid=1, mods=-1, uid='8505303'):
     mapjson,rankjson = draw_data.map_ranks_info(str(bid), groupid, hid, mods)
     ppyIns = ppyHandler.ppyHandler()
+    # 历史问题导致遗漏的情况
+    if not mapjson:
+        mapsinfo = [ppyIns.getOsuBeatMapInfo(bid)]
+        map_args = score.args_format('map', mapsinfo)
+        score.map2db(map_args)
+        mapjson,rankjson = draw_data.map_ranks_info(str(bid), groupid, hid, mods)
     userjson = ppyIns.getOsuUserInfo(uid)[0]
     mapjson = ppyIns.getOsuBeatMapInfo(bid)[0]
     return drawR(mapjson,rankjson,userjson)
