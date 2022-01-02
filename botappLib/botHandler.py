@@ -1695,9 +1695,52 @@ class botHandler():
 
         # print(s)
         return s
+    
+    def osu_mp(self, groupid):
+        if self.check_mp_idle():
+            return "房间存活，房名: xinrenqun mp | auto host ratation 密码: x114514"
+        
+        pushTools.pushMsgOne(groupid, "mp房间不存在，请稍等，正在创建...")
 
+        npmrun_ret = os.system('cd /root/code/osu-ahr; nohup npm run start m xinrenqunmp > ser.log 2>&1 &')
+        logging.info("os system npm run res:%s", npmrun_ret)
+        idle_flag = 0
+        for i in range(20):
+            time.sleep(3)
+            logging.info("[%s].checking npm process...", i+1)
+            if idle_flag == 0 and self.check_mp_idle():
+                idle_flag = 1
+
+            if idle_flag == 1:
+                mid = self.check_mp_mid()
+                if mid:
+                    pushTools.pushMsgOne(groupid, "mp房间创建完成，频道为#mp_%s" % mid)
+                    return "房名: xinrenqun mp | auto host ratation 密码: x114514"
+
+        return "房间创建结果未知..."
+    
+    def check_mp_idle(self):
+        ret = os.popen("ps axu|grep 'xinrenqunmp'|grep -v grep")
+        ret = ret.read()
+        logging.info(ret)
+        if "xinrenqunmp" in ret:
+            return True
+        return False
+    
+    def check_mp_mid(self):
+        ret = os.popen("cd /root/code/osu-ahr; grep '#mp' ser.log|tail -1")
+        s = ret.read()
+        mpid = None
+        if "#mp" in s:
+            p = re.compile("#mp_(\d+)")
+            rs = p.findall(s)
+            if len(rs) > 0:
+                mpid = rs[0]
+        return mpid
 
 if __name__ == "__main__":
     b = botHandler()
     # b.drawRctpp(osuid="11788070", osuname="interbot")
-    b.annual_sammry(osuid = "11788070", osuname="interbot")
+    # b.annual_sammry(osuid = "11788070", osuname="interbot")
+    # b.osu_mp("712603531")
+    print(b.check_mp_mid())

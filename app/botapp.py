@@ -785,6 +785,18 @@ def annual_summary(**kw):
     return res
 
 
+@app.route('/osump', methods=['POST'])
+@appTools.deco()
+def osump(**kw):
+    b = botHandler.botHandler()
+    try:
+        res = b.osu_mp(kw["groupid"])
+    except:
+        logging.exception("")
+        return "未知异常，请联系inter处理!"
+    return res
+
+
 
 
 if __name__ == '__main__':
