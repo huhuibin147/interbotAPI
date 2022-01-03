@@ -796,6 +796,17 @@ def osump(**kw):
         return "未知异常，请联系inter处理!"
     return res
 
+@app.route('/mplink', methods=['POST'])
+@appTools.deco()
+def mplink(**kw):
+    b = botHandler.botHandler()
+    try:
+        res = b.get_mp_link()
+    except:
+        logging.exception("")
+        return "fail!"
+    return res
+
 
 
 

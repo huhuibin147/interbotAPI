@@ -1741,6 +1741,14 @@ class botHandler():
                 mpid = rs[0]
         return mpid
 
+    def get_mp_link(self):
+        mid = self.check_mp_mid()
+        link = f"https://osu.ppy.sh/community/matches/{mid}"
+        return link
+
+
+
+
 if __name__ == "__main__":
     b = botHandler()
     # b.drawRctpp(osuid="11788070", osuname="interbot")
