@@ -1746,6 +1746,9 @@ class botHandler():
         link = f"https://osu.ppy.sh/community/matches/{mid}"
         return link
 
+    def mp_idle_kill(self):
+        return os.system("ps axu|grep 'xinrenqunmp'|grep -v grep|awk '{print $2}'|xargs kill")
+
 
 
 

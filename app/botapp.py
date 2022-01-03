@@ -807,6 +807,17 @@ def mplink(**kw):
         return "fail!"
     return res
 
+@app.route('/mpidlekill', methods=['POST'])
+@appTools.deco()
+def mpidlekill(**kw):
+    b = botHandler.botHandler()
+    try:
+        res = b.mp_idle_kill()
+        return "kill result:%s" % res
+    except:
+        logging.exception("")
+        return "fail!"
+
 @app.route('/updatemap', methods=['POST'])
 @appTools.deco()
 def updatemap(**kw):
