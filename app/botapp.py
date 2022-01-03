@@ -807,6 +807,22 @@ def mplink(**kw):
         return "fail!"
     return res
 
+@app.route('/updatemap', methods=['POST'])
+@appTools.deco()
+def updatemap(**kw):
+    b = ppyHandler.ppyHandler()
+    try:
+        if not kw['iargs']:
+            return "请输入bid!"
+        bidstr = kw['iargs'][0]
+        bids = bidstr.split(",")
+        res = b.refresh_mapinfo2db(bids)
+        return f"update res: {res}"
+    except:
+        logging.exception("")
+        return "fail!"
+
+
 
 
 

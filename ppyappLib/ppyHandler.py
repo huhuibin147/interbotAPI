@@ -14,6 +14,7 @@ from botappLib import botHandler
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 from bs4 import BeautifulSoup
+from draws import score
 
 
 class ppyHandler():
@@ -374,3 +375,8 @@ class ppyHandler():
             logging.error(traceback.format_exc())
             return '那个破网站连不上!!'
 
+    def refresh_mapinfo2db(self, bids):
+        mapsinfo = [self.getOsuBeatMapInfo(bid) for bid in bids]
+        map_args = score.args_format('map', mapsinfo)
+        ret = score.map2db(map_args)
+        return ret
