@@ -1698,7 +1698,7 @@ class botHandler():
     
     def osu_mp(self, groupid):
         if self.check_mp_idle():
-            return "房间存活，房名: xinrenqun mp | auto host rotation 密码: x114514"
+            return "房间存活，房名: xinrenqun mp | auto host rotate 密码: x114514"
         
         pushTools.pushMsgOne(groupid, "mp房间不存在，请稍等，正在创建...")
 
@@ -1715,7 +1715,7 @@ class botHandler():
                 mid = self.check_mp_mid()
                 if mid:
                     pushTools.pushMsgOne(groupid, "mp房间创建完成，频道为#mp_%s" % mid)
-                    return "房名: xinrenqun mp | auto host rotation 密码: x114514"
+                    return "房名: xinrenqun mp | auto host rotate 密码: x114514"
 
         return "房间创建结果未知..."
     
