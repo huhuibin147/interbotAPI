@@ -1702,7 +1702,7 @@ class botHandler():
         
         pushTools.pushMsgOne(groupid, "mp房间不存在，请稍等，正在创建...")
 
-        npmrun_ret = os.system('cd /root/code/osu-ahr; nohup npm run start m xinrenqunmp > ser.log 2>&1 &')
+        npmrun_ret = self.make_mp_idle()
         logging.info("os system npm run res:%s", npmrun_ret)
         idle_flag = 0
         for i in range(20):
@@ -1718,6 +1718,9 @@ class botHandler():
                     return "房名: xinrenqun mp | auto host ratation 密码: x114514"
 
         return "房间创建结果未知..."
+    
+    def make_mp_idle(self):
+        return os.system('cd /root/code/osu-ahr; nohup npm run start m xinrenqunmp > ser.log 2>&1 &')
     
     def check_mp_idle(self):
         ret = os.popen("ps axu|grep 'xinrenqunmp'|grep -v grep")
