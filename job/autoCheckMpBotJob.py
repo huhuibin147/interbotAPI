@@ -23,5 +23,8 @@ class autoCheckMpBotJob(jobCenter.jobCenter):
             logging.info("auto make mp idle rs:%s", rs)
         else:
             logging.info("mp idle alive")
+            if not b.check_mp_network():
+                b.mp_idle_kill()
+        
     
         

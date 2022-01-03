@@ -1747,8 +1747,17 @@ class botHandler():
         return link
 
     def mp_idle_kill(self):
-        return os.system("ps axu|grep 'xinrenqunmp'|grep -v grep|awk '{print $2}'|xargs kill")
+        rs = os.system("ps axu|grep 'xinrenqunmp'|grep -v grep|awk '{print $2}'|xargs kill")
+        logging.info("kill mp idle rs:%s", rs)
+        return rs
 
+    def check_mp_network(self):
+        ret = os.popen("cd /root/code/osu-ahr; grep 'network reconnection detected' ser.log|tail -1")
+        s = ret.read()
+        if 'network reconnection detected' in s:
+            logging.info('network reconnection detected!')
+            return False
+        return True
 
 
 
