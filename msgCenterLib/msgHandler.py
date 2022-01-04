@@ -8,6 +8,7 @@ from commLib import interMysql
 from commLib import pushTools
 from commLib import interRedis
 from commLib import Config
+from chatbotLib import chatHandler
 from msgCenterLib import otherMsgHandler
 
 class msgHandler():
@@ -35,6 +36,8 @@ class msgHandler():
             replyFlag, msg = self.interactiveFuncRef(self.context['user_id'], self.context['group_id'], msg)
             if '!' in msg:
                 return self.autoApi(msg, replyFlag)
+            elif msg == f"[CQ:at,qq={self.context['self_id']}]":
+                return self.at_random_reply()
             else:
                 return self.autoReply(msg)
         
@@ -345,5 +348,11 @@ class msgHandler():
                 replyFlag = 1
         return replyFlag, msg
 
+    def at_random_reply(self):
+        c = chatHandler.chatHandler()
+        msg = c.get_random_speak()
+        if msg and len(msg) > 0:
+            return msg
+        return ""
 
 

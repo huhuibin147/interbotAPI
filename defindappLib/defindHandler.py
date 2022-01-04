@@ -74,4 +74,5 @@ class defindHandler():
         try:
             audio.entry(self.context)
         except:
-            logging.error(traceback.format_exc())
+            logging.exception("")
+            
