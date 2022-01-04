@@ -36,7 +36,7 @@ class msgHandler():
             replyFlag, msg = self.interactiveFuncRef(self.context['user_id'], self.context['group_id'], msg)
             if '!' in msg:
                 return self.autoApi(msg, replyFlag)
-            elif msg == f"[CQ:at,qq={self.context['self_id']}]":
+            elif msg.strip() == f"[CQ:at,qq={self.context['self_id']}]" or msg.strip() == f"@interbot2":
                 return self.at_random_reply()
             else:
                 return self.autoReply(msg)
