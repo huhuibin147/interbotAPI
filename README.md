@@ -85,28 +85,28 @@ if __name__ == '__main__':
 | id | cmd | url | location | reply | at | level | toprivate |
 | :-----| :----- | :----- | :----- | :----- | :----- | :----- | :----- |
 | 1 | hello |  |  | hello | 1 | 1 |   |   |
-| 2 | !rctpp | /rctpp | http://inter4.com/osubot | 最近游戏记录,需要绑定  | 1 | 1 |   | 
-| 3 | !setid | /oauth | http://inter4.com/osubase | 绑定 用法：!setid，链接认证  | 1 | 1 | 1 |  
-| 4 | !mybp | /mybp | http://inter4.com/osubot | bp查询 用法：!mybp num  | 1 | 1 |   |   
-| 5 | !bbp | /mybp | http://inter4.com/osubot | bp简化输出,需绑定  |   | 1 |   |   
-| 6 | !test | /test | http://inter4.com/osubot | osu账号评分  |   | 1 |   |   
-| 7 | !skill | /skill | http://inter4.com/osubot | osuskill站点信息  |   | 1 |   |   
-| 8 | !todaybp | /todaybp | http://inter4.com/osubot | 今日更新bp  |   | 1 |   |   
-| 9 | !mu | /mu | http://inter4.com/osubot | 主页链接  |   | 1 |   |   
-| 10 | !check | /check | http://inter4.com/extendapp | 来自薛定谔的pp  |   | 1 |   |   
-| 11 | !vssk | /vssk | http://inter4.com/osubot | skill pk  |   | 1 |   |   
-| 12 | !oauth | /oauth | http://inter4.com/osubase | osu apiv2 绑定  |  1 | 1 |   |   
-| 13 | !friends | /friends | http://inter4.com/osubot | 好友列表  |  1 | 1 |   |   
-| 14 | !nbp | /nbp | http://inter4.com/osubot | 输入bid得到bp几  |  1 | 1 |   |   
-| 15 | !rl | /rankline | http://inter1.com/osu2 | 排名变化曲线  |    | 1 |   |   
-| 16 | !pc | /rplaycount | http://inter1.com/osu2 | 游玩次数变化曲线  |    | 1 |   |   
-| 17 | !rctpps | /rctpps | http://inter4.com/osubot | 批量版rctpp   |  1  |  |   |   
-| 18 | !stat | /stat | http://inter4.com/osubot | 新版osu个人信息   |  1  |  |   |   
-| 19 | !map | /map | http://inter4.com/extendapp | 低端pp图推荐   |  1  |  |   |   
-| 20 | !oldsetid | /setid | http://inter4.com/osubase | 绑定osu信息   |  1  |  |   |   
-| 21 | !days | /days | http://inter4.com/osubot | 增长数据查询   |     | 1 |   |   
-| 22 | !bd | /rank | http://inter4.com/osubot | 榜单查询 bd bid   |     | 1 |   |   
-| 23 | !mt | /randmap | http://inter4.com/osubot | 随机摸图 mt 4 6 5(星数,星数,条数)   |     | 1 |   |   
+| 2 | !rctpp | /xxxx | http://inter4.com/xxxx | 最近游戏记录,需要绑定  | 1 | 1 |   | 
+| 3 | !setid | /xxxx | http://inter4.com/xxxx | 绑定 用法：!setid，链接认证  | 1 | 1 | 1 |  
+| 4 | !mybp | /xxxx | http://inter4.com/xxxx | bp查询 用法：!mybp num  | 1 | 1 |   |   
+| 5 | !bbp | /xxxx | http://inter4.com/xxxx | bp简化输出,需绑定  |   | 1 |   |   
+| 6 | !test | /xxxx | http://inter4.com/xxxx | osu账号评分  |   | 1 |   |   
+| 7 | !skill | /xxxx | http://inter4.com/xxxx | osuskill站点信息  |   | 1 |   |   
+| 8 | !todaybp | /xxxx | http://inter4.com/xxxx | 今日更新bp  |   | 1 |   |   
+| 9 | !mu | /xxxx | http://inter4.com/xxxx | 主页链接  |   | 1 |   |   
+| 10 | !check | /xxxx | http://inter4.com/xxxx | 来自薛定谔的pp  |   | 1 |   |   
+| 11 | !vssk | /xxxx | http://inter4.com/xxxx | skill pk  |   | 1 |   |   
+| 12 | !oauth | /xxxx | http://inter4.com/xxxx | osu apiv2 绑定  |  1 | 1 |   |   
+| 13 | !friends | /xxxx | http://inter4.com/xxxx | 好友列表  |  1 | 1 |   |   
+| 14 | !nbp | /xxxx | http://inter4.com/xxxx | 输入bid得到bp几  |  1 | 1 |   |   
+| 15 | !rl | /xxxx | http://inter1.com/xxxx | 排名变化曲线  |    | 1 |   |   
+| 16 | !pc | /xxxx | http://inter1.com/xxxx | 游玩次数变化曲线  |    | 1 |   |   
+| 17 | !rctpps | /xxxx | http://inter4.com/xxxx | 批量版rctpp   |  1  |  |   |   
+| 18 | !stat | /xxxx | http://inter4.com/xxxx | 新版osu个人信息   |  1  |  |   |   
+| 19 | !map | /xxxx | http://inter4.com/xxxx | 低端pp图推荐   |  1  |  |   |   
+| 20 | !oldsetid | /xxxx | http://inter4.com/xxxx | 绑定osu信息   |  1  |  |   |   
+| 21 | !days | /xxxx | http://inter4.com/xxxx | 增长数据查询   |     | 1 |   |   
+| 22 | !bd | /xxxx | http://inter4.com/xxxx | 榜单查询 bd bid   |     | 1 |   |   
+| 23 | !mt | /xxxx | http://inter4.com/xxxx | 随机摸图 mt 4 6 5(星数,星数,条数)   |     | 1 |   |   
 
 
 | 字段 | 说明 | 备注 | 
