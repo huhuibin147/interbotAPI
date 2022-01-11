@@ -843,6 +843,10 @@ class botHandler():
                     i+1, c["cmd"], c["reply"]
                 )
         return rs[:-1]
+    
+    def out_html(self, data):
+        r = f'<pre>{data}</pre>'
+        return r
 
     def cmdRefFromDb(self, level):
         """命令信息

@@ -459,12 +459,19 @@ def myinfo(**kw):
     res = "osu:%s\nosuid:%s\nmoney:%s\nbagnum:%s\n%s" % (osuname, osuid, money, bagnum, home_url)
     return res
 
-@app.route('/help', methods=['POST'])
+@app.route('/help', methods=['GET', 'POST'])
 @appTools.deco()
 def help(**kw):
     b = botHandler.botHandler()
     rs = b.helpFormatOut()
     return rs
+
+@app.route('/help_html', methods=['GET', 'POST'])
+@appTools.deco()
+def help_html(**kw):
+    b = botHandler.botHandler()
+    rs = b.helpFormatOut()
+    return b.out_html(rs)
 
 @app.route('/thanks', methods=['POST'])
 @appTools.deco()
