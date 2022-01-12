@@ -285,7 +285,7 @@ def bestmaprec(**kw):
 
     res = b.getBestInfo(osuid, bid, "1")
     if not res:
-        return "你倒是打一下啊!"
+        return "没有查询到该铺面游戏记录!"
     recinfo = res[0]
     recinfo["beatmap_id"] = bid
     res, kv = b.getRctppResNew(recinfo)
@@ -314,7 +314,7 @@ def bestmaprecdraw(**kw):
     try:
         res = b.getBestInfo(osuid, bid, "1")
         if not res:
-            return "你倒是打一下啊!"
+            return "没有查询到该铺面游戏记录!"
         recinfo = res[0]
         recinfo["beatmap_id"] = bid
         p, kv = b.drawRctpp(osuid, osuname, recinfo=recinfo, bestinfo=recinfo)
