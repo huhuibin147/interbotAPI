@@ -333,8 +333,8 @@ class ppyHandler():
             'uid': uid
         }
         res = ppyAPI.apiRoute('userpage', **kw)
-        if len(res) < 1:
-            return 'support都没有,先氪金好吧!'
+        if not res or len(res) < 1:
+            return '抓取不到个人主页信息！'
         result = (res).replace('<br />','\n')
         repatt = re.compile(r'<.*?>')
         result = re.sub(repatt,'',result)
