@@ -16,9 +16,23 @@ class msgHandler():
     def __init__(self, context):
         self.context = context
         self.isPrivate = 0
+        self.init_context()
+
+    def init_context(self):
+        self.qqid = self.context.get("user_id", 0)
+        self.groupid = self.context.get("group_id", 0)
+        self.msg = self.context.get("message", "")
+        self.selfqqid = self.context.get("self_id", 0)
 
     def auto(self):
-        """消息处理"""
+        """消息处理
+        {'anonymous': None, 'font': 0, 'group_id': 123456, 'message': 'xxxxxx', 'message_id': -1374832969, 
+        'message_seq': 208055, 'message_type': 'group', 'post_type': 'message', 'raw_message': 'xxxxxxx', 
+        'self_id': 2680306741, 'sender': {'age': 0, 'area': '', 'card': 'xxxxxxx', 'level': '', 
+        'nickname': 'xxxx', 'role': 'member', 'sex': 'unknown', 'title': '', 'user_id': 3421863886}, 
+        'sub_type': 'normal', 'time': 1642143847, 'user_id': 3421863886
+        }
+        """
 
         if self.context["post_type"] == "message":
             # 分发线程
@@ -29,17 +43,22 @@ class msgHandler():
             if self.context['message_type'] in ('private', 'guild'):
                 self.isPrivate = 1
                 self.context['group_id'] = -1
+                self.groupid = -1
 
             # 自动处理
+            self.save_chat()
             msg = self.context['message']
             msg = msg.replace('！', '!')
-            replyFlag, msg = self.interactiveFuncRef(self.context['user_id'], self.context['group_id'], msg)
+            replyFlag, msg = self.interactiveFuncRef(self.qqid, self.groupid, msg)
             if '!' in msg:
                 return self.autoApi(msg, replyFlag)
-            elif msg.strip() == f"[CQ:at,qq={self.context['self_id']}]" or msg.strip() == f"@interbot2":
-                return self.at_random_reply()
+            # elif msg.strip() == f"[CQ:at,qq={self.selfqqid}]" or msg.strip() == f"@interbot2":
+            #     return self.at_random_reply()
             else:
-                return self.autoReply(msg)
+                rs = self.autoReply(msg)
+                if not rs:
+                    rs = self.random_speak()
+                return rs
         
         else:
             o = otherMsgHandler.oMsgHandler(self.context)
@@ -284,9 +303,9 @@ class msgHandler():
             AND account = %s
         '''
         if gtype == 1:
-            account = self.context['user_id']
+            account = self.qqid
         else:
-            account = self.context['group_id']
+            account = self.groupid
         args = [groupid, account]
         res = db.query(sql, args)
         if not res:
@@ -307,9 +326,9 @@ class msgHandler():
             AND account = %s
         '''
         if gtype == 1:
-            account = self.context['user_id']
+            account = self.qqid
         else:
-            account = self.context['group_id']
+            account = self.groupid
         args = [groupid, account]
         res = db.query(sql, args)
         if not res:
@@ -355,4 +374,12 @@ class msgHandler():
             return msg
         return ""
 
+    def random_speak(self):
+        c = chatHandler.chatHandler()
+        return c.autoreply(self.groupid, self.qqid, self.msg, self.selfqqid)
 
+    def save_chat(self):
+        c = chatHandler.chatHandler()
+        if c.check_whitelist(self.groupid, whites=[Config.XINRENQUN, Config.JINJIEQUN]):
+            c.msg2Mysql(self.groupid, self.qqid, self.msg)
+        

@@ -2,6 +2,7 @@
 
 # 超级权限
 SUPER_QQ = 405622418
+BOT_QQ = 2680306741
 
 # 语音模板
 audioTmp = '[CQ:record,file=http://interbot.cn/itbaudio/%s]'
@@ -29,9 +30,13 @@ FUNC_ACTIVE_KEY = 'FUNC-ACTIVE-{qq}-{groupid}'
 # ppy-tools path
 PP_TOOLS_PATH = '/root/code/osu-tools/PerformanceCalculator/bin/Debug/net5.0'
 
+XINRENQUN = 712603531 # osu新人群
+JINJIEQUN = 928936255 # osu进阶群
+HOUHUAYUAN = 514661057 # osu后花园
+
 GROUPID = {
-    "XINRENQUN": 712603531, # osu新人群
-    "JINJIEQUN": 758120648, # osu进阶群
+    "XINRENQUN": XINRENQUN,
+    "JINJIEQUN": JINJIEQUN,
     "test": 619786604
 }
 
@@ -40,3 +45,8 @@ GROUP_IRC = {'1':614892339,'2':514661057,'3':641236878,'4':758120648}
 
 # ChatCache
 CHAT_RANDOM_KEY = "CHAT_RANDOM_KEY"
+
+# 回复概率数 0~100
+AUTOREPLY_PCT = 99
+# 自动触发speak概率数 0~100
+AUTOSPEAK_PCT = 95
