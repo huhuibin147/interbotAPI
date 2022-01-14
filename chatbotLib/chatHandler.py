@@ -82,7 +82,7 @@ class chatHandler():
             return self.get_random_speak()
         return ""
 
-    def check_whitelist(self, groupid, whites=[Config.XINRENQUN]):
+    def check_whitelist(self, groupid, whites=[Config.XINRENQUN, Config.JINJIEQUN]):
         """白名单
         """
         if groupid in whites:
