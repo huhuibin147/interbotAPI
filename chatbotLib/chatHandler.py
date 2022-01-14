@@ -89,19 +89,21 @@ class chatHandler():
             return True
         return False
     
-    def autoreply(self, groupid, qq, message, selfqq):
+    def autoreply(self, groupid, selfqq):
         """概率随机回复
         """
         # 白名单检测
         if not self.check_whitelist(groupid):
             return ""
 
-        self.Chat2Redis(groupid, qq, message)
         # 防止重复
         if self.check_redis_is_selfchat(groupid, selfqq):
             return ""
 
-        return self.random_auotoreply_msg(Config.AUTOREPLY_PCT)
+        msg = self.random_auotoreply_msg(Config.AUTOREPLY_PCT)
+        if msg:
+            self.Chat2Redis(groupid, selfqq, msg)
+        return msg
 
     def msg2Mysql(self, groupid, qq, content):
         f_msg = re.sub('\[.*\]','',content)

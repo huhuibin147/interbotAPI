@@ -29,6 +29,7 @@ class autoSpeakJob(jobCenter.jobCenter):
         if msg:
             logging.info(f"触发[{gid}]自动发言！")
             self.sendCq(gid, msg)
+            c.Chat2Redis(gid, Config.BOT_QQ, msg)
 
 
         

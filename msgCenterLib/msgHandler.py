@@ -376,10 +376,11 @@ class msgHandler():
 
     def random_speak(self):
         c = chatHandler.chatHandler()
-        return c.autoreply(self.groupid, self.qqid, self.msg, self.selfqqid)
+        return c.autoreply(self.groupid, self.selfqqid)
 
     def save_chat(self):
         c = chatHandler.chatHandler()
         if c.check_whitelist(self.groupid, whites=[Config.XINRENQUN, Config.JINJIEQUN]):
             c.msg2Mysql(self.groupid, self.qqid, self.msg)
+            c.Chat2Redis(self.groupid, self.qqid, self.msg)
         
