@@ -5,6 +5,7 @@ import time
 import random
 import logging
 import requests
+from chatbotLib import chatHandler
 from flask import Flask
 from flask import request
 from botappLib import botHandler
@@ -840,7 +841,23 @@ def updatemap(**kw):
         logging.exception("")
         return "fail!"
 
+@app.route('/speak', methods=['POST'])
+@appTools.deco()
+def speak(**kw):
+    try:
+        if not kw['iargs']:
+            x = 0
+        else:
+            input0 = kw['iargs'][0]
+            x = int(input0) if input0.isdigit() else 1
 
+        c = chatHandler.chatHandler()
+        c.random_muti_speak(kw["groupid"], x)
+
+    except:
+        logging.exception("")
+        return "raise exception!"
+    return ""
 
 
 

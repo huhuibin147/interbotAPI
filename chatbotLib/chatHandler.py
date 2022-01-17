@@ -4,12 +4,14 @@ sys.path.append('./')
 
 import re
 import json
+import time
 import random
 import logging
 import datetime
 from commLib import Config
 from commLib import interRedis
 from commLib import interMysql
+from commLib import pushTools
 
 
 
@@ -65,7 +67,7 @@ class chatHandler():
             msg = c.get("content", "")
             if len(msg) > 30:
                 continue
-            if msg.startswith("!") or msg.startswith("！"):
+            if msg.startswith("!") or msg.startswith("！") or msg == "~":
                 continue
 
             return msg
@@ -157,7 +159,17 @@ class chatHandler():
             logging.exception("")
         return
 
+    def random_muti_speak(self, gid, n=0, y=10, randomY=5, interval=1):
+        # y上限
+        if n <= 0 or n > y:
+            n = random.randint(1, randomY)
 
+        for _ in range(n):
+            msg = self.get_random_speak()
+            if msg:
+                pushTools.pushMsgOne(gid, msg)
+                time.sleep(interval)
+        return
 
 if __name__ == "__main__":
     b = chatHandler()

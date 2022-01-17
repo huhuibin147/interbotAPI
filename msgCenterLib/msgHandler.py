@@ -52,8 +52,8 @@ class msgHandler():
             replyFlag, msg = self.interactiveFuncRef(self.qqid, self.groupid, msg)
             if '!' in msg:
                 return self.autoApi(msg, replyFlag)
-            # elif msg.strip() == f"[CQ:at,qq={self.selfqqid}]" or msg.strip() == f"@interbot2":
-            #     return self.at_random_reply()
+            elif msg.strip() == f"[CQ:at,qq={self.selfqqid}]" or msg.strip() == f"@interbot2":
+                return self.at_random_reply()
             else:
                 rs = self.autoReply(msg)
                 if not rs:
@@ -369,9 +369,7 @@ class msgHandler():
 
     def at_random_reply(self):
         c = chatHandler.chatHandler()
-        msg = c.get_random_speak()
-        if msg and len(msg) > 0:
-            return msg
+        c.random_muti_speak(self.groupid)
         return ""
 
     def random_speak(self):
