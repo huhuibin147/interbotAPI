@@ -20,6 +20,7 @@ from commLib import pushTools
 from botappLib import healthCheck
 from ppyappLib import ppyHandler
 from draws import drawReplay
+from chatbotLib import chatHandler
 
 
 
@@ -715,9 +716,14 @@ class botHandler():
                     else:
                         r = '%smiss，%s' % (miss, ranReply)
 
+        randn = random.randint(0,100)
+        if randn < 30:
+            return '%smiss，%s' % (miss, ranReply)
+        elif randn < 70:
+            c = chatHandler.chatHandler()
+            ranReply = c.get_random_speak()
+            return '%smiss，%s' % (miss, ranReply)
 
-        if random.randint(0,100) < 50:
-            r = '%smiss，%s' % (miss, ranReply)
         return r
 
     def replyFromDb(self):

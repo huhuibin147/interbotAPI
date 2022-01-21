@@ -67,7 +67,7 @@ class chatHandler():
             msg = c.get("content", "")
             if len(msg) > 30:
                 continue
-            if msg.startswith("!") or msg.startswith("！") or msg == "~":
+            if msg.startswith("!") or msg.startswith("！") or msg == "~" or msg.startswith("/"):
                 continue
 
             return msg
