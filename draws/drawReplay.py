@@ -14,20 +14,20 @@ from commLib import mods
 
 skin_map = {
     1: {
-        "path": "draws/New!+game!",
-        "hit100_icon": {"y":315},
-        "hit50_icon": {"y":375},
-        "hit100k_icon": {"y":315},
-        "hit0_icon": {"x":377,"y":365,"isresize":True,"width":78,"height":78},
-    },
-
-    2: {
         "path": "draws/Umaru",
         "hit100_icon": {"y":315-30},
         "hit50_icon": {"y":375-30},
         "hit100k_icon": {"y":315-30},
         "hit0_icon": {"x":377,"y":365+15,"isresize":True,"width":58,"height":58},
     }
+
+    # 2: {
+    #     "path": "draws/New!+game!",
+    #     "hit100_icon": {"y":315},
+    #     "hit50_icon": {"y":375},
+    #     "hit100k_icon": {"y":315},
+    #     "hit0_icon": {"x":377,"y":365,"isresize":True,"width":78,"height":78},
+    # },
 }
 
 
