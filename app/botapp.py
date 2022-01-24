@@ -25,7 +25,7 @@ with open('./app/botapp.yaml', encoding='utf8') as f:
 app = Flask(__name__)
 
 
-@app.route('/rctpp', methods=['POST'])
+@app.route('/rctppold', methods=['POST'])
 @appTools.deco(autoOusInfoKey='osuid,osuname')
 def rctpp(**kw):
     b = botHandler.botHandler()
@@ -47,7 +47,7 @@ def rctpp(**kw):
         return f'由于触发本群限制，请私聊查询，触犯法律:{smoke_res}'
     return res
 
-@app.route('/rctppnew', methods=['POST'])
+@app.route('/rctpp', methods=['POST', 'GET'])
 @appTools.deco(autoOusInfoKey='osuid,osuname')
 def rctppnew(**kw):
     b = botHandler.botHandler()
@@ -69,7 +69,7 @@ def rctppnew(**kw):
         return f'由于触发本群限制，请私聊查询，触犯法律:{smoke_res}'
     return res
 
-@app.route('/rctppdraw', methods=['POST'])
+@app.route('/rctppdraw', methods=['POST', 'GET'])
 @appTools.deco(autoOusInfoKey='osuid,osuname')
 def rctppdraw(**kw):
     b = botHandler.botHandler()
@@ -117,10 +117,10 @@ def rctpps(**kw):
     res = b.getRctppBatchRes2(recinfo[x:x+3])
     return res
 
-@app.route('/mybp', methods=['POST'])
+@app.route('/mybp', methods=['POST', 'GET'])
 @appTools.deco()
 def mybp(**kw):
-    qqid = kw['qqid'] if not kw['atqq'] else kw['atqq']
+    qqid = kw['qqid']
     if not kw['iargs']:
         x = 1  
     else:
@@ -131,39 +131,33 @@ def mybp(**kw):
     if x < 0 or x > 100:
         x = 1
     b = botHandler.botHandler()
-    osuinfo = b.getOsuInfo2(qqid)
-    logging.info(osuinfo)
+    osuid = kw['autoOusInfoKey']['osuid']
     smoke_res = None
-    if osuinfo:
-        osuid = osuinfo['osuid']
-
-        key = 'OSU2_USERBP:%s'
-        rds = interRedis.connect('osu2')
-        rdsRs = rds.get(key % osuid)
-        if not rdsRs:
-            recinfo = b.getRecBp(osuid, "100")
-            rds.setex(key % osuid, json.dumps(recinfo), 900)
-        else:
-            recinfo = json.loads(rdsRs)
-
-        if not recinfo:
-            res = "别复读好马!"
-        else:
-            res, kv = b.getRctppResNew(recinfo[x-1])
-            # 执行管理逻辑
-            smoke_res = b.rctppSmoke(kw["groupid"], kw["qqid"], kv, iswarn=1)
-            if smoke_res:
-                res += f'\n>>{smoke_res}<<'
+    key = 'OSU2_USERBP:%s'
+    rds = interRedis.connect('osu2')
+    rdsRs = rds.get(key % osuid)
+    if not rdsRs:
+        recinfo = b.getRecBp(osuid, "100")
+        rds.setex(key % osuid, json.dumps(recinfo), 900)
     else:
-        res = "你倒是绑定啊.jpg"
+        recinfo = json.loads(rdsRs)
+
+    if not recinfo:
+        res = "别复读好马!"
+    else:
+        res, kv = b.getRctppResNew(recinfo[x-1])
+        # 执行管理逻辑
+        smoke_res = b.rctppSmoke(kw["groupid"], kw["qqid"], kv, iswarn=1)
+        if smoke_res:
+            res += f'\n>>{smoke_res}<<'
     if smoke_res:
         return f'由于触发本群限制，请私聊查询，触犯法律:{smoke_res}'
     return res
 
-@app.route('/mybpdraw', methods=['POST'])
+@app.route('/mybpdraw', methods=['POST', 'GET'])
 @appTools.deco()
 def mybpdraw(**kw):
-    qqid = kw['qqid'] if not kw['atqq'] else kw['atqq']
+    qqid = kw['qqid']
     if not kw['iargs']:
         x = 1  
     else:
@@ -174,31 +168,27 @@ def mybpdraw(**kw):
     if x < 0 or x > 100:
         x = 1
     b = botHandler.botHandler()
-    osuinfo = b.getOsuInfo2(qqid)
-    logging.info(osuinfo)
+    osuid = kw['autoOusInfoKey']['osuid']
+    osuname = kw['autoOusInfoKey']['osuname']
     smoke_res = None
-    if osuinfo:
-        osuid = osuinfo['osuid']
-        osuname = osuinfo['osuname']
 
-        key = 'OSU2_USERBP:%s'
-        rds = interRedis.connect('osu2')
-        rdsRs = rds.get(key % osuid)
-        if not rdsRs:
-            recinfo = b.getRecBp(osuid, "100")
-            rds.setex(key % osuid, json.dumps(recinfo), 900)
-        else:
-            recinfo = json.loads(rdsRs)
-
-        if not recinfo:
-            res = "别复读好马!"
-        else:
-            p, kv = b.drawRctpp(osuid, osuname, recinfo=recinfo[x-1], bestinfo=recinfo[x-1])
-            res = "[CQ:image,cache=0,file=http://interbot.cn/itbimage/%s]" % p
-            # 执行管理逻辑
-            smoke_res = b.rctppSmoke(kw["groupid"], kw["qqid"], kv, iswarn=1)
+    key = 'OSU2_USERBP:%s'
+    rds = interRedis.connect('osu2')
+    rdsRs = rds.get(key % osuid)
+    if not rdsRs:
+        recinfo = b.getRecBp(osuid, "100")
+        rds.setex(key % osuid, json.dumps(recinfo), 900)
     else:
-        res = "你倒是绑定啊.jpg"
+        recinfo = json.loads(rdsRs)
+
+    if not recinfo:
+        res = "别复读好马!"
+    else:
+        p, kv = b.drawRctpp(osuid, osuname, recinfo=recinfo[x-1], bestinfo=recinfo[x-1])
+        res = "[CQ:image,cache=0,file=http://interbot.cn/itbimage/%s]" % p
+        # 执行管理逻辑
+        smoke_res = b.rctppSmoke(kw["groupid"], kw["qqid"], kv, iswarn=1)
+
     if smoke_res:
         return f'由于触发本群限制，请私聊查询，触犯法律:{smoke_res}'
     return res
@@ -271,7 +261,7 @@ def score(**kw):
     rank_tab.upload_best_rec(osuid, kw["groupid"], [recinfo])
     return ""
 
-@app.route('/bestmaprec', methods=['POST'])
+@app.route('/bestmaprec', methods=['POST', 'GET'])
 @appTools.deco(autoOusInfoKey='osuid,osuname', rawinput=1)
 def bestmaprec(**kw):
     if not kw['iargs']:
@@ -299,7 +289,7 @@ def bestmaprec(**kw):
         return f'由于触发本群限制，请私聊查询，触犯法律:{smoke_res}'
     return res
 
-@app.route('/bestmaprecdraw', methods=['POST'])
+@app.route('/bestmaprecdraw', methods=['POST', 'GET'])
 @appTools.deco(autoOusInfoKey='osuid,osuname', rawinput=1)
 def bestmaprecdraw(**kw):
     if not kw['iargs']:
@@ -332,10 +322,10 @@ def bestmaprecdraw(**kw):
     return res
 
 
-@app.route('/bbp', methods=['POST'])
+@app.route('/bbp', methods=['POST', 'GET'])
 @appTools.deco(autoOusInfoKey='osuid,osuname')
 def bbp(**kw):
-    qqid = kw['qqid'] if not kw['atqq'] else kw['atqq']
+    qqid = kw['qqid']
     if not kw['iargs']:
         x = 1  
     else:
@@ -347,12 +337,14 @@ def bbp(**kw):
         x = 1
 
     b = botHandler.botHandler()
-    osuinfo = b.getOsuInfo2(qqid)
-    if osuinfo:
-        osuid = osuinfo['osuid']
-        osuname = osuinfo['osuname']
-    else:
-        return "你倒是绑定啊.jpg"
+    # osuinfo = b.getOsuInfo2(qqid)
+    # if osuinfo:
+    #     osuid = osuinfo['osuid']
+    #     osuname = osuinfo['osuname']
+    # else:
+    #     return "你倒是绑定啊.jpg"
+    osuid = kw['autoOusInfoKey']['osuid']
+    osuname = kw['autoOusInfoKey']['osuname']
 
     recinfo = b.getRecBp(osuid, "100")
     if not recinfo:
@@ -360,10 +352,10 @@ def bbp(**kw):
     res = b.bbpOutFormat(recinfo[x-1:x+4], osuname, x)
     return res
     
-@app.route('/bbp2', methods=['POST'])
+@app.route('/bbp2', methods=['POST', 'GET'])
 @appTools.deco(autoOusInfoKey='osuid,osuname')
 def bbp2(**kw):
-    qqid = kw['qqid'] if not kw['atqq'] else kw['atqq']
+    qqid = kw['qqid']
     if not kw['iargs']:
         x = 1  
     else:
@@ -375,12 +367,14 @@ def bbp2(**kw):
         x = 1
 
     b = botHandler.botHandler()
-    osuinfo = b.getOsuInfo2(qqid)
-    if osuinfo:
-        osuid = osuinfo['osuid']
-        osuname = osuinfo['osuname']
-    else:
-        return "你倒是绑定啊.jpg"
+    # osuinfo = b.getOsuInfo2(qqid)
+    # if osuinfo:
+    #     osuid = osuinfo['osuid']
+    #     osuname = osuinfo['osuname']
+    # else:
+    #     return "你倒是绑定啊.jpg"
+    osuid = kw['autoOusInfoKey']['osuid']
+    osuname = kw['autoOusInfoKey']['osuname']
 
     recinfo = b.getRecBp(osuid, "100")
     if not recinfo:
@@ -388,7 +382,7 @@ def bbp2(**kw):
     res = b.bbpOutFormat2(recinfo[x-1:x+2], osuname, x)
     return res
 
-@app.route('/test', methods=['POST'])
+@app.route('/test', methods=['POST', 'GET'])
 @appTools.deco(autoOusInfoKey='osuid')
 def test(**kw):
     b = botHandler.botHandler()
@@ -432,7 +426,7 @@ def vssk(**kw):
     res = b.getSkillvsInfo(osuname, vsosuname)
     return res
 
-@app.route('/todaybp', methods=['POST'])
+@app.route('/todaybp', methods=['POST', 'GET'])
 @appTools.deco(autoOusInfoKey='osuname')
 def todaybp(**kw):
     b = botHandler.botHandler()
@@ -443,12 +437,11 @@ def todaybp(**kw):
 @app.route('/mu', methods=['POST'])
 @appTools.deco(autoOusInfoKey='osuid')
 def mu(**kw):
-    b = botHandler.botHandler()
     osuid = kw['autoOusInfoKey']['osuid']
     res = 'https://osu.ppy.sh/u/%s' % osuid
     return res
 
-@app.route('/myinfo', methods=['POST'])
+@app.route('/myinfo', methods=['POST', 'GET'])
 @appTools.deco(autoOusInfoKey='osuid,osuname,money,bagnum')
 def myinfo(**kw):
     b = botHandler.botHandler()
@@ -465,14 +458,7 @@ def myinfo(**kw):
 def help(**kw):
     b = botHandler.botHandler()
     rs = b.helpFormatOut()
-    return rs
-
-@app.route('/help_html', methods=['GET', 'POST'])
-@appTools.deco()
-def help_html(**kw):
-    b = botHandler.botHandler()
-    rs = b.helpFormatOut()
-    return b.out_html(rs)
+    return appTools.out_html(rs)
 
 @app.route('/thanks', methods=['POST'])
 @appTools.deco()
@@ -481,7 +467,7 @@ def thanks(**kw):
     rs = b.thanksFormatOut()
     return rs
 
-@app.route('/friends', methods=['POST'])
+@app.route('/friends', methods=['POST', 'GET'])
 @appTools.deco()
 def friends(**kw):
     b = ppyHandler.ppyHandler()
@@ -494,18 +480,19 @@ def tt(**kw):
     rs = '%s->%s' % (kw['qqid'], kw['atqq'])
     return rs
 
-@app.route('/stat', methods=['POST'])
+@app.route('/stat', methods=['POST', 'GET'])
 @appTools.deco()
 def stat(**kw):
     b = ppyHandler.ppyHandler()
-    atqq = kw['atqq']
-    if atqq:
-        base = baseHandler.baseHandler()
-        rs = base.checkTokenPermission(atqq, kw['groupid'])
-        if rs.isdigit():
-            rs = b.osuV2stat(atqq, kw['groupid'])
-    else:
-        rs = b.osuV2stat(kw['qqid'], kw['groupid'])
+    # atqq = kw['atqq']
+    # if atqq:
+    #     base = baseHandler.baseHandler()
+    #     rs = base.checkTokenPermission(atqq, kw['groupid'])
+    #     if rs.isdigit():
+    #         rs = b.osuV2stat(atqq, kw['groupid'])
+    # else:
+    #     rs = b.osuV2stat(kw['qqid'], kw['groupid'])
+    rs = b.osuV2stat(kw['qqid'], kw['groupid'])
     return rs
 
 @app.route('/v2me', methods=['POST'])
@@ -564,7 +551,7 @@ def ppcheckcallback(**kw):
     ret = b.scanPlayers2(groupid, users)
     return ret
 
-@app.route('/days', methods=['POST'])
+@app.route('/days', methods=['POST', 'GET'])
 @appTools.deco(autoOusInfoKey='osuname', rawinput=1)
 def days(**kw):
     x = 0 if not kw['iargs'] else int(kw['iargs'][0])
@@ -575,7 +562,7 @@ def days(**kw):
     ret = b.osu_stats(osuname, x)
     return ret
 
-@app.route('/rank', methods=['POST'])
+@app.route('/rank', methods=['POST', 'GET'])
 @appTools.deco(autoOusInfoKey='osuid', rawinput=1)
 def rank(**kw):
     try:
@@ -595,13 +582,13 @@ def rank(**kw):
         logging.exception("rank error")
         return "fail..."
 
-@app.route('/uploadrec', methods=['POST'])
+@app.route('/uploadrec', methods=['POST', 'GET'])
 @appTools.deco(autoOusInfoKey='osuid', rawinput=1)
 def up(**kw):
     osuid = kw['autoOusInfoKey']['osuid']
     return rank_tab.upload_rec(osuid, kw["groupid"])
 
-@app.route('/uploadrec2', methods=['POST'])
+@app.route('/uploadrec2', methods=['POST', 'GET'])
 @appTools.deco(autoOusInfoKey='osuid', rawinput=1)
 def up2(**kw):
     osuid = kw['autoOusInfoKey']['osuid']
@@ -639,7 +626,7 @@ def pr(**kw):
         break
     return ""
 
-@app.route('/nbp', methods=['POST'])
+@app.route('/nbp', methods=['POST', 'GET'])
 @appTools.deco(autoOusInfoKey='osuid,osuname', rawinput=1)
 def nbp(**kw):
     b = botHandler.botHandler()
@@ -653,7 +640,7 @@ def nbp(**kw):
     res = b.getBpNumBybid(recinfo, osuname, bid)
     return res
 
-@app.route('/upimg', methods=['POST'])
+@app.route('/upimg', methods=['POST', 'GET'])
 @appTools.deco(autoOusInfoKey='osuid', rawinput=1)
 def upimg(**kw):
     osuid = kw['autoOusInfoKey']['osuid']
@@ -740,7 +727,7 @@ def sttest_start(func, qqid, groupid, step):
 
 
 
-@app.route('/randmap', methods=['POST'])
+@app.route('/randmap', methods=['POST', 'GET'])
 @appTools.deco()
 def randmap(**kw):
     s1, s2, s3 = None, None, None
@@ -765,7 +752,7 @@ def randmap(**kw):
     return res
 
 
-@app.route('/avgpp', methods=['POST'])
+@app.route('/avgpp', methods=['POST', 'GET'])
 @appTools.deco(autoOusInfoKey='osuid')
 def avgpp(**kw):
     osuid = kw['autoOusInfoKey']['osuid']
@@ -774,7 +761,7 @@ def avgpp(**kw):
     return res
 
 
-@app.route('/ppplus', methods=['POST'])
+@app.route('/ppplus', methods=['POST', 'GET'])
 @appTools.deco(autoOusInfoKey='osuname')
 def ppplus(**kw):
     b = ppyHandler.ppyHandler()
@@ -804,7 +791,7 @@ def osump(**kw):
         return "未知异常，请联系inter处理!"
     return res
 
-@app.route('/mplink', methods=['POST'])
+@app.route('/mplink', methods=['POST', 'GET'])
 @appTools.deco()
 def mplink(**kw):
     b = botHandler.botHandler()

@@ -11,6 +11,7 @@ from flask import request
 from subprocess import Popen
 from ppyappLib import ppyHandler
 from baseappLib import baseHandler
+from commLib import appTools
 
 with open('./app/apiapp.yaml', encoding='utf8') as f:
     config = yaml.load(f)
@@ -40,11 +41,12 @@ def statApi(**kw):
     resp = Response(r.content, mimetype="image/jpeg")
     return resp
 
-@app.route('/rankline', methods=['POST'])
+@app.route('/rankline', methods=['POST', 'GET'])
+@appTools.deco()
 def apiv2me(**kw):
-    qqid = request.form.get('qqid')
-    groupid = request.form.get('groupid')
-    atqq = request.form.get('atqq')
+    qqid = kw.get('qqid')
+    groupid = kw.get('groupid')
+    atqq = kw.get('atqq')
     queryid = qqid
     if atqq:
         base = baseHandler.baseHandler()
@@ -71,10 +73,11 @@ def apiv2me(**kw):
             return '异常'
     return '异常,懒得修了'
 
-@app.route('/rplaycount', methods=['POST'])
+@app.route('/rplaycount', methods=['POST', 'GET'])
+@appTools.deco()
 def rplaycount(**kw):
-    qqid = request.form.get('qqid')
-    groupid = request.form.get('groupid')
+    qqid = kw.get('qqid')
+    groupid = kw.get('groupid')
     url = "http://inter4.com/osubot/v2me"
     data = {
         "qqid": qqid,
@@ -93,10 +96,11 @@ def rplaycount(**kw):
             return '异常'
     return '异常,懒得修了'
 
-@app.route('/osuheadimg', methods=['POST'])
+@app.route('/osuheadimg', methods=['POST', 'GET'])
+@appTools.deco()
 def osuheadimg(**kw):
-    qqid = request.form.get('qqid')
-    groupid = request.form.get('groupid')
+    qqid = kw.get('qqid')
+    groupid = kw.get('groupid')
     url = "http://inter4.com/osubot/v2me"
     data = {
         "qqid": qqid,

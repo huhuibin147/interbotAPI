@@ -14,12 +14,12 @@ with open('./app/defindapp.yaml', encoding='utf8') as f:
 app = Flask(__name__)
 
 
-@app.route('/inter3', methods=['POST'])
+@app.route('/inter3', methods=['POST', 'GET'])
 @appTools.deco()
 def inter3(**kw):
     return 'inter3节点响应测试'
 
-@app.route('/check', methods=['POST'])
+@app.route('/check', methods=['POST', 'GET'])
 @appTools.deco(autoOusInfoKey='osuid,osuname')
 def check(**kw):
     osuid = kw['autoOusInfoKey']['osuid']
@@ -28,7 +28,7 @@ def check(**kw):
     ret = extObj.checkFormat(osuid, osuname)
     return ret
 
-@app.route('/map', methods=['POST'])
+@app.route('/map', methods=['POST', 'GET'])
 @appTools.deco(autoOusInfoKey='osuid,osuname')
 def map(**kw):
     osuid = kw['autoOusInfoKey']['osuid']

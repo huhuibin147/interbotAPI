@@ -79,7 +79,7 @@ def beatmap(**kw):
     ret = pyh.getOsuBeatMapInfo(bid)
     return json.dumps(ret)
 
-@app.route('/osuskill', methods=['POST'])
+@app.route('/osuskill', methods=['POST', 'GET'])
 @appTools.deco()
 def osuskill(**kw):
     osuname = kw.get('osuname')
@@ -87,7 +87,7 @@ def osuskill(**kw):
     ret = pyh.getSkillInfo(osuname)
     return ret
 
-@app.route('/osuskillvs', methods=['POST'])
+@app.route('/osuskillvs', methods=['POST', 'GET'])
 @appTools.deco()
 def osuskillvs(**kw):
     osuname = kw.get('osuname')
