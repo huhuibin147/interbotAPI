@@ -278,7 +278,7 @@ def drawRec(mapjson, recinfo, bestinfo, userjson, debug=0, **kw):
         uid = userjson.get('user_id', '')
         p = 'rctpp-%s.png' % uid
         pfs = 'rctpp-%s-fs8.png' % uid
-        f = '/static/interbot/image/%s' % p
+        f = '/static/interbot/image/tmp/%s' % p
         d.save(f)
         # 压缩
         os.system('pngquant -f %s' % f)

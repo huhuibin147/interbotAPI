@@ -102,3 +102,10 @@ def out_html(data):
     for img in cqimg:
         r = r.replace(f'[CQ:image,cache=0,file={img}]', f'<img src="{img}" />')
     return r
+
+def rm_cq_image(s):
+    p = re.compile('\[CQ:image,cache=0,file=(.*?)\]')
+    cqimg = p.findall(s)
+    for img in cqimg:
+        s = s.replace(f'[CQ:image,cache=0,file={img}]', '')
+    return s

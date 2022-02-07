@@ -35,16 +35,17 @@ def rctpp(**kw):
     logging.info(recinfo)
     smoke_res = None
     if not recinfo:
-        res = "没有最近游戏记录,绑定用户为%s" % osuname
+        res = "没有最近游戏记录\n绑定用户为%s" % osuname
     else:
         res, kv  = b.getRctppRes(recinfo[0])
+        res = f"{osuname}\n{res}"
         # 执行管理逻辑
         smoke_res = b.rctppSmoke(kw["groupid"], kw["qqid"], kv, iswarn=1)
         if smoke_res:
             res += f'\n>>{smoke_res}<<'
     rank_tab.upload_rec(osuid, kw["groupid"])
     if smoke_res:
-        return f'由于触发本群限制，请私聊查询，触犯法律:{smoke_res}'
+        return f'{osuname}\n由于触发本群限制，请私聊查询，触犯法律:{smoke_res}'
     return res
 
 @app.route('/rctpp', methods=['POST', 'GET'])
@@ -57,16 +58,17 @@ def rctppnew(**kw):
     logging.info(recinfo)
     smoke_res = None
     if not recinfo:
-        res = "没有最近游戏记录,绑定用户为%s" % osuname
+        res = "没有最近游戏记录\n绑定用户为%s" % osuname
     else:
         res, kv = b.getRctppResNew(recinfo[0])
+        res = f"{osuname}\n{res}"
         # 执行管理逻辑
         smoke_res = b.rctppSmoke(kw["groupid"], kw["qqid"], kv, iswarn=1)
         if smoke_res:
             res += f'\n>>{smoke_res}<<'
     rank_tab.upload_rec(osuid, kw["groupid"])
     if smoke_res:
-        return f'由于触发本群限制，请私聊查询，触犯法律:{smoke_res}'
+        return f'{osuname}\n由于触发本群限制，请私聊查询，触犯法律:{smoke_res}'
     return res
 
 @app.route('/rctppdraw', methods=['POST', 'GET'])
@@ -80,7 +82,7 @@ def rctppdraw(**kw):
         # 执行管理逻辑
         smoke_res = b.rctppSmoke(kw["groupid"], kw["qqid"], kv, iswarn=1)
         if smoke_res:
-            return f'由于触发本群限制，请私聊查询，触犯法律:{smoke_res}'
+            return f'{osuname}\n由于触发本群限制，请私聊查询，触犯法律:{smoke_res}'
         rank_tab.upload_rec(osuid, kw["groupid"])
         return "[CQ:image,cache=0,file=http://interbot.cn/itbimage/%s]" % p
     except:
@@ -107,7 +109,7 @@ def rctpps(**kw):
     
     recinfo = b.getRecInfo(osuid, str(x+3))
     if not recinfo:
-        return "没有最近游戏记录,绑定用户为%s" % osuname
+        return "没有最近游戏记录\n绑定用户为%s" % osuname
     
     if x > len(recinfo):
         x = len(recinfo) - 3
@@ -115,10 +117,11 @@ def rctpps(**kw):
         x = 0
 
     res = b.getRctppBatchRes2(recinfo[x:x+3])
+    res = f"{osuname}\n{res}"
     return res
 
 @app.route('/mybp', methods=['POST', 'GET'])
-@appTools.deco()
+@appTools.deco(autoOusInfoKey='osuid,osuname', rawinput=1)
 def mybp(**kw):
     qqid = kw['qqid']
     if not kw['iargs']:
@@ -132,6 +135,7 @@ def mybp(**kw):
         x = 1
     b = botHandler.botHandler()
     osuid = kw['autoOusInfoKey']['osuid']
+    osuname = kw['autoOusInfoKey']['osuname']
     smoke_res = None
     key = 'OSU2_USERBP:%s'
     rds = interRedis.connect('osu2')
@@ -146,16 +150,17 @@ def mybp(**kw):
         res = "别复读好马!"
     else:
         res, kv = b.getRctppResNew(recinfo[x-1])
+        res = f"{osuname}\n{res}"
         # 执行管理逻辑
         smoke_res = b.rctppSmoke(kw["groupid"], kw["qqid"], kv, iswarn=1)
         if smoke_res:
             res += f'\n>>{smoke_res}<<'
     if smoke_res:
-        return f'由于触发本群限制，请私聊查询，触犯法律:{smoke_res}'
+        return f'{osuname}\n由于触发本群限制，请私聊查询，触犯法律:{smoke_res}'
     return res
 
 @app.route('/mybpdraw', methods=['POST', 'GET'])
-@appTools.deco()
+@appTools.deco(autoOusInfoKey='osuid,osuname', rawinput=1)
 def mybpdraw(**kw):
     qqid = kw['qqid']
     if not kw['iargs']:
@@ -190,7 +195,7 @@ def mybpdraw(**kw):
         smoke_res = b.rctppSmoke(kw["groupid"], kw["qqid"], kv, iswarn=1)
 
     if smoke_res:
-        return f'由于触发本群限制，请私聊查询，触犯法律:{smoke_res}'
+        return f'{osuname}\n由于触发本群限制，请私聊查询，触犯法律:{smoke_res}'
     return res
 
 
@@ -268,6 +273,7 @@ def bestmaprec(**kw):
         return "请输入bid！"
     bid = kw['iargs'][0]
     osuid = kw['autoOusInfoKey']['osuid']
+    osuname = kw['autoOusInfoKey']['osuname']
     b = botHandler.botHandler()
     # res = b.get_best_map_rec_from_db(osuid, bid)
     # if not res:
@@ -280,13 +286,14 @@ def bestmaprec(**kw):
     recinfo = res[0]
     recinfo["beatmap_id"] = bid
     res, kv = b.getRctppResNew(recinfo)
+    res = f"{osuname}\n{res}"
     rank_tab.upload_best_rec(osuid, kw["groupid"], [recinfo])
     # 执行管理逻辑
     smoke_res = b.rctppSmoke(kw["groupid"], kw["qqid"], kv, iswarn=1)
     if smoke_res:
         res += f'\n>>{smoke_res}<<'
     if smoke_res:
-        return f'由于触发本群限制，请私聊查询，触犯法律:{smoke_res}'
+        return f'{osuname}\n由于触发本群限制，请私聊查询，触犯法律:{smoke_res}'
     return res
 
 @app.route('/bestmaprecdraw', methods=['POST', 'GET'])
@@ -315,7 +322,7 @@ def bestmaprecdraw(**kw):
         # 执行管理逻辑
         smoke_res = b.rctppSmoke(kw["groupid"], kw["qqid"], kv, iswarn=1)
         if smoke_res:
-            return f'由于触发本群限制，请私聊查询，触犯法律:{smoke_res}'
+            return f'{osuname}\n由于触发本群限制，请私聊查询，触犯法律:{smoke_res}'
     except:
         logging.exception("")
         return "fail..."
@@ -323,7 +330,7 @@ def bestmaprecdraw(**kw):
 
 
 @app.route('/bbp', methods=['POST', 'GET'])
-@appTools.deco(autoOusInfoKey='osuid,osuname')
+@appTools.deco(autoOusInfoKey='osuid,osuname', rawinput=1)
 def bbp(**kw):
     qqid = kw['qqid']
     if not kw['iargs']:
@@ -353,7 +360,7 @@ def bbp(**kw):
     return res
     
 @app.route('/bbp2', methods=['POST', 'GET'])
-@appTools.deco(autoOusInfoKey='osuid,osuname')
+@appTools.deco(autoOusInfoKey='osuid,osuname', rawinput=1)
 def bbp2(**kw):
     qqid = kw['qqid']
     if not kw['iargs']:
@@ -484,15 +491,8 @@ def tt(**kw):
 @appTools.deco()
 def stat(**kw):
     b = ppyHandler.ppyHandler()
-    # atqq = kw['atqq']
-    # if atqq:
-    #     base = baseHandler.baseHandler()
-    #     rs = base.checkTokenPermission(atqq, kw['groupid'])
-    #     if rs.isdigit():
-    #         rs = b.osuV2stat(atqq, kw['groupid'])
-    # else:
-    #     rs = b.osuV2stat(kw['qqid'], kw['groupid'])
-    rs = b.osuV2stat(kw['qqid'], kw['groupid'])
+    qqid = kw['atqq'] if kw['atqq'] else kw['qqid']
+    rs = b.osuV2stat(qqid, kw['groupid'])
     return rs
 
 @app.route('/v2me', methods=['POST'])

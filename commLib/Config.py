@@ -7,6 +7,7 @@ BOT_QQ = 2680306741
 # 语音模板
 audioTmp = '[CQ:record,file=http://interbot.cn/itbaudio/%s]'
 bg_thumb = '[CQ:image,cache=0,file=https://b.ppy.sh/thumb/{sid}l.jpg]'
+ImgTmp = '[CQ:image,cache=0,file=http://interbot.cn/itbimage/%s]'
 
 # token权限
 TOKEN_PERMISSION = {

@@ -8,8 +8,12 @@ from commLib import interMysql
 from commLib import pushTools
 from commLib import interRedis
 from commLib import Config
+from commLib import appTools
 from chatbotLib import chatHandler
 from msgCenterLib import otherMsgHandler
+from draws import drawTools
+
+
 
 class msgHandler():
 
@@ -51,14 +55,14 @@ class msgHandler():
             msg = msg.replace('！', '!')
             replyFlag, msg = self.interactiveFuncRef(self.qqid, self.groupid, msg)
             if '!' in msg:
-                return self.autoApi(msg, replyFlag)
-            elif msg.strip() == f"[CQ:at,qq={self.selfqqid}]" or msg.strip() == f"@interbot2":
-                return self.at_random_reply()
+                rs = self.autoApi(msg, replyFlag)
+            # elif msg.strip() == f"[CQ:at,qq={self.selfqqid}]" or msg.strip() == f"@interbot2":
+            #     return self.at_random_reply()
             else:
                 rs = self.autoReply(msg)
-                if not rs:
-                    rs = self.random_speak()
-                return rs
+                # if not rs:
+                #     rs = self.random_speak()
+            return rs
         
         else:
             o = otherMsgHandler.oMsgHandler(self.context)
@@ -150,6 +154,9 @@ class msgHandler():
 
         if res['toprivate']:
             opts.append('*toprivate')
+        
+        if res['image']:
+            opts.append('*image')
 
         isInteractive = res['interactive']
         # 交互式命令判断
@@ -190,7 +197,8 @@ class msgHandler():
     def returnHandler(self, res, opts, context):
         """转发封装 带上选项"""
         returnstr = ''
-        if '*at' in opts:
+        # 图片at转换掉
+        if '*at' in opts and '*image' not in opts:
             qq = context['user_id']
             returnstr = ''
             returnstr += '[CQ:at,qq=%s] ' % (qq)
@@ -205,6 +213,12 @@ class msgHandler():
             pushTools.pushMsgOnePrivate(context['user_id'], res)
             returnstr = ''
         
+        if returnstr and '*image' in opts:
+            returnstr = appTools.rm_cq_image(returnstr)
+            img = drawTools.drawText(returnstr)
+            if img:
+                returnstr = Config.ImgTmp % img
+
         return returnstr
 
     def extractArgs(self, msg, cmd):
@@ -271,7 +285,7 @@ class msgHandler():
         """映射"""
         db = interMysql.Connect('osu2')
         sql = '''
-            SELECT cmd, url, location, reply, at, toprivate, interactive
+            SELECT cmd, url, location, reply, at, toprivate, interactive, image
             FROM cmdRef WHERE cmd = %s
         '''
         res = db.query(sql, [cmd])
