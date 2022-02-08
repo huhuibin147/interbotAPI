@@ -159,6 +159,18 @@ class chatHandler():
             logging.exception("")
         return
 
+    def random_muti_speak_str(self, n=3, y=15, randomY=8):
+        msgLst = []
+        # y上限
+        if n <= 0 or n > y:
+            n = random.randint(3, randomY)
+
+        for _ in range(n):
+            msg = self.get_random_speak()
+            if msg:
+                msgLst.append(msg)
+        return "\n".join(msgLst)
+
     def random_muti_speak(self, gid, n=0, y=10, randomY=5, interval=1):
         # y上限
         if n <= 0 or n > y:

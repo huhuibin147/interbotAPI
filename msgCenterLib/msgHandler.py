@@ -48,6 +48,9 @@ class msgHandler():
                 self.isPrivate = 1
                 self.context['group_id'] = -1
                 self.groupid = -1
+            
+            if self.isPrivate == 1:
+                return ""
 
             # 自动处理
             self.save_chat()
@@ -56,12 +59,12 @@ class msgHandler():
             replyFlag, msg = self.interactiveFuncRef(self.qqid, self.groupid, msg)
             if '!' in msg:
                 rs = self.autoApi(msg, replyFlag)
-            # elif msg.strip() == f"[CQ:at,qq={self.selfqqid}]" or msg.strip() == f"@interbot2":
-            #     return self.at_random_reply()
+            elif msg.strip() == f"[CQ:at,qq={self.selfqqid}]":
+                return self.at_random_reply()
             else:
                 rs = self.autoReply(msg)
-                # if not rs:
-                #     rs = self.random_speak()
+                if not rs:
+                    rs = self.random_speak()
             return rs
         
         else:
@@ -383,8 +386,13 @@ class msgHandler():
 
     def at_random_reply(self):
         c = chatHandler.chatHandler()
-        c.random_muti_speak(self.groupid)
-        return ""
+        msg = c.random_muti_speak_str(n=-1)
+        rs = ""
+        if msg:
+            img = drawTools.drawText(msg)
+            if img:
+                rs = Config.ImgTmp % img
+        return rs
 
     def random_speak(self):
         c = chatHandler.chatHandler()
