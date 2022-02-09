@@ -160,6 +160,8 @@ class msgHandler():
         
         if res['image']:
             opts.append('*image')
+            if res['image'] == 'bg':
+                opts.append('*bg')
 
         isInteractive = res['interactive']
         # 交互式命令判断
@@ -217,10 +219,7 @@ class msgHandler():
             returnstr = ''
         
         if returnstr and '*image' in opts:
-            returnstr = appTools.rm_cq_image(returnstr)
-            img = drawTools.drawText(returnstr)
-            if img:
-                returnstr = Config.ImgTmp % img
+            returnstr = self.trans_return_to_img(returnstr, opts)
 
         return returnstr
 
@@ -403,4 +402,18 @@ class msgHandler():
         if c.check_whitelist(self.groupid, whites=[Config.XINRENQUN, Config.JINJIEQUN]):
             c.msg2Mysql(self.groupid, self.qqid, self.msg)
             c.Chat2Redis(self.groupid, self.qqid, self.msg)
-        
+    
+    def trans_return_to_img(self, s, opts):
+        img = ""
+        if '*bg' in opts:
+            img = drawTools.drawTextWithCover(s)
+
+        else:
+            s = appTools.rm_cq_image(s)
+            img = drawTools.drawText(s)
+
+        if img:
+            img = Config.ImgTmp % img
+
+        return img
+
