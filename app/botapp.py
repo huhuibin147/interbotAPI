@@ -84,7 +84,7 @@ def rctppdraw(**kw):
         if smoke_res:
             return f'{osuname}\n由于触发本群限制，请私聊查询，触犯法律:{smoke_res}'
         rank_tab.upload_rec(osuid, kw["groupid"])
-        return "[CQ:image,cache=0,file=http://interbot.cn/itbimage/%s]" % p
+        return "[CQ:image,cache=0,file=http://interbot.cn/itbimage/tmp/%s]" % p
     except:
         logging.exception("rctppdraw error")
         return "fail..."
@@ -190,7 +190,7 @@ def mybpdraw(**kw):
         res = "别复读好马!"
     else:
         p, kv = b.drawRctpp(osuid, osuname, recinfo=recinfo[x-1], bestinfo=recinfo[x-1])
-        res = "[CQ:image,cache=0,file=http://interbot.cn/itbimage/%s]" % p
+        res = "[CQ:image,cache=0,file=http://interbot.cn/itbimage/tmp/%s]" % p
         # 执行管理逻辑
         smoke_res = b.rctppSmoke(kw["groupid"], kw["qqid"], kv, iswarn=1)
 
@@ -317,7 +317,7 @@ def bestmaprecdraw(**kw):
         recinfo["beatmap_id"] = bid
         p, kv = b.drawRctpp(osuid, osuname, recinfo=recinfo, bestinfo=recinfo)
         rank_tab.upload_best_rec(osuid, kw["groupid"], [recinfo])
-        res = "[CQ:image,cache=0,file=http://interbot.cn/itbimage/%s]" % p
+        res = "[CQ:image,cache=0,file=http://interbot.cn/itbimage/tmp/%s]" % p
         # rank_tab.upload_best_rec(osuid, kw["groupid"], [recinfo])
         # 执行管理逻辑
         smoke_res = b.rctppSmoke(kw["groupid"], kw["qqid"], kv, iswarn=1)
