@@ -162,6 +162,8 @@ class msgHandler():
             opts.append('*image')
             if res['image'] == 'bg':
                 opts.append('*bg')
+            if res['image'] == 'stat':
+                opts.append('*stat')
 
         isInteractive = res['interactive']
         # 交互式命令判断
@@ -407,6 +409,9 @@ class msgHandler():
         img = ""
         if '*bg' in opts:
             img = drawTools.drawTextWithCover(s)
+
+        elif '*stat' in opts:
+            img = drawTools.drawTextWithRawCover(s)
 
         else:
             s = appTools.rm_cq_image(s)

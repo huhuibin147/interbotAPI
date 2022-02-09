@@ -48,30 +48,31 @@ def get_str_size(s, font):
         img_size[1] += r_size[1] + 2 if r_size[1] >= d_size[1] else d_size[1] + 2
     return img_size
 
-def drawTextWithBg(s, fontsize=14, debug=0, offset=(3,1)):
+def drawTextWithRawCover(s, fontsize=14, debug=0, offset=(5,5), img_offset=(5,5)):
     cqImgs = getCqImage(s)
     text_s = rm_cq_image(s)
 
     font = ImageFont.truetype(font_cn, fontsize)
     img_size = get_str_size(text_s, font)
     img_size[0] += offset[0] + 5
-
-    img = Image.new('RGB', (img_size[0], img_size[1]), "black")
-    drawer = ImageDraw.Draw(img)
+    y = 0
     
     if cqImgs:
-        sid, cover = Thumb2Cover(cqImgs[0])
-        fname = downImage(cover, sid)
+        osuid = cqImgs[0].split("?")[0].split("/")[-1]
+        fname = downImage(cqImgs[0], f'headimg_cover_{osuid}')
         if fname:
-            bg = getLocalImage(img_path+fname, factor=0.8)
-            x = img_size[0]
-            y = int(img_size[1]*img_size[0]/bg.size[0])
-            bg_rsize = bg.resize((x, y))
-            img.paste(bg_rsize, (0, 0), mask=None)
+            bg = getLocalImage(img_path+fname)
+            x = bg.size[0]
+            y = bg.size[1]
+            img = Image.new('RGB', (img_size[0], img_size[1]+y), "white")
+            # 居中
+            img.paste(bg, (img_offset[0], img_offset[1]), mask=None)
         else:
+            img = Image.new('RGB', (img_size[0], img_size[1]), "white")
             logging.error("图片下载失败!")
             
-    drawer.text(offset, text_s, font=font, fill='white')
+    drawer = ImageDraw.Draw(img)
+    drawer.text((offset[0], offset[1]+y), text_s, font=font, fill='black')
 
     if debug:
         img.show()
@@ -79,12 +80,14 @@ def drawTextWithBg(s, fontsize=14, debug=0, offset=(3,1)):
 
     else:
         p = '%s.png' % uuid.uuid4()
+        p = 'test3.png'
         f = '/static/interbot/image/tmp/%s' % p
         img.save(f)
+        print(p)
         logging.info('生成图片[%s]' % f)
         return f"tmp/{p}"
 
-def drawTextWithCover(s, fontsize=14, debug=0, offset=(3,1)):
+def drawTextWithCover(s, fontsize=14, debug=0, offset=(5,5)):
     cqImgs = getCqImage(s)
     text_s = rm_cq_image(s)
 
@@ -95,9 +98,9 @@ def drawTextWithCover(s, fontsize=14, debug=0, offset=(3,1)):
 
     if cqImgs:
         sid, cover = Thumb2Cover(cqImgs[0])
-        fname = downImage(cover, sid)
+        fname = downImage(cover, f'map_cover_{sid}')
         if fname:
-            bg = getLocalImage(img_path+fname, factor=0.8)
+            bg = getLocalImage(img_path+fname)
             x = img_size[0]
             y = int(img_size[1]*img_size[0]/bg.size[0])
             bg_rsize = bg.resize((x, y))
@@ -142,9 +145,8 @@ def rm_cq_image(s):
         s = s.replace(f'[CQ:image,cache=0,file={img}]', '')
     return s
 
-def downImage(url, sid, useCache=1):
+def downImage(url, iname, useCache=1):
     r = interRequest.interReq()
-    iname = f'map_cover_{sid}'
     res = 1
     if useCache:
         if not os.path.exists(img_path + iname + '.jpg'):
@@ -192,5 +194,20 @@ https://osu.ppy.sh/b/1180037
     """
     # https://assets.ppy.sh/beatmaps/557733/covers/cover.jpg
     # downImage("https://assets.ppy.sh/beatmaps/557733/covers/cover.jpg", 557733)
-    drawTextWithCover(s, debug=0)
-
+    # drawTextWithCover(s, debug=0)
+    s = """
+-interesting-
+[CQ:image,cache=0,file=https://a.ppy.sh/8505303?1485883146.jpg]
+3415pp (1.65/day)
+14216pc (6.85/day)
+398wtth (280/pc)
+--------------------
+SS+(0) | SS(0) | S+(1) | S(98) | A(308)
+bp1: 206pp,4.1*,97.47%,+NF,DT(4年前)
+--------------------
+粉丝数: 102
+爆肝时长: 12天11小时
+最后登录: 2022-02-09 22:05
+注册时间: 2016-06-04 (2076天)
+    """
+    drawTextWithRawCover(s, debug=0)

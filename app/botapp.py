@@ -491,7 +491,7 @@ def tt(**kw):
 @appTools.deco()
 def stat(**kw):
     b = ppyHandler.ppyHandler()
-    qqid = kw['atqq'] if kw['atqq'] else kw['qqid']
+    qqid = kw['atqq'] if kw.get("atqq") else kw['qqid']
     rs = b.osuV2stat(qqid, kw['groupid'])
     return rs
 
