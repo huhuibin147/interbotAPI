@@ -27,16 +27,7 @@ def drawText(s, fontsize=14, debug=0, offset=(3,1)):
     drawer = ImageDraw.Draw(img)
     drawer.text(offset, s, font=font, fill='black')
 
-    if debug:
-        img.show()
-        return ""
-
-    else:
-        p = '%s.png' % uuid.uuid4()
-        f = '/static/interbot/image/tmp/%s' % p
-        img.save(f)
-        logging.info('生成图片[%s]' % f)
-        return f"tmp/{p}"
+    return save_or_show(img, debug)
 
 def get_str_size(s, font):
     ws = s.split("\n")
@@ -74,18 +65,7 @@ def drawTextWithRawCover(s, fontsize=14, debug=0, offset=(5,5), img_offset=(5,5)
     drawer = ImageDraw.Draw(img)
     drawer.text((offset[0], offset[1]+y), text_s, font=font, fill='black')
 
-    if debug:
-        img.show()
-        return ""
-
-    else:
-        p = '%s.png' % uuid.uuid4()
-        p = 'test3.png'
-        f = '/static/interbot/image/tmp/%s' % p
-        img.save(f)
-        print(p)
-        logging.info('生成图片[%s]' % f)
-        return f"tmp/{p}"
+    return save_or_show(img, debug)
 
 def drawTextWithCover(s, fontsize=14, debug=0, offset=(5,5)):
     cqImgs = getCqImage(s)
@@ -113,6 +93,10 @@ def drawTextWithCover(s, fontsize=14, debug=0, offset=(5,5)):
     drawer = ImageDraw.Draw(img)
     drawer.text((offset[0], offset[1]+y), text_s, font=font, fill='black')
 
+    return save_or_show(img, debug)
+
+
+def save_or_show(img, debug=0):
     if debug:
         img.show()
         return ""
