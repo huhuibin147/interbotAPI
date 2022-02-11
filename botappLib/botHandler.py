@@ -292,6 +292,53 @@ class botHandler():
         ret += f"{avgStars}* - {avgAcc:.1f}% - {avgPp:.0f}pp (ps:这个是老算法)"
         return ret
 
+    def getRctppBatchResDraw2(self, recinfos):
+        """批量版本2
+        """
+        ret = ""
+        l = len(recinfos)
+        totalMiss = 0
+        totalStars = 0
+        totalpp = 0
+        totalppfc = 0
+        totalppss = 0
+        totalacc = 0
+        # 需要切换到新的上 to-do
+        for i, recinfo in enumerate(recinfos):
+            # rec计算
+            bid = recinfo['beatmap_id']
+            rinfo = self.exRecInfo(recinfo)
+            extend = self.convert2oppaiArgs(**rinfo) 
+            ojson = self.oppai2json(bid, extend)
+
+            # fc计算
+            fcacc = self.calFcacc(recinfo)
+            extendFc = self.convert2oppaiArgs(rinfo['mods'], fcacc)
+            ojsonFc = self.oppai2json(bid, extendFc)
+
+            # ac计算
+            extendSs = self.convert2oppaiArgs(rinfo['mods'])
+            ojsonSs = self.oppai2json(bid, extendSs)
+
+            res, data = self.formatRctpp4(ojson, recinfo['rank'], rinfo['acc'], 
+                ojsonFc['pp'], ojsonSs['pp'], bid, fcacc, recinfo['countmiss'])
+            totalStars += data["stars"]
+            totalMiss += int(data["miss"])
+            totalpp += data["pp"]
+            totalppfc += data["ppfc"]
+            totalppss += data["ppss"] 
+            totalacc += data["acc"]
+
+            ret += f'{res}' 
+            ret += '\n---------------------------------\n'
+
+        avgStars = round(totalStars/l, 2)
+        avgAcc = round(totalacc/l, 2)
+        avgPp = round(totalpp/l, 0)
+        
+        ret += f"{avgStars}* - {avgAcc:.1f}% - {avgPp:.0f}pp (ps:这个是老算法)"
+        return ret
+
     def oppai(self, bid, extend=''):
         """取oppai结果
         Args:
@@ -846,8 +893,8 @@ class botHandler():
         """bbp输出格式化
         """
         d = drawTools.DrawTool()
-        d.autoDrawText("%s's bp!!\n" % ousname)
-        for i,r in enumerate(bp5[0:3]):
+        d.autoDrawText("%s's bp!!" % ousname)
+        for i,r in enumerate(bp5):
             mapInfo = self.getOsuBeatMapInfo(r["beatmap_id"])
             d.autoDrawImage(save_name=drawTools.MAP_COVER_FILE.format(sid=mapInfo["beatmapset_id"]), 
                     url=drawTools.MAP_COVER.format(sid=mapInfo["beatmapset_id"]), autoResizeW=1)
@@ -1494,13 +1541,30 @@ class botHandler():
             out += f'Beatmap by {r["creator"]}\n'
             out += f'https://osu.ppy.sh/b/{r["bid"]}\n'
         return out[:-1]
-        
+    
+    def random_maps_draw(self, minstar, maxstar, limit):
+        x = random.uniform(minstar, maxstar)
+        maps = self.get_maps_by_stars(x, limit)
+        if not maps:
+            return "暂无推荐，请换个难度重试！"
+
+        d = drawTools.DrawTool(width=600)
+        d.autoDrawText(f"本次推荐星级:{maps[0]['stars']:.1f}*")
+        for i, r in enumerate(maps):
+            m = json.loads(r['mapjson'])
+            d.autoDrawImage(save_name=drawTools.MAP_COVER_FILE.format(sid=m["beatmapset_id"]), 
+                    url=drawTools.MAP_COVER.format(sid=m["beatmapset_id"]), autoResizeW=1)
+
+            d.autoDrawText(f'[{i+1}] {r["artist"]} - {r["title"]} [{r["version"]}] ')
+            d.autoDrawText(f'Beatmap by {r["creator"]}')
+            d.autoDrawText(f'https://osu.ppy.sh/b/{r["bid"]}')
+        return d.startDraw()
 
 
     def get_maps_by_stars(self, minstar, limit):
         db = interMysql.Connect('osu')
         sql = '''
-            SELECT bid, source, artist, title, version, creator, stars
+            SELECT bid, source, artist, title, version, creator, stars, mapjson
             FROM beatmap where stars >= %s limit %s
         '''
         ret = db.query(sql, [minstar, limit])

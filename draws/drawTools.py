@@ -29,6 +29,7 @@ class DrawTool:
         # cover图原size(900,250)，这里除掉一半
         self.width = kw.get('width', 425)
         self.height = kw.get('height', 475)
+        self.exheight = kw.get('exheight', 3)
         self.font_cn = kw.get('font_cn', font_cn) # 字体
         self.font_size = kw.get('font_size', 14) # 文字大小
         self.font_color = kw.get('font_color', 'black') # 文字颜色
@@ -139,10 +140,10 @@ class DrawTool:
         # 先计算图大小
         autoY = 0
         for r in self.autoDraw:
-            autoY += r['size'][1]
+            yy = r.get('offset', (0, 0))[1]
+            autoY += r['size'][1] + yy
 
-        if autoY < self.height:
-            self.height = autoY + 5
+        self.height = autoY + self.exheight
 
         x = 0
         y = 0

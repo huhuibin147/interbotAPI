@@ -753,6 +753,22 @@ def randmap(**kw):
     res = b.random_maps(s1, s2, s3)
     return res
 
+@app.route('/randmapdraw', methods=['POST', 'GET'])
+@appTools.deco()
+def randmapdraw(**kw):
+    s1, s2, s3 = 4, 5.6, 5
+    if kw['iargs'] and len(kw['iargs']) >= 1:
+        try:
+            n = float(kw['iargs'][0])
+            s1 = n
+            s2 = n
+        except:
+            pass
+
+    b = botHandler.botHandler()
+    fname = b.random_maps_draw(s1, s2, s3)
+    return Config.ImgTmp % fname
+
 
 @app.route('/avgpp', methods=['POST', 'GET'])
 @appTools.deco(autoOusInfoKey='osuid')
