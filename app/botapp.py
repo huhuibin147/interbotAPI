@@ -761,7 +761,8 @@ def randmapdraw(**kw):
         try:
             n = float(kw['iargs'][0])
             if n == n:
-                s1 = s2 = n
+                s1 = n
+                s2 += 0.1
         except:
             pass
 

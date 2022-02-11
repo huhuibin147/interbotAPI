@@ -213,6 +213,9 @@ def drawTextWithCover(s, fontsize=14, debug=0, offset=(5,5)):
     font = ImageFont.truetype(font_cn, fontsize)
     img_size = get_str_size(text_s, font)
     img_size[0] += offset[0] + 5
+    if img_size[0] < 425:
+        img_size[0] = 425
+        
     y = 0
 
     if cqImgs:
