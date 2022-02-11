@@ -1546,7 +1546,7 @@ class botHandler():
         x = random.uniform(minstar, maxstar)
         maps = self.get_maps_by_stars(x, limit)
         if not maps:
-            return "暂无推荐，请换个难度重试！"
+            return ""
 
         d = drawTools.DrawTool(width=600)
         d.autoDrawText(f"本次推荐星级:{maps[0]['stars']:.1f}*")

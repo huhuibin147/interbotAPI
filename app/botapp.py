@@ -760,14 +760,18 @@ def randmapdraw(**kw):
     if kw['iargs'] and len(kw['iargs']) >= 1:
         try:
             n = float(kw['iargs'][0])
-            s1 = n
-            s2 = n
+            if n == n:
+                s1 = s2 = n
         except:
             pass
 
     b = botHandler.botHandler()
     fname = b.random_maps_draw(s1, s2, s3)
-    return Config.ImgTmp % fname
+    if not fname:
+        res = "暂无推荐，请换个难度重试！"
+    else:
+        res = Config.ImgTmp % fname
+    return res
 
 
 @app.route('/avgpp', methods=['POST', 'GET'])
