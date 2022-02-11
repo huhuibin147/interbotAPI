@@ -21,6 +21,7 @@ from botappLib import healthCheck
 from ppyappLib import ppyHandler
 from draws import drawReplay
 from chatbotLib import chatHandler
+from draws import drawTools
 
 
 
@@ -840,6 +841,31 @@ class botHandler():
             )
             s_msg = s_msg + msg + '\n'
         return s_msg[:-1]
+
+    def bbpOutFormatDraw2(self, bp5, ousname, offset=0):
+        """bbp输出格式化
+        """
+        d = drawTools.DrawTool()
+        d.autoDrawText("%s's bp!!\n" % ousname)
+        for i,r in enumerate(bp5[0:3]):
+            mapInfo = self.getOsuBeatMapInfo(r["beatmap_id"])
+            d.autoDrawImage(save_name=drawTools.MAP_COVER_FILE.format(sid=mapInfo["beatmapset_id"]), 
+                    url=drawTools.MAP_COVER.format(sid=mapInfo["beatmapset_id"]), autoResizeW=1)
+            bp_text = 'bp{x}, {pp}pp,{acc:.2f}%,{rank},+{mod}'
+            c50 = float(r['count50'])
+            c100 = float(r['count100'])
+            c300 = float(r['count300'])
+            cmiss = float(r['countmiss'])
+            acc = round((c50*50+c100*100+c300*300)/(c50+c100+c300+cmiss)/300*100, 2)
+            bp_text = bp_text.format(
+                x=i+offset,
+                pp=round(float(r['pp'])),
+                acc=acc,rank=r['rank'],
+                mod=','.join(mods.getMod(int(r['enabled_mods'])))
+            )
+            d.autoDrawText(bp_text)
+        filename = d.startDraw()
+        return filename
 
     def helpFormatOut(self):
         cmdInfo = self.cmdRefFromDb(level=[1])

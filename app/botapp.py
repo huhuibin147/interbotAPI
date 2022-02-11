@@ -386,7 +386,9 @@ def bbp2(**kw):
     recinfo = b.getRecBp(osuid, "100")
     if not recinfo:
         return "没有Bp,下一个!!"
-    res = b.bbpOutFormat2(recinfo[x-1:x+2], osuname, x)
+    # res = b.bbpOutFormat2(recinfo[x-1:x+2], osuname, x)
+    fname = b.bbpOutFormatDraw2(recinfo[x-1:x+2], osuname, x)
+    res = Config.ImgTmp % fname
     return res
 
 @app.route('/test', methods=['POST', 'GET'])

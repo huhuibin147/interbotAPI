@@ -67,7 +67,7 @@ class oMsgHandler():
     
     def group_increase(self):
         # 活动回流级别做提示
-        msg = "cy让我来欢迎新人！先仔细读下公告，有问题直接@管理@管理@管理！"
+        msg = "欢迎！先仔细阅读公告！有问题找管理！"
         pushTools.pushMsgOne(self.context["group_id"], msg)
 
     def group_request(self):
