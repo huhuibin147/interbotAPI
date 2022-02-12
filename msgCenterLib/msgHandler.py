@@ -187,7 +187,8 @@ class msgHandler():
         )
         if res.status_code == 200 and res.text:
             return self.returnHandler(res.text, opts, self.context)
-        logging.info('调用[%s]异常' % apiUrl)
+        elif res.status_code != 200:
+            logging.info('调用[%s]异常' % apiUrl)
         return ''
         
     def extractAtqqid(self, msg):

@@ -770,11 +770,12 @@ def randmapdraw(**kw):
             n = float(kw['iargs'][0])
             if n == n:
                 s1 = n
-                s2 += 0.1
+                s2 = s1 + 0.1
         except:
             pass
 
     b = botHandler.botHandler()
+    logging.info(f"randmapdraw args, s1:{s1}, s2:{s2}, s3:{s3}")
     fname = b.random_maps_draw(s1, s2, s3)
     if not fname:
         res = "暂无推荐，请换个难度重试！"

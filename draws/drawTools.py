@@ -123,7 +123,8 @@ class DrawTool:
             im = im.convert(conv)
         return im
 
-    def save(self, name="", debug=0):
+    def save(self, name="", debug=0, fs8=1):
+        # fs8 压缩
         if debug == 1:
             self.img.show()
         else:
@@ -133,6 +134,12 @@ class DrawTool:
             self.img.save(fname)
             name = f"tmp/{name}"
             logging.info('生成图片[%s]' % fname)
+
+            # 压缩
+            if fs8:
+                os.system('pngquant -f %s' % fname)
+                name = name.replace(".png", "-fs8.png")
+                logging.info('生成压缩图片[%s]' % name)
 
         return name
 
@@ -185,6 +192,8 @@ def drawTextWithRawCover(s, fontsize=14, debug=0, offset=(5,5), img_offset=(5,5)
     font = ImageFont.truetype(font_cn, fontsize)
     img_size = get_str_size(text_s, font)
     img_size[0] += offset[0] + 5
+    if img_size[0] < 375:
+        img_size[0] = 375
     y = 0
     
     if cqImgs:
@@ -195,7 +204,6 @@ def drawTextWithRawCover(s, fontsize=14, debug=0, offset=(5,5), img_offset=(5,5)
             x = bg.size[0]
             y = bg.size[1]
             img = Image.new('RGB', (img_size[0], img_size[1]+y), "white")
-            # 居中
             img.paste(bg, (img_offset[0], img_offset[1]), mask=None)
         else:
             img = Image.new('RGB', (img_size[0], img_size[1]), "white")
@@ -215,7 +223,7 @@ def drawTextWithCover(s, fontsize=14, debug=0, offset=(5,5)):
     img_size[0] += offset[0] + 5
     if img_size[0] < 425:
         img_size[0] = 425
-        
+
     y = 0
 
     if cqImgs:
