@@ -333,12 +333,13 @@ def bestmaprecdraw(**kw):
 @appTools.deco(autoOusInfoKey='osuid,osuname', rawinput=1)
 def bbp(**kw):
     qqid = kw['qqid']
-    if not kw['iargs']:
-        x = 1  
-    else:
+    x = 1  
+    if kw['iargs']:
         input0 = kw['iargs'][0]
         args0 = input0.replace(f'[CQ:at,qq={qqid}]', '')
         x = int(args0) if args0.isdigit() else 1
+        if len(kw['iargs']) >= 2 and kw['iargs'][1].isdigit():
+            x = int(kw['iargs'][1]) 
 
     if x < 1 or x > 100:
         x = 1
@@ -352,6 +353,9 @@ def bbp(**kw):
     #     return "你倒是绑定啊.jpg"
     osuid = kw['autoOusInfoKey']['osuid']
     osuname = kw['autoOusInfoKey']['osuname']
+    if not args0.isdigit():
+        osuid = args0
+        osuname = args0
 
     recinfo = b.getRecBp(osuid, "100")
     if not recinfo:
@@ -363,12 +367,13 @@ def bbp(**kw):
 @appTools.deco(autoOusInfoKey='osuid,osuname', rawinput=1)
 def bbp2(**kw):
     qqid = kw['qqid']
-    if not kw['iargs']:
-        x = 1  
-    else:
+    x = 1  
+    if kw['iargs']:
         input0 = kw['iargs'][0]
         args0 = input0.replace(f'[CQ:at,qq={qqid}]', '')
         x = int(args0) if args0.isdigit() else 1
+        if len(kw['iargs']) >= 2 and kw['iargs'][1].isdigit():
+            x = int(kw['iargs'][1]) 
 
     if x < 1 or x > 100:
         x = 1
@@ -382,6 +387,9 @@ def bbp2(**kw):
     #     return "你倒是绑定啊.jpg"
     osuid = kw['autoOusInfoKey']['osuid']
     osuname = kw['autoOusInfoKey']['osuname']
+    if not args0.isdigit():
+        osuid = args0
+        osuname = args0
 
     recinfo = b.getRecBp(osuid, "100")
     if not recinfo:
