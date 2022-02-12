@@ -116,8 +116,8 @@ def rctpps(**kw):
     if x < 0:
         x = 0
 
-    res = b.getRctppBatchRes2(recinfo[x:x+3])
-    res = f"{osuname}\n{res}"
+    fname = b.getRctppBatchResDraw2(osuname, recinfo[x:x+3])
+    res = Config.ImgTmp % fname
     return res
 
 @app.route('/mybp', methods=['POST', 'GET'])

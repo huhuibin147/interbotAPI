@@ -292,7 +292,7 @@ class botHandler():
         ret += f"{avgStars}* - {avgAcc:.1f}% - {avgPp:.0f}pp (ps:这个是老算法)"
         return ret
 
-    def getRctppBatchResDraw2(self, recinfos):
+    def getRctppBatchResDraw2(self, osuname, recinfos):
         """批量版本2
         """
         ret = ""
@@ -304,6 +304,8 @@ class botHandler():
         totalppss = 0
         totalacc = 0
         # 需要切换到新的上 to-do
+        d = drawTools.DrawTool(width=600)
+        d.autoDrawText(f"{osuname}")
         for i, recinfo in enumerate(recinfos):
             # rec计算
             bid = recinfo['beatmap_id']
@@ -320,8 +322,9 @@ class botHandler():
             extendSs = self.convert2oppaiArgs(rinfo['mods'])
             ojsonSs = self.oppai2json(bid, extendSs)
 
-            res, data = self.formatRctpp4(ojson, recinfo['rank'], rinfo['acc'], 
-                ojsonFc['pp'], ojsonSs['pp'], bid, fcacc, recinfo['countmiss'])
+            data = self.formatRctppDraw4(ojson, recinfo['rank'], rinfo['acc'], 
+                ojsonFc['pp'], ojsonSs['pp'], bid, fcacc, recinfo['countmiss'], d)
+
             totalStars += data["stars"]
             totalMiss += int(data["miss"])
             totalpp += data["pp"]
@@ -329,14 +332,13 @@ class botHandler():
             totalppss += data["ppss"] 
             totalacc += data["acc"]
 
-            ret += f'{res}' 
-            ret += '\n---------------------------------\n'
-
         avgStars = round(totalStars/l, 2)
         avgAcc = round(totalacc/l, 2)
         avgPp = round(totalpp/l, 0)
         
-        ret += f"{avgStars}* - {avgAcc:.1f}% - {avgPp:.0f}pp (ps:这个是老算法)"
+        d.autoDrawText("---------------------------------")
+        d.autoDrawText(f"{avgStars}* - {avgAcc:.1f}% - {avgPp:.0f}pp (ps:这个是老算法)")
+        ret = d.startDraw()
         return ret
 
     def oppai(self, bid, extend=''):
@@ -708,6 +710,40 @@ class botHandler():
         out = outp.format(**data)
 
         return out, data
+
+    def formatRctppDraw4(self, ojson, rank, acc, ppfc, ppss, bid, fcacc, miss, d):
+        """格式化rctpp简版输出"""
+        mapInfo = self.getOsuBeatMapInfo(bid)
+        bpm = self.factBpm(float(mapInfo['bpm']), ojson['mods_str'])
+
+        m = {
+            'ar': ojson['ar'],
+            'cs': ojson['cs'],
+            'od': ojson['od'],
+            'hp': ojson['hp'],
+            'stars': round(ojson['stars'], 2),
+            'combo': ojson['combo'],
+            'max_combo': ojson['max_combo'],
+            'acc': round(acc, 2),
+            'mods_str': ojson['mods_str'],
+            'pp': round(ojson['pp'], 2),
+            'rank': rank,
+            'ppfc': round(ppfc, 2),
+            'ppss': round(ppss, 2),
+            'miss': miss,
+            'bpm': bpm,
+            'sid': mapInfo["beatmapset_id"]
+        }
+
+        d.autoDrawImage(save_name=drawTools.MAP_COVER_FILE.format(sid=m["sid"]), 
+                url=drawTools.MAP_COVER.format(sid=m["sid"]), autoResizeW=1)
+
+        d.autoDrawText(f"{mapInfo['artist']} - {mapInfo['title']} [{mapInfo['version']}]")
+        d.autoDrawText(f"[ar{ojson['ar']:.1f} cs{ojson['cs']} od{ojson['od']} hp{ojson['hp']}  bpm{bpm:.0f}]  {m['stars']}*")
+        d.autoDrawText(f"{ojson['combo']}x/{ojson['max_combo']}({miss}x) | {acc:.1f}% | {rank}")
+        d.autoDrawText(f"{m['pp']:.0f}pp | {ppfc:.0f}pp | {ppss:.0f}pp")
+
+        return m
 
 
     def missReply(self, miss, acc, ar, cb, maxcb, stars):
