@@ -880,6 +880,17 @@ def speak(**kw):
         return "raise exception!"
     return ""
 
+@app.route('/admchatcnt', methods=['POST'])
+@appTools.deco()
+def admchatcnt(**kw):
+    try:
+        b = botHandler.botHandler()
+        return b.get_admins()
+
+    except:
+        logging.exception("")
+        return "raise exception!"
+
 
 
 if __name__ == '__main__':

@@ -1904,6 +1904,33 @@ class botHandler():
             return False
         return True
 
+    def get_admins(self, gid="712603531", days=7):
+        with open(Config.USERLIST_FILE, 'r', encoding='utf-8') as f:
+            confs = json.load(f)
+        users = confs[gid]["admin_users"]
+        rs = self.get_user_chatlog_cnt(users.keys(), gid, days)
+        for k, v in users.items():
+            v["n"] = rs.get(k, 0)
+        sortrs = sorted(users.items(), key=lambda x: x[1]['n'], reverse=True)
+        ret = "新人群管理近7天发言统计\n"
+        for i, r in enumerate(sortrs):
+            m = r[1]
+            ret += f"{i+1}.{m['nickname']:<14}   {m['n']}\n"
+        return ret[:-1]
+    
+    def get_user_chatlog_cnt(self, qq, gid, days=7):
+        db = interMysql.Connect('osu')
+        sql = f'''
+            SELECT qq, count(*) cnt FROM `chat_logs` where 
+            qq in %s
+            and group_number=%s and
+            create_time>=DATE_ADD(CURDATE(),interval -{days} DAY)
+            GROUP BY qq
+        '''
+        ret = db.query(sql, [tuple(qq), gid])
+        rs = {r['qq']:r['cnt'] for r in ret}
+        return rs
+
 
 
 if __name__ == "__main__":
@@ -1911,4 +1938,5 @@ if __name__ == "__main__":
     # b.drawRctpp(osuid="11788070", osuname="interbot")
     # b.annual_sammry(osuid = "11788070", osuname="interbot")
     # b.osu_mp("712603531")
-    print(b.check_mp_mid())
+    # print(b.check_mp_mid())
+    b.get_admins()

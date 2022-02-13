@@ -53,3 +53,5 @@ CHAT_RANDOM_KEY = "CHAT_RANDOM_KEY"
 AUTOREPLY_PCT = 99
 # 自动触发speak概率数 0~100
 AUTOSPEAK_PCT = 99
+
+USERLIST_FILE = "botappLib/userlist.json"
