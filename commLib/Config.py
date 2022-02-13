@@ -9,6 +9,8 @@ audioTmp = '[CQ:record,file=http://interbot.cn/itbaudio/%s]'
 bg_thumb = '[CQ:image,cache=0,file=https://b.ppy.sh/thumb/{sid}l.jpg]'
 ImgTmp = '[CQ:image,cache=0,file=http://interbot.cn/itbimage/%s]'
 
+sayo_down_api = 'https://dl.sayobot.cn/beatmaps/download/novideo/{sid}'
+
 # token权限
 TOKEN_PERMISSION = {
     '0': "仅自己可用",

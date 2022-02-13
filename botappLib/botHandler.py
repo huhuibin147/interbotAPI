@@ -888,7 +888,8 @@ class botHandler():
         """
         s_msg = "%s's bp!!\n" % ousname
         for i,r in enumerate(bp5[0:5]):
-            msg = 'bp{x}, {pp}pp,{acc:.2f}%,{rank},+{mod}'
+            mapInfo = self.getOsuBeatMapInfo(r["beatmap_id"])
+            msg = 'bp{x}, {pp}pp, {star:.2f}*, {acc:.2f}%,{rank},+{mod}'
             c50 = float(r['count50'])
             c100 = float(r['count100'])
             c300 = float(r['count300'])
@@ -898,7 +899,8 @@ class botHandler():
                 x=i+offset,
                 pp=round(float(r['pp'])),
                 acc=acc,rank=r['rank'],
-                mod=','.join(mods.getMod(int(r['enabled_mods'])))
+                mod=','.join(mods.getMod(int(r['enabled_mods']))),
+                star = float(mapInfo["difficultyrating"])
             )
             s_msg = s_msg + msg + '\n'
         return s_msg[:-1]
@@ -928,13 +930,14 @@ class botHandler():
     def bbpOutFormatDraw2(self, bp5, ousname, offset=0):
         """bbp输出格式化
         """
-        d = drawTools.DrawTool()
+        d = drawTools.DrawTool(width=600)
         d.autoDrawText("%s's bp!!" % ousname)
         for i,r in enumerate(bp5):
             mapInfo = self.getOsuBeatMapInfo(r["beatmap_id"])
             d.autoDrawImage(save_name=drawTools.MAP_COVER_FILE.format(sid=mapInfo["beatmapset_id"]), 
                     url=drawTools.MAP_COVER.format(sid=mapInfo["beatmapset_id"]), autoResizeW=1)
-            bp_text = 'bp{x}, {pp}pp,{acc:.2f}%,{rank},+{mod}'
+            d.autoDrawText(f'{mapInfo["artist"]} - {mapInfo["title"]} [{mapInfo["version"]}] ')
+            bp_text = 'bp{x}, {pp}pp, {star:.2f}*, {acc:.2f}%,{rank},+{mod}   (bid:{bid})'
             c50 = float(r['count50'])
             c100 = float(r['count100'])
             c300 = float(r['count300'])
@@ -944,7 +947,9 @@ class botHandler():
                 x=i+offset,
                 pp=round(float(r['pp'])),
                 acc=acc,rank=r['rank'],
-                mod=','.join(mods.getMod(int(r['enabled_mods'])))
+                mod=','.join(mods.getMod(int(r['enabled_mods']))),
+                star = float(mapInfo["difficultyrating"]),
+                bid = r["beatmap_id"]
             )
             d.autoDrawText(bp_text)
         filename = d.startDraw()
@@ -1573,9 +1578,13 @@ class botHandler():
 
         out = f"随机推图  本次推荐星级:{maps[0]['stars']:.1f}*\n"
         for i, r in enumerate(maps):
+            m = json.loads(r['mapjson'])
+            sid = m["beatmapset_id"]
             out += f'[{i+1}] {r["artist"]} - {r["title"]} [{r["version"]}] '
             out += f'Beatmap by {r["creator"]}\n'
-            out += f'https://osu.ppy.sh/b/{r["bid"]}\n'
+            out += f'{Config.bg_thumb.format(sid=sid)}\n'
+            out += f'<a href="https://osu.ppy.sh/b/{r["bid"]}">https://osu.ppy.sh/b/{r["bid"]}</a>  '
+            out += f'<a href="{Config.sayo_down_api.format(sid=sid)}">download</a>\n\n'
         return out[:-1]
     
     def random_maps_draw(self, minstar, maxstar, limit):

@@ -334,6 +334,7 @@ def bestmaprecdraw(**kw):
 def bbp(**kw):
     qqid = kw['qqid']
     x = 1  
+    args0 = None
     if kw['iargs']:
         input0 = kw['iargs'][0]
         args0 = input0.replace(f'[CQ:at,qq={qqid}]', '')
@@ -353,7 +354,7 @@ def bbp(**kw):
     #     return "你倒是绑定啊.jpg"
     osuid = kw['autoOusInfoKey']['osuid']
     osuname = kw['autoOusInfoKey']['osuname']
-    if not args0.isdigit():
+    if args0 and not args0.isdigit():
         osuid = args0
         osuname = args0
 
@@ -368,6 +369,7 @@ def bbp(**kw):
 def bbp2(**kw):
     qqid = kw['qqid']
     x = 1  
+    args0 = None
     if kw['iargs']:
         input0 = kw['iargs'][0]
         args0 = input0.replace(f'[CQ:at,qq={qqid}]', '')
@@ -387,7 +389,7 @@ def bbp2(**kw):
     #     return "你倒是绑定啊.jpg"
     osuid = kw['autoOusInfoKey']['osuid']
     osuname = kw['autoOusInfoKey']['osuname']
-    if not args0.isdigit():
+    if args0 and not args0.isdigit():
         osuid = args0
         osuname = args0
 
