@@ -8,6 +8,8 @@ import requests
 from flask import Response, Flask
 from flask import request
 from apivLib import apivHandler
+from commLib import interRedis
+from commLib import Config
 
 with open('./app/apiv.yaml', encoding='utf8') as f:
     config = yaml.load(f)
@@ -32,8 +34,15 @@ app = Flask(__name__)
 def newSetid(**kw):
     code = request.args.get('code')
     state = request.args.get('state')
-    qq, groupid = state.split('x')
+    qq, gid = state.split('x')
     logging.info('回调记录,qq[%s]' % qq)
+    
+    rds = interRedis.connect('osu2')
+    key = Config.OAUTH_CACHE_KEY.format(qq=qq, gid=gid)
+    if not rds.get(key):
+        logging.error('redis验证失败')
+        return "由于你点击了别人的认证链接(或者已过期)，绑定失败，请在群中发送!oauth获取你的认证链接"
+
     obj = apivHandler.apivHandler()
     rs = obj.newUserOauth(code, state)
     if rs > 0:

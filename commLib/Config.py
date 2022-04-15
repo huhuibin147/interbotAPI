@@ -55,3 +55,6 @@ AUTOREPLY_PCT = 99
 AUTOSPEAK_PCT = 99
 
 USERLIST_FILE = "botappLib/userlist.json"
+
+#oauth cache
+OAUTH_CACHE_KEY = "oauth_verify_{qq}_{gid}"
