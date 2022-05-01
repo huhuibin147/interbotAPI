@@ -204,3 +204,8 @@ class baseHandler():
             return "Ta还没有放开token权限，当前权限为%s(%s)，赶紧叫Ta放开(¡settokenpms)啊！" \
                 % (tpms, Config.TOKEN_PERMISSION[tpms])
         return qq
+
+    def setOauthCache(self, qq, gid):
+        rds = interRedis.connect('osu2')
+        key = Config.OAUTH_CACHE_KEY.format(qq=qq, gid=gid)
+        rds.setex(key, 1, 3600)

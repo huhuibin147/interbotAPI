@@ -103,6 +103,7 @@ def chat(**kw):
 @appTools.deco()
 def bindUserToken(**kw):
     ins = baseHandler.baseHandler()
+    ins.setOauthCache(kw['qqid'], kw['groupid'])
     url = 'https://osu.ppy.sh/oauth/authorize?client_id=19&response_type=code&state=%sx%s&scope=friends.read%%20identify&redirect_uri=http://interbot.cn/apiv2/auth' % (kw['qqid'], kw['groupid'])
     ret = url + '\n*请点击链接进行授权绑定'
     return ret

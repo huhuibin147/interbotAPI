@@ -56,3 +56,6 @@ AUTOSPEAK_PCT = 99
 
 USERLIST_FILE = "botappLib/userlist.json"
 MATCHLIST_FILE = "botappLib/matchlist.json"
+
+#oauth cache
+OAUTH_CACHE_KEY = "oauth_verify_{qq}_{gid}"
