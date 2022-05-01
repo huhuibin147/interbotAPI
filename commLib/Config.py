@@ -55,3 +55,4 @@ AUTOREPLY_PCT = 99
 AUTOSPEAK_PCT = 99
 
 USERLIST_FILE = "botappLib/userlist.json"
+MATCHLIST_FILE = "botappLib/matchlist.json"

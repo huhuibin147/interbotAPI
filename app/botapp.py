@@ -594,6 +594,44 @@ def rank(**kw):
         logging.exception("rank error")
         return "fail..."
 
+@app.route('/maprankhd', methods=['POST', 'GET'])
+@appTools.deco(autoOusInfoKey='osuid', rawinput=1)
+def maprankhd(**kw):
+    try:
+        if not kw['iargs']:
+            return "请输入bid!"
+        bid = kw['iargs'][0]
+
+        hid = "25"
+        if len(kw['iargs']) > 1:
+            hid = kw['iargs'][1]
+
+        # 下标映射
+        if int(bid) < 50:
+            b = botHandler.botHandler()
+            bid = b.get_match_bids(bid, hid)
+            if not bid:
+                return f"{bid}不在本次范围内"
+        
+        osuid = kw['autoOusInfoKey']['osuid']
+        p = drawRank.start(bid, hid, hid=hid, mods=-1, uid=osuid)
+        return "[CQ:image,cache=0,file=http://interbot.cn/itbimage/%s]" % p
+    except:
+        logging.exception("maprankhd error")
+        return "fail..."
+
+@app.route('/rankhd', methods=['POST', 'GET'])
+@appTools.deco(autoOusInfoKey='osuid', rawinput=1)
+def rankhd(**kw):
+    try:
+        hid = "25"
+        b = botHandler.botHandler()
+        rs = b.match_rank(hid, hid)
+        return rs
+    except:
+        logging.exception("rankhd error")
+        return "fail..."
+
 @app.route('/uploadrec', methods=['POST', 'GET'])
 @appTools.deco(autoOusInfoKey='osuid', rawinput=1)
 def up(**kw):

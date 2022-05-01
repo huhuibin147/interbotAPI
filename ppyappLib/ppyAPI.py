@@ -22,7 +22,8 @@ ref = {
     'beatmap': 'https://osu.ppy.sh/api/get_beatmaps?k=%s&b={bid}' % OSU_API_KEY,
     'skill': 'http://osuskills.com/user/{osuname}',
     'skillvs': 'http://osuskills.com/user/{osuname}/vs/{vsosuname}',
-    'userpage': 'https://osu.ppy.sh/pages/include/profile-userpage.php?u={uid}'
+    'userpage': 'https://osu.ppy.sh/pages/include/profile-userpage.php?u={uid}',
+    'mp': 'https://osu.ppy.sh/api/get_match?k=%s&mp={mid}' % OSU_API_KEY
 }
 
 

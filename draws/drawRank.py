@@ -235,7 +235,7 @@ def drawR(mapjson, rankjson, userjson):
         rank = 'D' if r[u][4] == 'F' else r[u][4]
         d.add_items(x=20, y=590, path='image/userimg/%s.jpg'%me, isresize=True, width=60, height=60)
         d.add_items(rank_x%rank, 80, 595)
-        d.add_text(120, 590, '%s'%(udict.get(u, 'None')), font_size=25, ttype='en')
+        d.add_text(120, 590, '%s  #%s'%(udict.get(u, 'None'),me_idx+1), font_size=25, ttype='en')
         d.add_text(120, 620, '得分: %s'%(format(int(r[u][0]),',')), font_size=20, ttype='cn')
         d.add_text(300, 620, '(%sx)'%(format(int(r[u][1]),',')), font_size=20, ttype='en')
         d.add_text(450-20*len(mds_l), 600, '%s'%(m), font_size=20, ttype='en')

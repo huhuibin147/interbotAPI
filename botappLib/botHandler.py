@@ -22,6 +22,8 @@ from ppyappLib import ppyHandler
 from draws import drawReplay
 from chatbotLib import chatHandler
 from draws import drawTools
+from draws import draw_data
+
 
 
 
@@ -1917,6 +1919,11 @@ class botHandler():
             m = r[1]
             ret += f"{i+1}.{m['nickname']:<14}   {m['n']}\n"
         return ret[:-1]
+
+    def get_match_bids(self, bid_idx, hid):
+        with open(Config.MATCHLIST_FILE, 'r', encoding='utf-8') as f:
+            confs = json.load(f)
+        return confs.get(hid, {}).get(bid_idx)
     
     def get_user_chatlog_cnt(self, qq, gid, days=7):
         db = interMysql.Connect('osu')
@@ -1931,6 +1938,44 @@ class botHandler():
         rs = {r['qq']:r['cnt'] for r in ret}
         return rs
 
+    def match_rank(self, hid, gid):
+        db = interMysql.Connect('osu')
+        sql = 'SELECT bid, rankjson from maprank a where gid = %s and hid = %s'
+        ret = db.query(sql, [gid, hid])
+        u_cnt = {}
+        for r in ret:
+            rk = json.loads(r['rankjson'])
+            for i, s in enumerate(rk):
+                uid, v = list(s.items())[0]
+                if uid not in u_cnt:
+                    u_cnt[uid] = []
+                u_cnt[uid].append(i+1)
+        # print(u_cnt)
+        u_rank = {}
+        for k,v in u_cnt.items():
+            u_rank[k] = sum(v)/len(v)
+        # print(u_rank)
+        rank_s = sorted(u_rank.items(), key=lambda x:x[1])
+        # print(rank_s)
+        
+        db2 = interMysql.Connect('osu2')
+        sql2 = 'SELECT DISTINCT(osuid), osuname FROM user where osuid in %s'
+        ret2 = db2.query(sql2, [tuple(u_rank.keys())])
+        # print(ret2)
+        u_d = {}
+        for r in ret2:
+            u_d[r['osuid']] = r['osuname']
+
+        rs = f"新人群S{hid}群赛 平均排名                   \n"
+        for i, r in enumerate(rank_s):
+            uid = r[0]
+            n = round(r[1], 1)
+            osuname = u_d.get(uid, uid)
+            rs += f"{i+1}.{osuname}: {n}\n"
+        # print(rs)
+        return rs[:-1]
+
+
 
 
 if __name__ == "__main__":
@@ -1939,4 +1984,5 @@ if __name__ == "__main__":
     # b.annual_sammry(osuid = "11788070", osuname="interbot")
     # b.osu_mp("712603531")
     # print(b.check_mp_mid())
-    b.get_admins()
+    # b.get_admins()
+    b.match_rank("", 25, 25)
