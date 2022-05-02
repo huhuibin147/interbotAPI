@@ -413,6 +413,16 @@ def test(**kw):
     res = b.testFormatOut(uinfo[0], recinfo)
     return res
 
+@app.route('/pptest', methods=['POST', 'GET'])
+@appTools.deco(autoOusInfoKey='osuname')
+def pptest(**kw):
+    b = botHandler.botHandler()
+    osuname = kw['autoOusInfoKey']['osuname']
+    if not osuname:
+        return "不存在或者网络异常!"
+    res = b.check2(osuname)
+    return res
+
 @app.route('/skill', methods=['POST'])
 @appTools.deco(autoOusInfoKey='osuname')
 def skill(**kw):
@@ -599,7 +609,7 @@ def rank(**kw):
 def maprankhd(**kw):
     try:
         if not kw['iargs']:
-            return "请输入bid!"
+            return "请输入bid或第几张赛图序号"
         bid = kw['iargs'][0]
 
         hid = "25"

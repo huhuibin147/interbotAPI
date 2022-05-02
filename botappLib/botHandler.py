@@ -1975,6 +1975,59 @@ class botHandler():
         # print(rs)
         return rs[:-1]
 
+    def check2(self, osuid):
+        rs = self.getOsuInfoFromAPI(osuid)
+        if not rs:
+            return "用户信息不存在"
+        userinfo = rs[0]
+
+        bp = self.getRecBp(osuid, limit=10)
+        if not bp:
+            return "用户bp信息不存在"
+
+        acc = float(userinfo['accuracy'])
+        pc = float(userinfo['playcount'])
+        tth = float(int(userinfo['count300']) + int(userinfo['count100']) + int(userinfo['count50']))
+        bpacc = bppp = 0
+        for r in bp:
+            bppp += float(r['pp'])
+            bpacc += float(mods.get_acc(r['count300'], r['count100'], r['count50'], r['countmiss']))
+        newpp_w, acc_w, bpacc_w, bppp_w, pc_w, tth_w, newpp, acc_c, bpacc_c, bppp_c, pc_c, tth_c = self.pp2(acc, bpacc, bppp, pc, tth)
+        print(acc, bpacc, bppp, pc, tth)
+        print(acc_w, bpacc_w, bppp_w, pc_w, tth_w)
+        print(acc_c, bpacc_c, bppp_c, pc_c, tth_c)
+        ret = "%s\n实际pp:%spp\n预测水平:%spp\n" % (osuid, round(float(userinfo['pp_raw']),0), newpp)
+        ret += f"acc:{acc:.1f}   指标值:{acc_c:.0f} (权重:{acc_w:.3f})\n"
+        ret += f"pc:{pc:,.0f}   指标值:{pc_c:.0f} (权重:{pc_w:.3f})\n"
+        ret += f"tth:{tth:,.0f}   指标值:{tth_c:.0f} (权重:{tth_w:.3f})\n"
+        ret += f"bp10(acc):{bpacc/10:.1f}   指标值:{bpacc_c:.0f} (权重:{bpacc_w:.3f})\n"
+        ret += f"bp10(pp):{bppp/10:.1f}   指标值:{bppp_c:.0f} (权重:{bppp_w:.3f})"
+        return ret
+    
+    def pp2(self, acc, bpacc, bppp, pc, tth):
+        w = [0.22483119, -0.1217108, 0.82082623, 0.0294727, 0.06772371]
+        b = [4.95929298e-09]
+        pp_m = 2218.589021413463
+        pp_s = 1567.8553119973133
+        acc_m = 95.69755708902649
+        acc_s = 3.014845506352131
+        bpacc_m = 961.4064515140441
+        bpacc_s = 38.812586876313496
+        bppp_m = 1177.9167271984384
+        bppp_s = 808.798796955419
+        pc_m = 15030.912107867616
+        pc_s = 17940.253798480247
+        tth_m = 2756676.6760339583
+        tth_s = 3498224.778143693
+        acc_c = (acc-acc_m)/acc_s*(w[0])
+        bpacc_c = (bpacc-bpacc_m)/(bpacc_s)*(w[1])
+        bppp_c = (bppp-bppp_m)/bppp_s*(w[2])
+        pc_c = (pc-pc_m)/pc_s*(w[3])
+        tth_c = (tth-tth_m)/tth_s*(w[4]) + (b[0])
+        pp = acc_c + bpacc_c + bppp_c + pc_c + tth_c
+        res = [pp, acc_c, bpacc_c, bppp_c, pc_c, tth_c]
+        res2 = [round(r*pp_s+pp_m,1) for r in res]
+        return res + res2
 
 
 
@@ -1985,4 +2038,5 @@ if __name__ == "__main__":
     # b.osu_mp("712603531")
     # print(b.check_mp_mid())
     # b.get_admins()
-    b.match_rank("", 25, 25)
+    # b.match_rank("", 25, 25)
+    print(b.check2("sakamata1"))
