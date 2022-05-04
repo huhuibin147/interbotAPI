@@ -152,6 +152,8 @@ class ppyHandler():
 
     def getV2osuInfo(self, qq, groupid):
         uinfo = baseHandler.baseHandler().getUserBindInfo({"qq": qq})
+        if len(uinfo) < 1:
+            return -3, "请使用oauth进行认证绑定!"
         token = uinfo[0]["acesstoken"]
         refreshtoken = uinfo[0]["refreshtoken"]
         osuname = uinfo[0]["osuname"]

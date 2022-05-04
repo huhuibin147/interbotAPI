@@ -48,7 +48,7 @@ class oMsgHandler():
         if group_id not in list(Config.GROUPID.values()):
             return
         # 加群处理
-        if self.context["notice_type"] == "request":
+        if self.context.get("notice_type", "") == "request":
             if self.context["request_type"] == "group" and self.context["sub_type"] == "add":
                 self.group_request()
 

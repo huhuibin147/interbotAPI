@@ -208,6 +208,8 @@ def drawTextWithRawCover(s, fontsize=14, debug=0, offset=(5,5), img_offset=(5,5)
         else:
             img = Image.new('RGB', (img_size[0], img_size[1]), "white")
             logging.error("图片下载失败!")
+    else:
+        return drawText(text_s)
             
     drawer = ImageDraw.Draw(img)
     drawer.text((offset[0], offset[1]+y), text_s, font=font, fill='black')
@@ -239,6 +241,8 @@ def drawTextWithCover(s, fontsize=14, debug=0, offset=(5,5)):
         else:
             img = Image.new('RGB', (img_size[0], img_size[1]), "white")
             logging.error("图片下载失败!")
+    else:
+        return drawText(text_s)
             
     drawer = ImageDraw.Draw(img)
     drawer.text((offset[0], offset[1]+y), text_s, font=font, fill='black')
