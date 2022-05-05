@@ -1486,6 +1486,46 @@ class botHandler():
         except:
             logging.exception("osu_stats error")
 
+    def osu_stats_info(self, osuname):
+        try:
+            ppyIns = ppyHandler.ppyHandler()
+            result = ppyIns.getOsuUserInfo(osuname)
+            if not result:
+                return ''
+            result = result[0]
+            # result = {'user_id': '11788070', 'username': 'interbot', 'join_date': '2018-02-22 07:51:46', 
+            # 'count300': '1620764', 'count100': '347130', 'count50': '45364', 'playcount': '5406', 
+            # 'ranked_score': '2168793737', 'total_score': '4861318224', 'pp_rank': '161898', 
+            # 'level': '89.9191', 'pp_raw': '3200.76', 'accuracy': '95.2582015991211', 'count_rank_ss': '0', 
+            # 'count_rank_ssh': '0', 'count_rank_s': '49', 'count_rank_sh': '0', 'count_rank_a': '273', 'country': 'CN', 
+            # 'total_seconds_played': '508223', 'pp_country_rank': '2705', 'events': []}
+            username = result['username']
+            osuid = result['user_id']
+            pp = result['pp_raw']
+            rank = int(result['pp_rank'])
+            acc1 = round(float(result['accuracy']),2)
+            acc = str(acc1)
+            pc =  int(result['playcount'])
+            count300 = result['count300']
+            count100 = result['count100']
+            count50 = result['count50']
+            tth = eval(count300)+eval(count50)+eval(count100)
+            country = result["country"]
+            pp_country_rank = int(result["pp_country_rank"])
+            join_date = result["join_date"]
+            
+            d = f"{username}\n"
+            d += f"{pp}pp\n"
+            d += f"{acc}%\n"
+            d += f"{pc:,}pc\n"
+            d += f"{tth:,}tth\n"
+            d += f"#{rank:,}({country}#{pp_country_rank:,})\n"
+            d += f"{join_date}"
+            return d
+        except:
+            logging.exception("get osu info error")
+            return "get osu info error"
+
     def get_user_fromDB(self, username, days=0):
         db = interMysql.Connect('osu')
         if not days:
@@ -2039,4 +2079,5 @@ if __name__ == "__main__":
     # print(b.check_mp_mid())
     # b.get_admins()
     # b.match_rank("", 25, 25)
-    print(b.check2("sakamata1"))
+    # print(b.check2("sakamata1"))
+    print(b.osu_stats_info("interbot"))

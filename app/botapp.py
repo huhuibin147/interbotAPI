@@ -413,6 +413,16 @@ def test(**kw):
     res = b.testFormatOut(uinfo[0], recinfo)
     return res
 
+@app.route('/myosuinfo', methods=['POST', 'GET'])
+@appTools.deco(autoOusInfoKey='osuid')
+def myosuinfo(**kw):
+    b = botHandler.botHandler()
+    osuid = kw['autoOusInfoKey']['osuid']
+    uinfo = b.osu_stats_info(osuid)
+    if not uinfo:
+        return "不存在或者网络异常!"
+    return uinfo
+
 @app.route('/pptest', methods=['POST', 'GET'])
 @appTools.deco(autoOusInfoKey='osuname')
 def pptest(**kw):
