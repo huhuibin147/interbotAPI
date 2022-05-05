@@ -68,7 +68,7 @@ def rctppnew(**kw):
             res += f'\n>>{smoke_res}<<'
     rank_tab.upload_rec(osuid, kw["groupid"])
     if smoke_res:
-        return f'{osuname}\n由于触发本群限制，请私聊查询，触犯法律:{smoke_res}'
+        return f'{osuname}\n由于触发本群限制，请另辟蹊径，触犯法律:{smoke_res}'
     return res
 
 @app.route('/rctppdraw', methods=['POST', 'GET'])
@@ -82,7 +82,7 @@ def rctppdraw(**kw):
         # 执行管理逻辑
         smoke_res = b.rctppSmoke(kw["groupid"], kw["qqid"], kv, iswarn=1)
         if smoke_res:
-            return f'{osuname}\n由于触发本群限制，请私聊查询，触犯法律:{smoke_res}'
+            return f'{osuname}\n由于触发本群限制，请另辟蹊径，触犯法律:{smoke_res}'
         rank_tab.upload_rec(osuid, kw["groupid"])
         return "[CQ:image,cache=0,file=http://interbot.cn/itbimage/tmp/%s]" % p
     except:
@@ -156,7 +156,7 @@ def mybp(**kw):
         if smoke_res:
             res += f'\n>>{smoke_res}<<'
     if smoke_res:
-        return f'{osuname}\n由于触发本群限制，请私聊查询，触犯法律:{smoke_res}'
+        return f'{osuname}\n由于触发本群限制，请另辟蹊径，触犯法律:{smoke_res}'
     return res
 
 @app.route('/mybpdraw', methods=['POST', 'GET'])
@@ -195,7 +195,7 @@ def mybpdraw(**kw):
         smoke_res = b.rctppSmoke(kw["groupid"], kw["qqid"], kv, iswarn=1)
 
     if smoke_res:
-        return f'{osuname}\n由于触发本群限制，请私聊查询，触犯法律:{smoke_res}'
+        return f'{osuname}\n由于触发本群限制，请另辟蹊径，触犯法律:{smoke_res}'
     return res
 
 
@@ -293,7 +293,7 @@ def bestmaprec(**kw):
     if smoke_res:
         res += f'\n>>{smoke_res}<<'
     if smoke_res:
-        return f'{osuname}\n由于触发本群限制，请私聊查询，触犯法律:{smoke_res}'
+        return f'{osuname}\n由于触发本群限制，请另辟蹊径，触犯法律:{smoke_res}'
     return res
 
 @app.route('/bestmaprecdraw', methods=['POST', 'GET'])
@@ -520,11 +520,20 @@ def tt(**kw):
     return rs
 
 @app.route('/stat', methods=['POST', 'GET'])
-@appTools.deco()
+@appTools.deco(autoOusInfoKey='osuid')
 def stat(**kw):
-    b = ppyHandler.ppyHandler()
+    p = ppyHandler.ppyHandler()
     qqid = kw['atqq'] if kw.get("atqq") else kw['qqid']
-    rs = b.osuV2stat(qqid, kw['groupid'])
+    osuid = kw['autoOusInfoKey']['osuid']
+
+    b = botHandler.botHandler()
+    if kw['iargs'] and len(kw['iargs']) > 0:
+        return b.osu_stats_info(kw['iargs'][0])
+
+    status, rs = p.osuV2stat(qqid, kw['groupid'])
+    if status < 0:
+        return b.osu_stats_info(osuid)
+
     return rs
 
 @app.route('/v2me', methods=['POST'])

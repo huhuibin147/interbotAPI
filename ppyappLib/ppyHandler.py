@@ -181,7 +181,7 @@ class ppyHandler():
         rs = ""
         status, ret = self.getV2osuInfo(qq, groupid)
         if status < 0:
-            return ret
+            return status, ret
 
         uid = ret["id"]
         grade_counts = ret['statistics']['grade_counts']
@@ -251,7 +251,7 @@ class ppyHandler():
         rs += '爆肝时长: {play_days}天{play_hours}小时\n'.format(play_days=int(play_days), play_hours=int(play_hours))
         rs += '最后登录: {last_visit_str}\n'.format(last_visit_str=last_visit_str)
         rs += '注册时间: {join_time} ({join_days}天)'.format(join_time=join_time, join_days=join_days)
-        return rs
+        return 1, rs
 
     # def drawRankLine(self, y, osuname, pp, locate, rank1, rank2):
         
