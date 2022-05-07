@@ -3,6 +3,7 @@
 import json
 import os
 import logging
+from socket import timeout
 from draws import score
 from botappLib import botHandler
 from commLib import interRequest
@@ -30,11 +31,14 @@ def get_user_stats(uid='8505303'):
     return ret[0]
 
 def check_bg(bid='1028215', sid='480609'):
-    for i in range(3):
-        if not os.path.exists(bg_path+bid+'.jpg'):
-            down_bg(bid, sid)
-        else:
-            return 1
+    try:
+        for i in range(1):
+            if not os.path.exists(bg_path+bid+'.jpg'):
+                down_bg(bid, sid)
+            else:
+                return 1
+    except:
+        logging.exception(f'down {bid} fail')
     return 0
 
 def down_bg(bid='1028215', sid='480609'):
@@ -43,7 +47,7 @@ def down_bg(bid='1028215', sid='480609'):
     bgUrl = cal_bg_url(bid, sid)
     if bgUrl == 0:
         return 0
-    return iq.down_image(iname=bid, url=bgUrl, path=bg_path, verify=False)
+    return iq.down_image(iname=bid, url=bgUrl, path=bg_path, verify=False, ts=30)
 
 def cal_bg_url(bid, sid):
     #从sayobot处下载

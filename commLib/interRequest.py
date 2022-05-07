@@ -35,11 +35,11 @@ class interReq():
         return res
 
 
-    def down_image(self, iname, url, path=None, verify=True):
+    def down_image(self, iname, url, path=None, verify=True, ts=3600):
         # 此方法暂留  未修改
         if not url:
             return 0
-        ir = requests.get(url=url, verify=verify)
+        ir = requests.get(url=url, verify=verify, timeout=ts)
         path = path+iname+'.jpg' if path else 'image/%s.png' % iname
         if ir.status_code == 200:
             with open(path, 'wb') as f:
