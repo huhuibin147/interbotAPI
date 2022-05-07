@@ -41,6 +41,7 @@ def rctpp(**kw):
         res = f"{osuname}\n{res}"
         # 执行管理逻辑
         smoke_res = b.rctppSmoke(kw["groupid"], kw["qqid"], kv, iswarn=1)
+        b.save_last_query_bid_cache(kv["bid"], kw["groupid"])
         if smoke_res:
             res += f'\n>>{smoke_res}<<'
     rank_tab.upload_rec(osuid, kw["groupid"])
@@ -64,6 +65,7 @@ def rctppnew(**kw):
         res = f"{osuname}\n{res}"
         # 执行管理逻辑
         smoke_res = b.rctppSmoke(kw["groupid"], kw["qqid"], kv, iswarn=1)
+        b.save_last_query_bid_cache(kv["bid"], kw["groupid"])
         if smoke_res:
             res += f'\n>>{smoke_res}<<'
     rank_tab.upload_rec(osuid, kw["groupid"])
@@ -81,6 +83,7 @@ def rctppdraw(**kw):
         p, kv = b.drawRctpp(osuid, osuname)
         # 执行管理逻辑
         smoke_res = b.rctppSmoke(kw["groupid"], kw["qqid"], kv, iswarn=1)
+        b.save_last_query_bid_cache(kv["bid"], kw["groupid"])
         if smoke_res:
             return f'{osuname}\n由于触发本群限制，请另辟蹊径，触犯法律:{smoke_res}'
         rank_tab.upload_rec(osuid, kw["groupid"])
@@ -153,6 +156,7 @@ def mybp(**kw):
         res = f"{osuname}\n{res}"
         # 执行管理逻辑
         smoke_res = b.rctppSmoke(kw["groupid"], kw["qqid"], kv, iswarn=1)
+        b.save_last_query_bid_cache(kv["bid"], kw["groupid"])
         if smoke_res:
             res += f'\n>>{smoke_res}<<'
     if smoke_res:
@@ -190,6 +194,7 @@ def mybpdraw(**kw):
         res = "别复读好马!"
     else:
         p, kv = b.drawRctpp(osuid, osuname, recinfo=recinfo[x-1], bestinfo=recinfo[x-1])
+        b.save_last_query_bid_cache(kv["bid"], kw["groupid"])
         res = "[CQ:image,cache=0,file=http://interbot.cn/itbimage/tmp/%s]" % p
         # 执行管理逻辑
         smoke_res = b.rctppSmoke(kw["groupid"], kw["qqid"], kv, iswarn=1)
@@ -269,12 +274,16 @@ def score(**kw):
 @app.route('/bestmaprec', methods=['POST', 'GET'])
 @appTools.deco(autoOusInfoKey='osuid,osuname', rawinput=1)
 def bestmaprec(**kw):
+    b = botHandler.botHandler()
     if not kw['iargs']:
-        return "请输入bid！"
-    bid = kw['iargs'][0]
+        bid = b.get_last_query_bid_cache(kw["groupid"])
+        if not bid:
+            return "请输入bid！"
+    else:
+        bid = kw['iargs'][0]
+
     osuid = kw['autoOusInfoKey']['osuid']
     osuname = kw['autoOusInfoKey']['osuname']
-    b = botHandler.botHandler()
     # res = b.get_best_map_rec_from_db(osuid, bid)
     # if not res:
     #     return "你连成绩都没有，快去打一个上传！"
@@ -282,7 +291,7 @@ def bestmaprec(**kw):
 
     res = b.getBestInfo(osuid, bid, "1")
     if not res:
-        return "没有查询到该铺面游戏记录!"
+        return f"{bid}没有查询到该铺面游戏记录!"
     recinfo = res[0]
     recinfo["beatmap_id"] = bid
     res, kv = b.getRctppResNew(recinfo)
@@ -290,6 +299,7 @@ def bestmaprec(**kw):
     rank_tab.upload_best_rec(osuid, kw["groupid"], [recinfo])
     # 执行管理逻辑
     smoke_res = b.rctppSmoke(kw["groupid"], kw["qqid"], kv, iswarn=1)
+    b.save_last_query_bid_cache(kv["bid"], kw["groupid"])
     if smoke_res:
         res += f'\n>>{smoke_res}<<'
     if smoke_res:
@@ -316,6 +326,7 @@ def bestmaprecdraw(**kw):
         recinfo = res[0]
         recinfo["beatmap_id"] = bid
         p, kv = b.drawRctpp(osuid, osuname, recinfo=recinfo, bestinfo=recinfo)
+        b.save_last_query_bid_cache(kv["bid"], kw["groupid"])
         rank_tab.upload_best_rec(osuid, kw["groupid"], [recinfo])
         res = "[CQ:image,cache=0,file=http://interbot.cn/itbimage/tmp/%s]" % p
         # rank_tab.upload_best_rec(osuid, kw["groupid"], [recinfo])
@@ -607,21 +618,26 @@ def days(**kw):
 @appTools.deco(autoOusInfoKey='osuid', rawinput=1)
 def rank(**kw):
     try:
-        if not kw['iargs']:
-            return "请输入bid!"
-        bid = kw['iargs'][0]
-        osuid = kw['autoOusInfoKey']['osuid']
         b = botHandler.botHandler()
+        if not kw['iargs']:
+            bid = b.get_last_query_bid_cache(kw["groupid"])
+            if not bid:
+                return "请输入bid！"
+        else:
+            bid = kw['iargs'][0]
+
+        osuid = kw['autoOusInfoKey']['osuid']
         res = b.getBestInfo(osuid, bid, "1")
         if res:
             recinfo = res[0]
             recinfo["beatmap_id"] = bid
             rank_tab.upload_best_rec(osuid, kw["groupid"], [recinfo])
+            b.save_last_query_bid_cache(bid, kw["groupid"])
         p = drawRank.start(bid, kw["groupid"], hid=1, mods=-1, uid=osuid)
         return "[CQ:image,cache=0,file=http://interbot.cn/itbimage/%s]" % p
     except:
         logging.exception("rank error")
-        return "fail..."
+        return f"{bid} fail..."
 
 @app.route('/maprankhd', methods=['POST', 'GET'])
 @appTools.deco(autoOusInfoKey='osuid', rawinput=1)

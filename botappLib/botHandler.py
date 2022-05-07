@@ -25,6 +25,9 @@ from draws import drawTools
 from draws import draw_data
 
 
+LAST_BID = "Q_LAST_BID_%s"
+CACHE = {}
+
 
 
 class botHandler():
@@ -562,7 +565,8 @@ class botHandler():
             "stars": ojson['stars'], 
             "rank": rank,
             "ar": ar,
-            "acc": acc
+            "acc": acc,
+            "bid": bid
         }
         return out, kv
 
@@ -631,7 +635,8 @@ class botHandler():
             "stars": stars, 
             "rank": rank,
             "ar": ar,
-            "acc": acc
+            "acc": acc,
+            "bid": bid
         }
         return out, kv
 
@@ -1767,7 +1772,8 @@ class botHandler():
             "stars": star, 
             "rank": recinfo["rank"],
             "ar": ojson['ar'],
-            "acc": rinfo['acc']
+            "acc": rinfo['acc'],
+            "bid": bid
         }
 
         pfs = drawReplay.drawRec(mapjson, recinfo, bestinfo, userjson, **kwargs)
@@ -2069,6 +2075,13 @@ class botHandler():
         res2 = [round(r*pp_s+pp_m,1) for r in res]
         return res + res2
 
+    def save_last_query_bid_cache(self, bid, gid):
+        CACHE[LAST_BID%gid] = bid
+        logging.info("set last bid cache: %s > %s", gid, bid)
+        return
+
+    def get_last_query_bid_cache(self, gid):
+        return CACHE.get(LAST_BID%gid, "")
 
 
 if __name__ == "__main__":
