@@ -65,6 +65,8 @@ class msgHandler():
                 rs = self.autoReply(msg)
                 if not rs:
                     rs = self.random_speak()
+                    if not rs:
+                        rs = self.random_repeat_msg()
             return rs
         
         else:
@@ -423,3 +425,6 @@ class msgHandler():
 
         return img
 
+    def random_repeat_msg(self):
+        c = chatHandler.chatHandler()
+        return c.autoRepeat(self.groupid, self.selfqqid, self.msg)

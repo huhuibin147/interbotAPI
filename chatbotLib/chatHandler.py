@@ -106,6 +106,24 @@ class chatHandler():
         if msg:
             self.Chat2Redis(groupid, selfqq, msg)
         return msg
+    
+    def autoRepeat(self, groupid, selfqq, msg):
+        """概率随机复读
+        """
+        # 白名单检测
+        if not self.check_whitelist(groupid):
+            return ""
+
+        # 防止重复
+        if self.check_redis_is_selfchat(groupid, selfqq):
+            return ""
+
+        if msg and random.randint(0, 100) > Config.AUTOREPEAT_PCT:
+            logging.info("触发自动复读！")
+            self.Chat2Redis(groupid, selfqq, msg)
+            return msg
+
+        return ""
 
     def msg2Mysql(self, groupid, qq, content):
         f_msg = re.sub('\[.*\]','',content)
