@@ -25,8 +25,7 @@ from draws import drawTools
 from draws import draw_data
 
 
-LAST_BID = "Q_LAST_BID_%s"
-CACHE = {}
+
 
 
 
@@ -2076,12 +2075,14 @@ class botHandler():
         return res + res2
 
     def save_last_query_bid_cache(self, bid, gid):
-        CACHE[LAST_BID%gid] = bid
+        rds = interRedis.connect('osu2')
+        rds.set(Config.LAST_BID % gid, bid, 86400*30)
         logging.info("set last bid cache: %s > %s", gid, bid)
         return
 
     def get_last_query_bid_cache(self, gid):
-        return CACHE.get(LAST_BID%gid, "")
+        rds = interRedis.connect('osu2')
+        return rds.get(Config.LAST_BID % gid)
 
 
 if __name__ == "__main__":

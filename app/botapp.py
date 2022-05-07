@@ -632,8 +632,9 @@ def rank(**kw):
             recinfo = res[0]
             recinfo["beatmap_id"] = bid
             rank_tab.upload_best_rec(osuid, kw["groupid"], [recinfo])
-            b.save_last_query_bid_cache(bid, kw["groupid"])
+            
         p = drawRank.start(bid, kw["groupid"], hid=1, mods=-1, uid=osuid)
+        b.save_last_query_bid_cache(bid, kw["groupid"])
         return "[CQ:image,cache=0,file=http://interbot.cn/itbimage/%s]" % p
     except:
         logging.exception("rank error")
