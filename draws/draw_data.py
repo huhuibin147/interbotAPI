@@ -32,7 +32,7 @@ def get_user_stats(uid='8505303'):
 
 def check_bg(bid='1028215', sid='480609'):
     try:
-        for i in range(1):
+        for i in range(2):
             if not os.path.exists(bg_path+bid+'.jpg'):
                 down_bg(bid, sid)
             else:
