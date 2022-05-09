@@ -1919,6 +1919,10 @@ class botHandler():
         ret = ret.read()
         logging.info(ret)
         if "xinrenqunmp" in ret:
+            mid = self.check_mp_mid()
+            if not mid:
+                logging.info("check mp mid fail")
+                self.mp_idle_kill()
             return True
         return False
     

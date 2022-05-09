@@ -65,8 +65,8 @@ class msgHandler():
                 rs = self.autoReply(msg)
                 if not rs:
                     rs = self.random_speak()
-                    if not rs:
-                        rs = self.random_repeat_msg()
+                    # if not rs:
+                    #     rs = self.random_repeat_msg()
             return rs
         
         else:
