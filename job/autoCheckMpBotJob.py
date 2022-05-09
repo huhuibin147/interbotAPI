@@ -16,16 +16,17 @@ class autoCheckMpBotJob(jobCenter.jobCenter):
         self.sched.add_job(self.jobMethod, 'interval', seconds=60, args=[])
 
     def jobMethod(self):
-        
+        # 防止启动误杀，这个暂时去掉，也节省资源
         b = botHandler.botHandler()
-        if not b.check_mp_idle():
-            logging.info("check mp idle dead")
-            # rs = b.make_mp_idle()
-            # logging.info("auto make mp idle rs:%s", rs)
-        else:
-            logging.info("mp idle alive")
-            if not b.check_mp_network():
-                b.mp_idle_kill()
+        b.osu_mp()
+        # if not b.check_mp_idle():
+        #     logging.info("check mp idle dead")
+        #     # rs = b.make_mp_idle()
+        #     # logging.info("auto make mp idle rs:%s", rs)
+        # else:
+        #     logging.info("mp idle alive")
+        #     if not b.check_mp_network():
+        #         b.mp_idle_kill()
         
     
         
