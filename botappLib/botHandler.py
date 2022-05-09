@@ -1888,24 +1888,25 @@ class botHandler():
         # print(s)
         return s
     
-    def osu_mp(self, groupid):
+    def osu_mp(self, groupid=None):
         if self.check_mp_idle():
             return "房间存活，房名: xinrenqun mp | auto host rotate 密码: x114514"
         
-        pushTools.pushMsgOne(groupid, "mp房间不存在，请稍等，正在创建...")
+        if groupid:
+            pushTools.pushMsgOne(groupid, "mp房间不存在，请稍等，正在创建...")
 
         npmrun_ret = self.make_mp_idle()
         logging.info("os system npm run res:%s", npmrun_ret)
         idle_flag = 0
         for i in range(20):
-            time.sleep(3)
+            time.sleep(5)
             logging.info("[%s].checking npm process...", i+1)
-            if idle_flag == 0 and self.check_mp_idle():
+            if idle_flag == 0 and self.check_mp_idle(kill=0):
                 idle_flag = 1
 
             if idle_flag == 1:
                 mid = self.check_mp_mid()
-                if mid:
+                if groupid and mid:
                     pushTools.pushMsgOne(groupid, "mp房间创建完成，频道为#mp_%s" % mid)
                     return "房名: xinrenqun mp | auto host rotate 密码: x114514"
 
@@ -1914,15 +1915,16 @@ class botHandler():
     def make_mp_idle(self):
         return os.system('cd /root/code/osu-ahr; nohup npm run start m xinrenqunmp > ser.log 2>&1 &')
     
-    def check_mp_idle(self):
+    def check_mp_idle(self, kill=1):
         ret = os.popen("ps axu|grep 'xinrenqunmp'|grep -v grep")
         ret = ret.read()
         logging.info(ret)
         if "xinrenqunmp" in ret:
-            mid = self.check_mp_mid()
-            if not mid:
-                logging.info("check mp mid fail")
-                self.mp_idle_kill()
+            if kill == 1:
+                mid = self.check_mp_mid()
+                if not mid:
+                    logging.info("check mp mid fail")
+                    self.mp_idle_kill()
             return True
         return False
     
