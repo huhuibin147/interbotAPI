@@ -184,7 +184,7 @@ class botHandler():
         # fc计算
         fcacc = self.calFcacc(recinfo)
         extendFc = self.convert2oppaiArgs(rinfo['mods'], fcacc)
-        ojsonFc = self.oppai2json(bid, extendFc)
+        # ojsonFc = self.oppai2json(bid, extendFc)
         fcppMap = self.ppy_tools_pp(bid, self.convert2oppaiArgsNew(rinfo['mods'], fcacc, 
                             int(newppMap['performance_attributes']['max_combo']), 0, rinfo['count100'], rinfo['count50']))
         fcpp = fcppMap.get("pp")
@@ -192,12 +192,12 @@ class botHandler():
 
         # ac计算
         extendSs = self.convert2oppaiArgs(rinfo['mods'])
-        ojsonSs = self.oppai2json(bid, extendSs)
+        # ojsonSs = self.oppai2json(bid, extendSs)
         ssppMap = self.ppy_tools_pp(bid, self.convert2oppaiArgsNew(rinfo['mods']))
         sspp = ssppMap.get("pp")
-
+        
         res, kv = self.formatRctpp2New(ojson, recinfo['rank'], rinfo['acc'], 
-            fcpp, sspp, bid, fcCalAcc, recinfo['countmiss'], pp, star, ojsonFc['pp'], ojsonSs['pp'])
+            fcpp, sspp, bid, fcCalAcc, recinfo['countmiss'], pp, star, recinfo.get('date', '')) # , ojsonFc['pp'], ojsonSs['pp']
 
         return res, kv 
 
@@ -570,19 +570,24 @@ class botHandler():
         return out, kv
 
 
-    def formatRctpp2New(self, ojson, rank, acc, ppfc, ppss, bid, fcacc, miss, pp, stars, oldfcpp, oldsspp):
+    def formatRctpp2New(self, ojson, rank, acc, ppfc, ppss, bid, fcacc, miss, pp, stars, date, oldfcpp=0, oldsspp=0):
         """格式化rctpp输出"""
         outp = '{artist} - {title} [{version}] \n'
         outp += 'Beatmap by {creator} \n'
         outp += '[ar{ar} cs{cs} od{od} hp{hp}  bpm{bpm}]\n'
         outp += Config.bg_thumb + '\n'
-        outp += 'stars: {stars}*({oldstar}*) | {mods_str} \n'
+        # outp += 'stars: {stars}*({oldstar}*) | {mods_str} \n'
+        outp += 'stars: {stars}* | {mods_str} \n'
         outp += '{combo}x/{max_combo}x | {acc}% | {rank} \n\n'
-        outp += '{acc}%: {pp}pp({oldpp}pp)\n'
-        outp += '{fcacc}%: {ppfc}pp({oldfcpp}pp)\n'
-        outp += '100.0%: {ppss}pp({oldsspp}pp)\n'
+        # outp += '{acc}%: {pp}pp({oldpp}pp)\n'
+        # outp += '{fcacc}%: {ppfc}pp({oldfcpp}pp)\n'
+        # outp += '100.0%: {ppss}pp({oldsspp}pp)\n'
+        outp += '{acc}%: {pp}pp\n'
+        outp += '{fcacc}%: {ppfc}pp\n'
+        outp += '100.0%: {ppss}pp\n'
         outp += '{missStr}\n'
-        outp += 'https://osu.ppy.sh/b/{bid}'
+        # outp += 'https://osu.ppy.sh/b/{bid}'
+        outp += '{date}  (bid:{bid})'
 
         mapInfo = self.getOsuBeatMapInfo(bid)
         # if not ojson['mods_str']:
@@ -610,7 +615,7 @@ class botHandler():
             od = round(ojson['od'], 2),
             hp = ojson['hp'],
             stars = stars,
-            oldstar = round(ojson['stars'], 2),
+            # oldstar = round(ojson['stars'], 2),
             combo = ojson['combo'],
             max_combo = ojson['max_combo'],
             acc = round(acc, 2),
@@ -625,9 +630,10 @@ class botHandler():
             missStr = missStr,
             bpm = bpm,
             sid = mapInfo["beatmapset_id"],
-            oldpp = round(ojson['pp']),
-            oldfcpp = round(oldfcpp),
-            oldsspp = round(oldsspp),
+            date = date[:10]
+            # oldpp = round(ojson['pp']),
+            # oldfcpp = round(oldfcpp),
+            # oldsspp = round(oldsspp),
         )
         # 供外部smoke使用
         kv = {
