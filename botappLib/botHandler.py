@@ -1931,6 +1931,10 @@ class botHandler():
                 if not mid:
                     logging.info("check mp mid fail")
                     self.mp_idle_kill()
+                    return False
+                if not self.check_mp_network():
+                    self.mp_idle_kill()
+                    return False
             return True
         return False
     

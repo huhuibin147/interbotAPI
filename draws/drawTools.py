@@ -47,7 +47,7 @@ class DrawTool:
 
     def autoDrawText(self, s):
         if not self.FreeTypeFont:
-            self.FreeTypeFont = ImageFont.truetype(self.font_cn, self.font_size)
+            self.FreeTypeFont = ImageFont.truetype(font_cn, self.font_size)
         font_size = get_str_size(s, self.FreeTypeFont) # 宽，高
         d = {
             "func": self.drawText,
