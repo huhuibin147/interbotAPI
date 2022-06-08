@@ -1935,6 +1935,9 @@ class botHandler():
                 if not self.check_mp_network():
                     self.mp_idle_kill()
                     return False
+                # if not self.check_mp_timeout():
+                #     self.mp_idle_kill()
+                #     return False
             return True
         return False
     
@@ -1964,6 +1967,14 @@ class botHandler():
         s = ret.read()
         if 'network reconnection detected' in s:
             logging.info('network reconnection detected!')
+            return False
+        return True
+
+    def check_mp_timeout(self):
+        ret = os.popen('cd /root/code/osu-ahr; grep "check timeout" ser.log |wc -l')
+        s = ret.read()
+        if int(s) > 10:
+            logging.info('check timeout:%s', s)
             return False
         return True
 
