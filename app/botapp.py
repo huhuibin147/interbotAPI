@@ -781,15 +781,34 @@ def privatetest(**kw):
 @appTools.deco(autoOusInfoKey='osuname', rawinput=1, autouseatqq=False)
 def setcontent(**kw):
     b = botHandler.botHandler()
-    osuname = kw['autoOusInfoKey']['osuname']
+    # osuname = kw['autoOusInfoKey']['osuname']
     if kw['iargs']:
-        content = kw['iargs'][0]
+        osuname = kw['iargs'][0]
+        content = kw['iargs'][1]
     else:
-        return '请输入内容，¡xx xxxx'
+        return '请输入内容，¡xx xxx xxx'
     if content[:2] == '\r\n':
         content = content[2:]
     cmd = b.set_id_content_cmd(osuname, content)
     res = '设置成功，生成指令为[%s]' % cmd
+    return res
+
+@app.route('/resetcontent', methods=['POST'])
+@appTools.deco(rawinput=1, autouseatqq=False)
+def resetcontent(**kw):
+    b = botHandler.botHandler()
+    if kw['iargs']:
+        rcmd = kw['iargs'][0]
+        content = kw['iargs'][1]
+    else:
+        return '请输入内容，¡xx xxx xxx'
+    if content[:2] == '\r\n':
+        content = content[2:]
+    cmd = b.reset_id_content_cmd(rcmd, content)
+    if not cmd:
+        res = '指令不存在'
+    else:
+        res = '设置成功，指令为[%s]' % cmd
     return res
 
 @app.route('/sttest', methods=['POST'])

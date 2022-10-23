@@ -1580,6 +1580,15 @@ class botHandler():
         self.set_id_cmd_to_db(cmd, content)
         return cmd
 
+    def reset_id_content_cmd(self, cmd, content):
+        n = self.get_id_cmd_num(cmd)
+        if n == None:
+            return ""
+            
+        if not self.reset_id_cmd_to_db(cmd, content):
+            return "设置失败"
+        return cmd
+
     def get_id_cmd_num(self, osuname):
         conn = interMysql.Connect('osu2')
         sql = '''SELECT cmd FROM cmdRef where cmd like %s order by id desc limit 1'''
@@ -1611,6 +1620,20 @@ class botHandler():
         except:
             db.rollback()
             logging.exception('cmd[%s]插入失败', cmd)
+
+    def reset_id_cmd_to_db(self, cmd, content):
+        try:
+            db = interMysql.Connect('osu2')
+            sql = '''
+                update cmdRef set reply=%s where cmd=%s
+            '''
+            db.execute(sql, [content, cmd])
+            db.commit()
+            return True
+        except:
+            db.rollback()
+            logging.exception('cmd[%s]修改失败', cmd)
+            return False
 
     def get_best_map_rec_from_db(self, bid, uid):
         db = interMysql.Connect('osu')
