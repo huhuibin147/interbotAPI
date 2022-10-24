@@ -105,7 +105,7 @@ def bindUserToken(**kw):
     ins = baseHandler.baseHandler()
     ins.setOauthCache(kw['qqid'], kw['groupid'])
     url = 'https://osu.ppy.sh/oauth/authorize?client_id=19&response_type=code&state=%sx%s&scope=friends.read%%20identify&redirect_uri=http://interbot.cn/apiv2/auth' % (kw['qqid'], kw['groupid'])
-    ret = url + '\n*请点击链接进行授权绑定'
+    ret = url + '\n*可在interbot/help中获取模板，自行替换到与图片相同信息，在浏览器中打开认证\n如果不使用v2认证，也可暂时使用老版绑定，!setid osuname'
     return ret
 
 @app.route('/permission', methods=['POST'])
