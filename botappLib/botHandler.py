@@ -1233,6 +1233,16 @@ class botHandler():
         pushTools.pushCallbackCmd(method, kv, callbackcmd, callbackargs)
         return ""
 
+    def groupAdminMsgCheck(self, groupid, send_gid):
+        """群管理发言统计
+        """
+        method = "get_group_member_list"
+        kv = {'group_id': str(groupid)}
+        callbackcmd = "!adminmsgrankcallback"
+        callbackargs = str(send_gid)
+        pushTools.pushCallbackCmd(method, kv, callbackcmd, callbackargs)
+        return ""
+
     def scanPlayers(self, groupid, users):
         """检测群列表
         """
@@ -1331,6 +1341,41 @@ class botHandler():
         msg += "4.5k~6k:   %s人(%s%%)\n" % (pp_static[4], round(pp_static[4]/cnt*100))
         msg += ">6k:   %s人(%s%%)"   % (pp_static[5], round(pp_static[5]/cnt*100))
         return msg
+
+    def calAdminMsgRank(self, send_gid, users, days=7):
+        """管理员发言排行统计
+        """
+        if len(users) == 0:
+            return "users zero error"
+            
+        gid = users[0]['group_id']
+        admins = {}
+        for u in users:
+            if u['user_id'] == Config.BOT_QQ:
+                continue
+            if u['role'] in ('admin', 'owner'):
+                admins[str(u['user_id'])] = u
+                if u['card'] == '':
+                    u['card'] = u['nickname']
+        rs = self.get_user_chatlog_cnt(admins.keys(), gid, days)
+        for k, v in admins.items():
+            v["n"] = rs.get(k, 0)
+        sortrs = sorted(admins.items(), key=lambda x: x[1]['n'], reverse=True)
+        ret = f"群({send_gid})管理近7天发言统计\n"
+        for i, r in enumerate(sortrs):
+            m = r[1]
+            ret += f"{i+1}.{m['card']} ----- {m['n']}\n"
+        ret = ret[:-1]
+        logging.info(ret)
+        
+        img = drawTools.drawText(ret)
+        if img:
+            img = Config.ImgTmp % img
+            pushTools.pushMsgOne(send_gid, img)
+        else:
+            pushTools.pushMsgOne(send_gid, "图片结果生成失败，请重试")
+        
+        return ret
 
 
     def getBindNum(self, qqids):

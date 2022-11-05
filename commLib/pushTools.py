@@ -121,7 +121,14 @@ def pushCallbackCmd(method, kv, callbackcmd, callbackargs):
     pushC().sendCqCallback(method, kv, callbackcmd, callbackargs)
 
 if __name__ == '__main__':
-    groupids = [514661057,641236878,758120648,863935563,669361496,712603531,713688443,609633978,709804864,623698222,657340423,414752793,885987374,620774599,704224907,549698812,724866171,959494005,982692471,877540541,656449326,728519827,698485901,361844643,688626873,914227683,719575091,533707575,982711563,823777928,936036735,708661114]
+    groupids = [619786604]
     msg = "【interbot通知消息】\nbot服务器节点迁移完毕，如功能出现问题请联系inter"
-    pushGroupMsg(groupids, msg)
+    # pushGroupMsg(groupids, msg)
     # pushKickCmd("619786604", "405622418")
+    
+    method = "get_group_member_list"
+    kv = {'group_id': str(712603531)}
+    callbackcmd = "!adminmsgrankcallback"
+    callbackargs = str(619786604)
+    pushCallbackCmd(method, kv, callbackcmd, callbackargs)
+

@@ -585,6 +585,17 @@ def scancallback(**kw):
     ret = b.scanPlayers(groupid, users)
     return ret
 
+@app.route('/adminmsgrankcallback', methods=['POST'])
+@appTools.deco()
+def adminmsgrankcallback(**kw):
+    logging.info('adminmsgrankcallback....')
+    ret = kw["ret"]
+    users = json.loads(ret)
+    send_gid = kw["callbackargs"]
+    b = botHandler.botHandler()
+    ret = b.calAdminMsgRank(send_gid, users)
+    return ret
+
 @app.route('/ppcheck', methods=['POST'])
 @appTools.deco()
 def ppcheck(**kw):
@@ -983,12 +994,25 @@ def speak(**kw):
         return "raise exception!"
     return ""
 
-@app.route('/admchatcnt', methods=['POST'])
+@app.route('/admchatcntxrq', methods=['POST'])
 @appTools.deco()
-def admchatcnt(**kw):
+def admchatcntxrq(**kw):
     try:
         b = botHandler.botHandler()
-        return b.get_admins()
+        # return b.get_admins()
+        return b.groupAdminMsgCheck(Config.XINRENQUN, kw["groupid"])
+
+    except:
+        logging.exception("")
+        return "raise exception!"
+
+@app.route('/admchatcntjjq', methods=['POST'])
+@appTools.deco()
+def admchatcntjjq(**kw):
+    try:
+        b = botHandler.botHandler()
+        # return b.get_admins()
+        return b.groupAdminMsgCheck(Config.JINJIEQUN, kw["groupid"])
 
     except:
         logging.exception("")

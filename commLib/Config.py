@@ -2,7 +2,7 @@
 
 # 超级权限
 SUPER_QQ = 405622418
-BOT_QQ = 2680306741
+BOT_QQ = 1677323371
 
 # 语音模板
 audioTmp = '[CQ:record,file=http://interbot.cn/itbaudio/%s]'
