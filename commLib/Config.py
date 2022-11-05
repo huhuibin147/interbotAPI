@@ -63,3 +63,6 @@ MATCHLIST_FILE = "botappLib/matchlist.json"
 
 #oauth cache
 OAUTH_CACHE_KEY = "oauth_verify_{qq}_{gid}"
+
+# groupMemberCache
+GROUP_MEMBER_LIST = "group_member_list_cache_{gid}"

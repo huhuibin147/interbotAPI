@@ -1243,6 +1243,16 @@ class botHandler():
         pushTools.pushCallbackCmd(method, kv, callbackcmd, callbackargs)
         return ""
 
+    def groupMsgCheck(self, groupid, send_gid):
+        """群发言统计
+        """
+        method = "get_group_member_list"
+        kv = {'group_id': str(groupid)}
+        callbackcmd = "!msgrankcallback"
+        callbackargs = str(send_gid)
+        pushTools.pushCallbackCmd(method, kv, callbackcmd, callbackargs)
+        return ""
+
     def scanPlayers(self, groupid, users):
         """检测群列表
         """
@@ -1361,7 +1371,7 @@ class botHandler():
         for k, v in admins.items():
             v["n"] = rs.get(k, 0)
         sortrs = sorted(admins.items(), key=lambda x: x[1]['n'], reverse=True)
-        ret = f"群({send_gid})管理近7天发言统计\n"
+        ret = f"群({gid})管理近7天发言统计\n"
         for i, r in enumerate(sortrs):
             m = r[1]
             ret += f"{i+1}.{m['card']} ----- {m['n']}\n"
@@ -1376,6 +1386,82 @@ class botHandler():
             pushTools.pushMsgOne(send_gid, "图片结果生成失败，请重试")
         
         return ret
+
+    def calMsgRank(self, send_gid, days=7):
+        rds = interRedis.connect('osu2')
+        rs1 = rds.get(Config.GROUP_MEMBER_LIST.format(gid=Config.XINRENQUN))
+        rs2 = rds.get(Config.GROUP_MEMBER_LIST.format(gid=Config.JINJIEQUN))
+        if rs1 is not None and rs2 is not None:
+            user1 = json.loads(rs1)
+            user2 = json.loads(rs2)
+
+            userlist = []
+            for user in [user1, user2]:
+                m = {}
+                for u in user:
+                    m[str(u['user_id'])] = u
+                    if u['card'] == '':
+                        u['card'] = u['nickname']
+                userlist.append(m)
+
+            data1 = self.get_group_chatlog_cnt(user1[0]['group_id'], days)
+            data2 = self.get_group_chatlog_cnt(user2[0]['group_id'], days)
+            
+            s = ""
+            for i, data in enumerate([data1, data2]):
+                range_m = [
+                    [10, 0],
+                    [50, 0],
+                    [100, 0],
+                    [500, 0],
+                    [1000, 0],
+                    [10000, 0],
+                    [999999, 0],
+                ]
+                s += f"新人群" if i == 0 else "进阶群"
+                s += "近7天活跃度统计\n"
+                tt = 0
+                for r in data:
+                    for rg in range_m:
+                        if r['cnt'] < rg[0]:
+                            rg[1] += 1
+                            break
+                    tt += r['cnt']
+                s += f"总发言人数:{len(data)}, 总条数:{tt}, 平均:{tt//len(data)}条/人\n"
+
+                s += "----活跃榜----\n"
+                for idx,r in enumerate(data[:5]):
+                    u = userlist[i].get(r['qq'], {})
+                    s += f"{idx+1}.{u.get('card')} ----- {r['cnt']}\n"
+
+                s += "----活跃区间----\n"
+                last = 1
+                for r in range_m:
+                    if r[1] == 0:
+                        last = r[0]
+                        continue                    
+                    s += f"{last}~{r[0]}条: {r[1]}人 {'*'*(r[1]//10+1)}\n"
+                    last = r[0]
+
+                if i == 0:
+                    s += '\n'
+            
+                print(range_m)
+
+            s = s[:-1]
+            print(s)
+            logging.info(s)
+
+            img = drawTools.drawText(s)
+            if img:
+                img = Config.ImgTmp % img
+                pushTools.pushMsgOne(send_gid, img)
+            else:
+                pushTools.pushMsgOne(send_gid, "图片结果生成失败，请重试")
+
+            return True
+        return False
+
 
 
     def getBindNum(self, qqids):
@@ -2077,6 +2163,17 @@ class botHandler():
         ret = db.query(sql, [tuple(qq), gid])
         rs = {r['qq']:r['cnt'] for r in ret}
         return rs
+    
+    def get_group_chatlog_cnt(self, gid, days=7):
+        db = interMysql.Connect('osu')
+        sql = f'''
+            SELECT qq, count(*) cnt FROM `chat_logs` where 
+            group_number=%s and
+            create_time>=DATE_ADD(CURDATE(),interval -{days} DAY)
+            GROUP BY qq order by cnt desc
+        '''
+        ret = db.query(sql, [gid])
+        return ret
 
     def match_rank(self, hid, gid):
         db = interMysql.Connect('osu')
@@ -2189,4 +2286,5 @@ if __name__ == "__main__":
     # b.get_admins()
     # b.match_rank("", 25, 25)
     # print(b.check2("sakamata1"))
-    print(b.osu_stats_info("interbot"))
+    # print(b.osu_stats_info("interbot"))
+    print(b.calMsgRank(""))

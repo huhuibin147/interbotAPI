@@ -585,17 +585,6 @@ def scancallback(**kw):
     ret = b.scanPlayers(groupid, users)
     return ret
 
-@app.route('/adminmsgrankcallback', methods=['POST'])
-@appTools.deco()
-def adminmsgrankcallback(**kw):
-    logging.info('adminmsgrankcallback....')
-    ret = kw["ret"]
-    users = json.loads(ret)
-    send_gid = kw["callbackargs"]
-    b = botHandler.botHandler()
-    ret = b.calAdminMsgRank(send_gid, users)
-    return ret
-
 @app.route('/ppcheck', methods=['POST'])
 @appTools.deco()
 def ppcheck(**kw):
@@ -999,7 +988,11 @@ def speak(**kw):
 def admchatcntxrq(**kw):
     try:
         b = botHandler.botHandler()
-        # return b.get_admins()
+        rds = interRedis.connect('osu2')
+        rs = rds.get(Config.GROUP_MEMBER_LIST.format(gid=Config.JINJIEQUN))
+        if rs is not None:
+            b.calAdminMsgRank(kw["groupid"], json.loads(rs))
+            return ""
         return b.groupAdminMsgCheck(Config.XINRENQUN, kw["groupid"])
 
     except:
@@ -1011,12 +1004,64 @@ def admchatcntxrq(**kw):
 def admchatcntjjq(**kw):
     try:
         b = botHandler.botHandler()
-        # return b.get_admins()
+        rds = interRedis.connect('osu2')
+        rs = rds.get(Config.GROUP_MEMBER_LIST.format(gid=Config.JINJIEQUN))
+        if rs is not None:
+            b.calAdminMsgRank(kw["groupid"], json.loads(rs))
+            return ""
         return b.groupAdminMsgCheck(Config.JINJIEQUN, kw["groupid"])
 
     except:
         logging.exception("")
         return "raise exception!"
+
+@app.route('/adminmsgrankcallback', methods=['POST'])
+@appTools.deco()
+def adminmsgrankcallback(**kw):
+    logging.info('adminmsgrankcallback....')
+    ret = kw["ret"]
+    users = json.loads(ret)
+
+    if len(users) > 0:
+        rds = interRedis.connect('osu2')
+        rds.set(Config.GROUP_MEMBER_LIST.format(gid=users[0]['group_id']), ret, 3600)
+
+    send_gid = kw["callbackargs"]
+    b = botHandler.botHandler()
+    ret = b.calAdminMsgRank(send_gid, users)
+    return ret
+
+@app.route('/groupmsgcount', methods=['POST'])
+@appTools.deco()
+def groupmsgcount(**kw):
+    try:
+        b = botHandler.botHandler()
+        if not b.calMsgRank(kw["groupid"]):
+            b.groupMsgCheck(Config.XINRENQUN, kw["groupid"])
+            b.groupMsgCheck(Config.JINJIEQUN, kw["groupid"])
+        return ""
+
+    except:
+        logging.exception("")
+        return "raise exception!"
+
+@app.route('/msgrankcallback', methods=['POST'])
+@appTools.deco()
+def msgrankcallback(**kw):
+    logging.info('msgrankcallback....')
+    ret = kw["ret"]
+    users = json.loads(ret)
+
+    if len(users) > 0:
+        rds = interRedis.connect('osu2')
+        rds.set(Config.GROUP_MEMBER_LIST.format(gid=users[0]['group_id']), ret, 3600)
+
+    send_gid = kw["callbackargs"]
+    b = botHandler.botHandler()
+    b.calMsgRank(send_gid)
+    return ""
+
+
 
 
 
