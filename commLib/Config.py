@@ -33,7 +33,7 @@ FUNC_ACTIVE_KEY = 'FUNC-ACTIVE-{qq}-{groupid}'
 # ppy-tools path
 PP_TOOLS_PATH = '/root/code/osu-tools/PerformanceCalculator/bin/Debug/net5.0'
 
-XINRENQUN = 712603531 # osu新人群
+XINRENQUN = 595985887 # osu新人群
 JINJIEQUN = 928936255 # osu进阶群
 HOUHUAYUAN = 514661057 # osu后花园
 

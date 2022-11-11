@@ -127,7 +127,7 @@ if __name__ == '__main__':
     # pushKickCmd("619786604", "405622418")
     
     method = "get_group_member_list"
-    kv = {'group_id': str(712603531)}
+    kv = {'group_id': str(595985887)}
     callbackcmd = "!adminmsgrankcallback"
     callbackargs = str(619786604)
     pushCallbackCmd(method, kv, callbackcmd, callbackargs)

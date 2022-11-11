@@ -2132,7 +2132,7 @@ class botHandler():
             return False
         return True
 
-    def get_admins(self, gid="712603531", days=7):
+    def get_admins(self, gid="595985887", days=7):
         with open(Config.USERLIST_FILE, 'r', encoding='utf-8') as f:
             confs = json.load(f)
         users = confs[gid]["admin_users"]
@@ -2281,7 +2281,7 @@ if __name__ == "__main__":
     b = botHandler()
     # b.drawRctpp(osuid="11788070", osuname="interbot")
     # b.annual_sammry(osuid = "11788070", osuname="interbot")
-    # b.osu_mp("712603531")
+    # b.osu_mp("595985887")
     # print(b.check_mp_mid())
     # b.get_admins()
     # b.match_rank("", 25, 25)
