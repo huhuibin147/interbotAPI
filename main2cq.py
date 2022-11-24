@@ -75,6 +75,7 @@ mainThread.start()
 async def wsMain(websockets, path):
     recvJson = await websockets.recv()
     recvDict = json.loads(recvJson)
+    logging.info(recvDict)
     # await websockets.send(msg)
     interface = recvDict.get('interface', 'send_msg')
     if interface == "send_msg":
