@@ -83,7 +83,7 @@ class chatHandler():
         if random.randint(0, 100) > pct:
             logging.info("触发自动回复！")
             # return self.get_random_speak()
-            return self.random_muti_speak_str2(low=1, high=5)
+            return self.random_muti_speak_str2(low=1, high=2)
         return ""
 
     def check_whitelist(self, groupid, whites=[Config.XINRENQUN, Config.JINJIEQUN]):
