@@ -391,11 +391,11 @@ class msgHandler():
     def at_random_reply(self):
         c = chatHandler.chatHandler()
         msg = c.random_muti_speak_str(n=-1)
-        rs = ""
-        if msg:
-            img = drawTools.drawText(msg)
-            if img:
-                rs = Config.ImgTmp % img
+        rs = msg
+        # if msg:
+        #     img = drawTools.drawText(msg)
+        #     if img:
+        #         rs = Config.ImgTmp % img
         return rs
 
     def random_speak(self):
