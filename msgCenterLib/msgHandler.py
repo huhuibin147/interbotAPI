@@ -4,6 +4,8 @@ import json
 import logging
 import requests
 import threading
+import difflib
+
 from commLib import interMysql
 from commLib import pushTools
 from commLib import interRedis
@@ -12,7 +14,6 @@ from commLib import appTools
 from chatbotLib import chatHandler
 from msgCenterLib import otherMsgHandler
 from draws import drawTools
-
 
 
 class msgHandler():
@@ -62,7 +63,7 @@ class msgHandler():
             elif msg.strip() == f"[CQ:at,qq={self.selfqqid}]":
                 return self.at_random_reply()
             else:
-                rs = self.autoReply(msg)
+                rs = self.autoReply2(msg)
                 if not rs:
                     rs = self.random_speak()
                     # if not rs:
@@ -119,13 +120,15 @@ class msgHandler():
             replyFlag 直接出参代替调用
         """
         cmd = self.extractCmd(msg)
-        res = self.getCmdRef(cmd)
+        res = self.cmdMatching(cmd)
+        cmd = res.get('cmd')
+        # res = self.getCmdRef(cmd)
+
+        logging.info('提取的cmd[%s]', cmd)
 
         # 直接回复
         if replyFlag:
             return self.returnHandler(msg, ['*at'], self.context)
-
-        logging.info('提取的cmd[%s]', cmd)
 
         if not res:
             return ''
@@ -273,6 +276,18 @@ class msgHandler():
                     retmsg = remark
         return retmsg
 
+    def autoReply2(self, msg):
+        """自动回复，非特殊指令性"""
+        retmsg = ''
+        res = self.cmdMatching(msg)
+        if res:
+            state, remark = self.checkPermission(res['cmd'])
+            if state > 0:
+                retmsg = res['reply']
+            else:
+                retmsg = remark
+        return retmsg
+
     def extractCmd(self, msg):
         """命令提取"""
         retcmd = None
@@ -282,11 +297,62 @@ class msgHandler():
             retcmd = cmds[0]
         return retcmd
 
+    def cmdMatching(self, cmd):
+        """模糊匹配命令"""
+        all = self.getAllCmdRef()
+        if cmd in all:
+            return all[cmd]
+        return self.fuzzyMatching(cmd, all)
+
+    def fuzzyMatching(self, cmd, all):
+        like_cmd = ""
+        max_ratio = 0
+        for k, v in all.items():
+            if v['automatch'] == 0:
+                continue
+            ratio = self.string_similar2(cmd, k)
+            if ratio >= v['automatch']:
+                logging.info("fuzzy match: %s, [%s]--[%s]", ratio, cmd, k)
+                if ratio > max_ratio:
+                    max_ratio = ratio
+                    like_cmd = k
+            elif ratio >= 0.5:
+                logging.info("half fuzzy match: %s, [%s]--[%s]", ratio, cmd, k)
+        if len(like_cmd) > 0:
+            logging.info("match and replace: [%s]>[%s]", cmd, like_cmd)
+            return all[like_cmd]
+        return {}
+    
+    def string_similar(self, s1, s2):
+        return difflib.SequenceMatcher(None, s1, s2).quick_ratio()
+
+    def string_similar2(self, s1, s2):
+        seq = difflib.SequenceMatcher(lambda x:x==" ", s1, s2)
+        ratio = seq.ratio()
+        return ratio
+
     def filterCN(self, content):
         """过滤中文"""
         pat = re.compile('[\u4e00-\u9fa5]')
         ret = pat.sub('', content)
         return ret
+
+    def getAllCmdRef(self):
+        """取全量指令"""
+        rds = interRedis.connect('osu2')
+        rs = rds.get(Config.ALL_CMD_KEY)
+        if rs:
+            return json.loads(rs)
+        db = interMysql.Connect('osu2')
+        sql = '''
+            SELECT * FROM cmdRef
+        '''
+        res = db.query(sql)
+        m = {}
+        for r in res:
+            m[r['cmd']] = r
+        rds.set(Config.ALL_CMD_KEY, json.dumps(m), 10)
+        return m
 
     def getCmdRef(self, cmd):
         """映射"""
@@ -390,7 +456,7 @@ class msgHandler():
 
     def at_random_reply(self):
         c = chatHandler.chatHandler()
-        msg = c.random_muti_speak_str(n=-1)
+        msg = c.random_muti_speak_str(low=2, high=3)
         rs = msg
         # if msg:
         #     img = drawTools.drawText(msg)

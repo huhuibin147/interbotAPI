@@ -30,6 +30,9 @@ CMDSTEP_KEY_EXPIRE_TIME = 86400
 # 交互式命令集
 FUNC_ACTIVE_KEY = 'FUNC-ACTIVE-{qq}-{groupid}'
 
+# 全量指令cache
+ALL_CMD_KEY = 'ALL-CMD-REF-KEY'
+
 # ppy-tools path
 PP_TOOLS_PATH = '/root/code/osu-tools/PerformanceCalculator/bin/Debug/net5.0'
 

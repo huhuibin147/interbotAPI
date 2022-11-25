@@ -67,9 +67,19 @@ class chatHandler():
             msg = c.get("content", "")
             if len(msg) > 30:
                 continue
-            if msg.startswith("!") or msg.startswith("！") or msg == "~" or msg.startswith("/") \
-                or '妈' in msg:
+
+            if msg.startswith("!") or msg.startswith("！") or msg.startswith("/"):
                 continue
+
+            filters = ['个人信息', 'BP指标', '目前潜力', 'Beatmap by', '[@M', 'inter去ppy', 'inter忘',
+                'inter推荐给', '目前的词库量', 's 战绩', '星级:', 'winner榜' , 'loser榜', 'Stamina :', '[视频]', '今日更新的bp',
+                '更新了bp', 'rank:' ,'s skill', '相关词', '游玩次数','金币数变更','更新打图信息','记录在案的pc',
+                '玩家已得到的卡','推荐图如下','bot经过一番计算','解除成功,游戏结束','建议修改群名片','玩家信息',
+                'Load','机票数变更','roll','排名信息','请稍等','欢迎','少女祈祷中','Dalou去找','猫猫没有找到'
+            ]
+            for f in filters:
+                if f in msg:
+                    continue
 
             return msg
             
@@ -83,7 +93,7 @@ class chatHandler():
         if random.randint(0, 100) > pct:
             logging.info("触发自动回复！")
             # return self.get_random_speak()
-            return self.random_muti_speak_str2(low=1, high=2)
+            return self.random_muti_speak_str(low=1, high=2)
         return ""
 
     def check_whitelist(self, groupid, whites=[Config.XINRENQUN, Config.JINJIEQUN]):
@@ -180,19 +190,7 @@ class chatHandler():
             logging.exception("")
         return
 
-    def random_muti_speak_str(self, n=3, y=15, randomY=8):
-        msgLst = []
-        # y上限
-        if n <= 0 or n > y:
-            n = random.randint(3, randomY)
-
-        for _ in range(n):
-            msg = self.get_random_speak()
-            if msg:
-                msgLst.append(msg)
-        return "，".join(msgLst)
-
-    def random_muti_speak_str2(self, low=1, high=3):
+    def random_muti_speak_str(self, low=1, high=3):
         msgLst = []
         if low <= 0:
             low = 1
@@ -202,7 +200,7 @@ class chatHandler():
 
         for _ in range(n):
             msg = self.get_random_speak()
-            if msg:
+            if msg and msg not in msgLst:
                 msgLst.append(msg)
         return "，".join(msgLst)
 
