@@ -1709,6 +1709,12 @@ class botHandler():
             n += 1
         cmd = '%s%s' % (osuname, n)
         self.set_id_cmd_to_db(cmd, content)
+        self.remove_cmd_cache()
+        return cmd
+
+    def del_id_content_cmd(self, cmd):
+        self.del_id_cmd_to_db(cmd)
+        self.remove_cmd_cache()
         return cmd
 
     def reset_id_content_cmd(self, cmd, content):
@@ -1718,7 +1724,12 @@ class botHandler():
             
         if not self.reset_id_cmd_to_db(cmd, content):
             return "设置失败"
+        self.remove_cmd_cache()
         return cmd
+
+    def remove_cmd_cache(self):
+        rds = interRedis.connect('osu2')
+        rds.delete(Config.ALL_CMD_KEY)
 
     def get_id_cmd_num(self, osuname):
         conn = interMysql.Connect('osu2')
@@ -1751,6 +1762,22 @@ class botHandler():
         except:
             db.rollback()
             logging.exception('cmd[%s]插入失败', cmd)
+
+    def del_id_cmd_to_db(self, cmd):
+        try:
+            db = interMysql.Connect('osu2')
+            sql = '''
+                DELETE FROM cmdRef where cmd=%s
+            '''
+            db.execute(sql, [cmd])
+            sql2 = '''
+                DELETE FROM permission where cmd=%s
+            '''
+            db.execute(sql2, [cmd])
+            db.commit()
+        except:
+            db.rollback()
+            logging.exception('cmd[%s]删除失败', cmd)
 
     def reset_id_cmd_to_db(self, cmd, content):
         try:

@@ -790,7 +790,19 @@ def setcontent(**kw):
     if content[:2] == '\r\n':
         content = content[2:]
     cmd = b.set_id_content_cmd(osuname, content)
-    res = '设置成功，生成指令为[%s]' % cmd
+    res = '生成指令为[%s]' % cmd
+    return res
+
+@app.route('/delcontent', methods=['POST'])
+@appTools.deco(rawinput=1, autouseatqq=False)
+def delcontent(**kw):
+    b = botHandler.botHandler()
+    if kw['iargs']:
+        cmd = kw['iargs'][0]
+    else:
+        return '请输入内容，¡xx xxx'
+    cmd = b.del_id_content_cmd(cmd)
+    res = 'del[%s]' % cmd
     return res
 
 @app.route('/resetcontent', methods=['POST'])
@@ -808,7 +820,7 @@ def resetcontent(**kw):
     if not cmd:
         res = '指令不存在'
     else:
-        res = '设置成功，指令为[%s]' % cmd
+        res = 'reset[%s]' % cmd
     return res
 
 @app.route('/sttest', methods=['POST'])
@@ -989,7 +1001,7 @@ def admchatcntxrq(**kw):
     try:
         b = botHandler.botHandler()
         rds = interRedis.connect('osu2')
-        rs = rds.get(Config.GROUP_MEMBER_LIST.format(gid=Config.JINJIEQUN))
+        rs = rds.get(Config.GROUP_MEMBER_LIST.format(gid=Config.XINRENQUN))
         if rs is not None:
             b.calAdminMsgRank(kw["groupid"], json.loads(rs))
             return ""
