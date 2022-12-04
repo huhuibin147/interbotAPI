@@ -34,7 +34,8 @@ FUNC_ACTIVE_KEY = 'FUNC-ACTIVE-{qq}-{groupid}'
 ALL_CMD_KEY = 'ALL-CMD-REF-KEY'
 
 # ppy-tools path
-PP_TOOLS_PATH = '/root/code/osu-tools/PerformanceCalculator/bin/Debug/net5.0'
+#PP_TOOLS_PATH = '/root/code/osu-tools/PerformanceCalculator/bin/Debug/net5.0'
+PP_TOOLS_PATH = '/root/code/osu-tools-2/osu-tools/PerformanceCalculator/bin/Debug/net6.0'
 
 XINRENQUN = 595985887 # osu新人群
 JINJIEQUN = 928936255 # osu进阶群

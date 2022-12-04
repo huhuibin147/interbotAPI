@@ -178,23 +178,27 @@ class botHandler():
         ojson = self.oppai2json(bid, extend)
         # pp = self.get_pp_from_str(self.ppy_tools_pp(bid, self.convert2oppaiArgsNew(**rinfo)))
         newppMap = self.ppy_tools_pp(bid, self.convert2oppaiArgsNew(**rinfo))
-        pp = newppMap.get("pp")
+        # pp = newppMap.get("pp")
+        pp = newppMap.get("performance_attributes", {}).get("pp")
         star = newppMap.get("difficulty_attributes", {}).get("star_rating")
+        max_combo = newppMap.get("difficulty_attributes", {}).get("max_combo")
 
         # fc计算
         fcacc = self.calFcacc(recinfo)
         extendFc = self.convert2oppaiArgs(rinfo['mods'], fcacc)
         # ojsonFc = self.oppai2json(bid, extendFc)
         fcppMap = self.ppy_tools_pp(bid, self.convert2oppaiArgsNew(rinfo['mods'], fcacc, 
-                            int(newppMap['performance_attributes']['max_combo']), 0, rinfo['count100'], rinfo['count50']))
-        fcpp = fcppMap.get("pp")
+                            int(max_combo), 0, rinfo['count100'], rinfo['count50']))
+        #fcpp = fcppMap.get("pp")
+        fcpp = fcppMap.get("performance_attributes", {}).get("pp")
         fcCalAcc = fcppMap.get("score", {}).get("accuracy")
 
         # ac计算
         extendSs = self.convert2oppaiArgs(rinfo['mods'])
         # ojsonSs = self.oppai2json(bid, extendSs)
         ssppMap = self.ppy_tools_pp(bid, self.convert2oppaiArgsNew(rinfo['mods']))
-        sspp = ssppMap.get("pp")
+        #sspp = ssppMap.get("pp")
+        sspp = ssppMap.get("performance_attributes", {}).get("pp")
         
         res, kv = self.formatRctpp2New(ojson, recinfo['rank'], rinfo['acc'], 
             fcpp, sspp, bid, fcCalAcc, recinfo['countmiss'], pp, star, recinfo.get('date', '')) # , ojsonFc['pp'], ojsonSs['pp']
@@ -1925,19 +1929,23 @@ class botHandler():
 
         # osu-tools计算
         newppMap = self.ppy_tools_pp(bid, self.convert2oppaiArgsNew(**rinfo))
-        pp = newppMap.get("pp")
+        #pp = newppMap.get("pp")
+        pp = newppMap.get("performance_attributes", {}).get("pp")
         star = newppMap.get("difficulty_attributes", {}).get("star_rating")
+        max_combo = newppMap.get("difficulty_attributes", {}).get("max_combo")
 
         # fc计算
         fcacc = self.calFcacc(recinfo)
         fcppMap = self.ppy_tools_pp(bid, self.convert2oppaiArgsNew(rinfo['mods'], fcacc, 
-                            int(newppMap['performance_attributes']['max_combo']), 0, rinfo['count100'], rinfo['count50']))
-        fcpp = fcppMap.get("pp")
+                            int(max_combo), 0, rinfo['count100'], rinfo['count50']))
+        #fcpp = fcppMap.get("pp")
+        fcpp = fcppMap.get("performance_attributes", {}).get("pp")
         fcCalAcc = fcppMap.get("score", {}).get("accuracy")
 
         # ac计算
         ssppMap = self.ppy_tools_pp(bid, self.convert2oppaiArgsNew(rinfo['mods']))
-        sspp = ssppMap.get("pp")
+        #sspp = ssppMap.get("pp")
+        sspp = ssppMap.get("performance_attributes", {}).get("pp")
 
         # 时长与物件数计算
         # to-do
