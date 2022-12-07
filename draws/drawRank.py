@@ -80,7 +80,7 @@ class DrawRec():
         self.RecImg.save(name)
 
 
-def drawR(mapjson, rankjson, userjson):
+def drawR(mapjson, rankjson, userjson, bestinfo={}):
     # skin
     bg_e = draw_data.check_bg(mapjson['beatmap_id'], mapjson['beatmapset_id'])
     bg = '%s.jpg'%mapjson['beatmap_id'] if bg_e else 'newgame_background.png' 
@@ -240,9 +240,22 @@ def drawR(mapjson, rankjson, userjson):
         d.add_text(300, 620, '(%sx)'%(format(int(r[u][1]),',')), font_size=20, ttype='en')
         d.add_text(450-20*len(mds_l), 600, '%s'%(m), font_size=20, ttype='en')
         d.add_text(410, 620, '%s%%'%(r[u][3]), font_size=18, ttype='en')
+    elif len(bestinfo)>0:
+        mds = int(bestinfo['enabled_mods'])
+        mds_l = mods.getMod(mds)
+        if 'NONE' in mds_l:
+            mds_l.remove('NONE')
+        m_str = ','.join(mds_l) if mds > 0 else ''
+        rank = 'D' if bestinfo['rank'] == 'F' else bestinfo['rank']
+        d.add_items(x=20, y=590, path='image/userimg/%s.jpg'%me, isresize=True, width=60, height=60)
+        d.add_items(rank_x%rank, 80, 595)
+        d.add_text(120, 590, f"{uname}  #50+", font_size=25, ttype='en')
+        d.add_text(120, 620, f"得分: {int(bestinfo['score']):,}    ({int(bestinfo['maxcombo']):,}x)", font_size=20, ttype='cn')
+        d.add_text(450-20*len(mds_l), 597, '%s'%(m_str), font_size=20, ttype='en')
+        acc = mods.get_acc(bestinfo['count300'], bestinfo['count100'], bestinfo['count50'], bestinfo['countmiss'])
+        d.add_text(410, 620, f"{acc:.2f}%", font_size=18, ttype='en')
     else:
         d.add_text(130, 600, '你倒是快刚榜啊', font_size=25, ttype='cn')
-
 
     # copy
     for i in range(r2):
@@ -274,7 +287,7 @@ def drawR(mapjson, rankjson, userjson):
     logging.info('[%s]榜单生成成功!' % pfs)
     return pfs
 
-def start(bid='847314', groupid='614892339', hid=1, mods=-1, uid='8505303'):
+def start(bid='847314', groupid='614892339', hid=1, mods=-1, uid='8505303', bestinfo={}):
     mapjson,rankjson = draw_data.map_ranks_info(str(bid), groupid, hid, mods)
     ppyIns = ppyHandler.ppyHandler()
     # 历史问题导致遗漏的情况
@@ -285,4 +298,4 @@ def start(bid='847314', groupid='614892339', hid=1, mods=-1, uid='8505303'):
         mapjson,rankjson = draw_data.map_ranks_info(str(bid), groupid, hid, mods)
     userjson = ppyIns.getOsuUserInfo(uid)[0]
     mapjson = ppyIns.getOsuBeatMapInfo(bid)[0]
-    return drawR(mapjson,rankjson,userjson)
+    return drawR(mapjson,rankjson,userjson, bestinfo)

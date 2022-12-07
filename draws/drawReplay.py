@@ -184,7 +184,11 @@ def drawRec(mapjson, recinfo, bestinfo, userjson, debug=0, **kw):
     rank = 'D' if bestinfo['rank'] == 'F' else bestinfo['rank']
     d.add_items(x=20, y=590, path='image/userimg/%s.jpg'%me, isresize=True, width=60, height=60)
     d.add_items(rank_x%rank, 80, 595)
-    d.add_text(120, 590, f"{uname}  #{round(float(bestinfo.get('pp', kw['pp'])))}pp", font_size=25, ttype='en')
+    try:
+        ubest_pp = round(float(bestinfo.get('pp', kw['pp'])))
+    except:
+        ubest_pp = round(float(kw['pp']))
+    d.add_text(120, 590, f"{uname}  #{ubest_pp}pp", font_size=25, ttype='en')
     d.add_text(120, 620, f"得分: {int(bestinfo['score']):,}    ({int(bestinfo['maxcombo']):,}x)", font_size=20, ttype='cn')
     d.add_text(450-20*len(mds_l), 597, '%s'%(m_str), font_size=20, ttype='en')
     acc = mods.get_acc(bestinfo['count300'], bestinfo['count100'], bestinfo['count50'], bestinfo['countmiss'])
