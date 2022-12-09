@@ -59,6 +59,11 @@ class ppyHandler():
         kw = {'bid': bid}
         logging.info(kw)
         return ppyAPI.apiRoute('beatmap', **kw)
+    
+    def getOsuMpInfo(self, mid):
+        kw = {'mid': mid}
+        logging.info(kw)
+        return ppyAPI.apiRoute('mp', **kw)
 
     def getSkillInfo(self, osuname):
         """Skill抓取

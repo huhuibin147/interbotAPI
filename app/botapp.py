@@ -952,6 +952,18 @@ def mplink(**kw):
         return "fail!"
     return res
 
+@app.route('/mpinfo', methods=['POST', 'GET'])
+@appTools.deco()
+def mpinfo(**kw):
+    b = botHandler.botHandler()
+    try:
+        mid = b.check_mp_mid()
+        res = b.get_xrq_mp_base_info(mid)
+    except:
+        logging.exception("")
+        return "fail!"
+    return res
+
 @app.route('/mpidlekill', methods=['POST'])
 @appTools.deco()
 def mpidlekill(**kw):

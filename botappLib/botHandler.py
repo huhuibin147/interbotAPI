@@ -2085,7 +2085,9 @@ class botHandler():
     
     def osu_mp(self, groupid=None):
         if self.check_mp_idle():
-            return "房间存活，房名: xinrenqun mp | auto host rotate 密码: x114514"
+            mid = self.check_mp_mid()
+            mpinfo = self.get_xrq_mp_base_info(mid)
+            return mpinfo 
         
         if groupid:
             pushTools.pushMsgOne(groupid, "mp房间不存在，请稍等，正在创建...")
@@ -2103,7 +2105,7 @@ class botHandler():
                 mid = self.check_mp_mid()
                 if groupid and mid:
                     pushTools.pushMsgOne(groupid, "mp房间创建完成，频道为#mp_%s" % mid)
-                    return "房名: xinrenqun mp | auto host rotate 密码: x114514"
+                    return "房名: xinrenqun mp | auto host rotate \n密码: x114514"
 
         return "房间创建结果未知..."
     
@@ -2124,9 +2126,33 @@ class botHandler():
                 if not self.check_mp_network():
                     self.mp_idle_kill()
                     return False
+                if not self.check_mp_terminated():
+                    self.mp_idle_kill()
+                    return False
+                # if not self.check_mp_start_time(mid):
+                #     self.mp_idle_kill()
+                #     return False
                 # if not self.check_mp_timeout():
                 #     self.mp_idle_kill()
                 #     return False
+            return True
+        return False
+    
+    def check_mp_alive(self, mid):
+        ret = os.popen("ps axu|grep 'xinrenqunmp'|grep -v grep")
+        ret = ret.read()
+        logging.info(ret)
+        if "xinrenqunmp" in ret:
+            # mid = self.check_mp_mid()
+            # if not mid:
+            #     logging.info("check mp mid fail")
+            #     return False
+            if not self.check_mp_network():
+                return False
+            if not self.check_mp_terminated():
+                return False
+            # if not self.check_mp_start_time(mid):
+            #     return False
             return True
         return False
     
@@ -2158,6 +2184,37 @@ class botHandler():
             logging.info('network reconnection detected!')
             return False
         return True
+
+    def check_mp_terminated(self):
+        ret = os.popen("cd /root/code/osu-ahr; grep 'terminated lobby' ser.log|tail -1")
+        s = ret.read()
+        if 'terminated lobby' in s:
+            logging.info('terminated lobby!')
+            return False
+        return True
+
+    def check_mp_start_time(self, mid):
+        st = self.get_mp_start_time_with_cache(mid)
+        if st:
+            diff = datetime.datetime.now() - self.timestr_add8_dt(st)
+            if diff.days > 1:
+                logging.info(f"mp start_time:{st} over 1 day, diff:{diff}")
+                return False
+        return True
+
+    def get_mp_start_time_with_cache(self, mid):
+        rds = interRedis.connect('osu2')
+        rs = rds.get(Config.MP_START_TIME.format(mid=mid))
+        if rs:
+            return rs
+        obj = ppyHandler.ppyHandler()
+        res = obj.getOsuMpInfo(mid)
+        minfo = res.get('match', {})
+        st = ""
+        if minfo:
+            st = minfo['start_time']
+            rds.set(Config.MP_START_TIME.format(mid=mid), st, 86400)
+        return st
 
     def check_mp_timeout(self):
         ret = os.popen('cd /root/code/osu-ahr; grep "check timeout" ser.log |wc -l')
@@ -2311,6 +2368,120 @@ class botHandler():
         rds = interRedis.connect('osu2')
         return rds.get(Config.LAST_BID % gid)
 
+    def get_xrq_mp_base_info(self, matchid):
+        # obj = ppyHandler.ppyHandler()
+        # res = obj.getOsuMpInfo(matchid)
+        # minfo = res.get('match', {})
+        # if not minfo:
+        #     return f"#mp_{matchid}不存在"
+        
+        alive = self.check_mp_alive(matchid)
+        # st = self.timestr_add8_dtstr(minfo['start_time'])
+        # ed = self.timestr_add8_dtstr(minfo['end_time']) if minfo['end_time'] else ""
+        users, map_name, diffc, st, ed, games = self.get_mp_info_from_osuahr_log()
+        # n = len(res['games'])
+        n = games
+        # last_game_users = 0
+        # if n > 0:
+        #     last_game_users = len(res['games'][-1]['scores'])
+        s = f"房名: xinrenqun mp | auto host rotate (x114514)\n"
+        s += f"总局数: {n}\n"
+        s += f"当前人数: {len(users)}\n"
+        s += f"当前曲子: {map_name}\n"
+        s += f"当前难度: {diffc}\n"
+        s += f"当前玩家: "
+        for i, u in enumerate(users):
+            s += f"{u} "
+            if (i+1)%3==0:
+                s += '\n'
+        if not s.endswith('\n'):
+            s += '\n'
+        s += f"开始时间: {st}\n"
+        if ed:
+            s += f"结束时间: {ed}\n"
+        if not alive:
+            s += f"状态: 已关闭\n"
+        else:
+            s += f"状态: 存活\n"
+        s += f"https://osu.ppy.sh/community/matches/{matchid}"
+        return s
+
+    def timestr_add8_dt(self, timestr):
+        t = datetime.datetime.strptime(timestr, "%Y-%m-%d %H:%M:%S")
+        t += datetime.timedelta(hours=8)
+        return t
+
+    def timestr_add8_dtstr(self, timestr):
+        t = datetime.datetime.strptime(timestr, "%Y-%m-%d %H:%M:%S")
+        t += datetime.timedelta(hours=8)
+        return t.strftime("%Y-%m-%d %H:%M:%S")
+        
+    def get_mp_info_from_osuahr_log(self):
+        try:
+            ret = os.popen("cd /root/code/osu-ahr; grep 'host order' ser.log|tail -1")
+            s = ret.read()
+            s = s.replace("\u200b", "")
+            users = s.replace("\n","").split(":")[-1].split(", ")
+            if users[0] == '':
+                users = users[1:]
+            else:
+                users[0] = users[0][1:]
+
+            users = set(users)
+            ret = os.popen("cd /root/code/osu-ahr; grep 'mp host' ser.log|tail -1")
+            s = ret.read()
+            host_user = s.replace("\n","").split("mp host ")[-1]
+            if len(host_user)>0 and not host_user.startswith("#"):
+                users.add(host_user)
+            st_str = s.split("][INFO")[0].split("[")[-1]
+            print(st_str)
+            ret = os.popen(f"cd /root/code/osu-ahr; sed -n '/{st_str}/,//p' ser.log|grep inout")
+            s = ret.read()
+            for r in s.split("\n"):
+                if len(r) == 0:
+                    continue
+                rs = r.split("inout")[1].split(" ")
+                u = rs[3].split('(')[0]
+                if rs[2][0] == '-':
+                    if u in users:
+                        users.remove(u)
+                else:
+                    users.add(u)
+            logging.info(users)
+
+            ret = os.popen("cd /root/code/osu-ahr; grep 'beatmap changed' ser.log|tail -1")
+            s = ret.read()
+            map_name = s.replace("\n","").split("b/")[-1]
+            logging.info(map_name)
+
+            ret = os.popen("cd /root/code/osu-ahr; grep '!mp map' ser.log|tail -1")
+            s = ret.read()
+            s = s.replace("\n","")
+            logging.info(s)
+
+            p = re.compile('star=.*?-')
+            res = p.findall(s)
+            star = res[0] if res else ""
+            star = star.replace(" -", "")
+
+            ret = os.popen("cd /root/code/osu-ahr; grep 'Making lobby' ser.log|head -1")
+            s = ret.read()
+            st = s.split("][INFO")[0].split("[")[-1][:5]
+
+            ret = os.popen("cd /root/code/osu-ahr; grep 'terminated lobby' ser.log|head -1")
+            s = ret.read()
+            ed = s.split("][INFO")[0].split("[")[-1][:5]
+
+            ret = os.popen("cd /root/code/osu-ahr; grep 'match started' ser.log|wc -l")
+            s = ret.read()
+            games = s.replace('\n','').replace(' ','')
+
+            return users, map_name, star, st, ed, games
+        except:
+            logging.exception("")
+            return "", "", "", "", "", ""
+
+
 
 if __name__ == "__main__":
     b = botHandler()
@@ -2322,4 +2493,8 @@ if __name__ == "__main__":
     # b.match_rank("", 25, 25)
     # print(b.check2("sakamata1"))
     # print(b.osu_stats_info("interbot"))
-    print(b.calMsgRank(""))
+    # print(b.calMsgRank(""))
+    # print(b.check_mp_start_time("105465538"))
+    # print(b.check_mp_alive())
+    print(b.get_xrq_mp_base_info("105533347"))
+    # print(b.get_mp_info_from_osuahr_log())

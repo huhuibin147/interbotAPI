@@ -71,3 +71,6 @@ OAUTH_CACHE_KEY = "oauth_verify_{qq}_{gid}"
 
 # groupMemberCache
 GROUP_MEMBER_LIST = "group_member_list_cache_{gid}"
+
+# mp starttime cache
+MP_START_TIME = "mp_start_time_{mid}"
