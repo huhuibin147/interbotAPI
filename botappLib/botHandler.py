@@ -2391,7 +2391,7 @@ class botHandler():
         s += f"当前难度: {diffc}\n"
         s += f"当前玩家: "
         for i, u in enumerate(users):
-            s += f"{u} "
+            s += f'{u.replace(" ", "_")} '
             if (i+1)%3==0:
                 s += '\n'
         if not s.endswith('\n'):
@@ -2471,6 +2471,12 @@ class botHandler():
             ret = os.popen("cd /root/code/osu-ahr; grep 'terminated lobby' ser.log|head -1")
             s = ret.read()
             ed = s.split("][INFO")[0].split("[")[-1][:5]
+            if not ed:
+                ret = os.popen("cd /root/code/osu-ahr; grep 'stat check timeout' ser.log|head -1")
+                s = ret.read()
+                ed2 = s.split("][WARN")[0].split("[")[-1][:5]
+                if len(ed2) > 0:
+                    ed = ed2
 
             ret = os.popen("cd /root/code/osu-ahr; grep 'match started' ser.log|wc -l")
             s = ret.read()
