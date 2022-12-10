@@ -307,6 +307,8 @@ class msgHandler():
     def fuzzyMatching(self, cmd, all):
         like_cmd = ""
         max_ratio = 0
+        if not cmd:
+            return {}
         for k, v in all.items():
             if v['automatch'] == 0:
                 continue

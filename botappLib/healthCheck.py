@@ -24,7 +24,7 @@ def health_check(user, bp):
     # print(pp,pc,tth,bp1,bp5,acc1,acc2,acc3)
     v = pp*pc*tth*bp1*bp5*acc1*acc2*acc3
     if v == 0:
-        return "%s 数据不正常" % uid
+        return "%s 数据不正常" % user['username']
     else:
         A1 = pp/(4*bp1-3*bp5)
         A2 = math.log(tth/pc)/math.log(15.5)

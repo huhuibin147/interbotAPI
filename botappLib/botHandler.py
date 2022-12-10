@@ -2378,7 +2378,7 @@ class botHandler():
         alive = self.check_mp_alive(matchid)
         # st = self.timestr_add8_dtstr(minfo['start_time'])
         # ed = self.timestr_add8_dtstr(minfo['end_time']) if minfo['end_time'] else ""
-        users, map_name, diffc, st, ed, games = self.get_mp_info_from_osuahr_log()
+        users, players, map_name, diffc, st, ed, games = self.get_mp_info_from_osuahr_log()
         # n = len(res['games'])
         n = games
         # last_game_users = 0
@@ -2386,7 +2386,7 @@ class botHandler():
         #     last_game_users = len(res['games'][-1]['scores'])
         s = f"房名: xinrenqun mp | auto host rotate (x114514)\n"
         s += f"总局数: {n}\n"
-        s += f"当前人数: {len(users)}\n"
+        s += f"当前人数: {players}\n"
         s += f"当前曲子: {map_name}\n"
         s += f"当前难度: {diffc}\n"
         s += f"当前玩家: "
@@ -2427,31 +2427,42 @@ class botHandler():
             else:
                 users[0] = users[0][1:]
 
-            users = set(users)
             ret = os.popen("cd /root/code/osu-ahr; grep 'mp host' ser.log|tail -1")
             s = ret.read()
             host_user = s.replace("\n","").split("mp host ")[-1]
-            if len(host_user)>0 and not host_user.startswith("#"):
-                users.add(host_user)
-            st_str = s.split("][INFO")[0].split("[")[-1]
-            print(st_str)
-            ret = os.popen(f"cd /root/code/osu-ahr; sed -n '/{st_str}/,//p' ser.log|grep inout")
-            s = ret.read()
-            for r in s.split("\n"):
-                if len(r) == 0:
-                    continue
-                rs = r.split("inout")[1].split(" ")
-                u = rs[3].split('(')[0]
-                if rs[2][0] == '-':
-                    if u in users:
-                        users.remove(u)
-                else:
-                    users.add(u)
+            if len(users)==0 and len(host_user)>0 and not host_user.startswith("#"):
+                users.append(host_user)
+
+            # st_str = s.split("][INFO")[0].split("[")[-1]
+            # ret = os.popen(f"cd /root/code/osu-ahr; sed -n '/{st_str}/,//p' ser.log|grep inout")
+            # s = ret.read()
+            # for r in s.split("\n"):
+            #     if len(r) == 0:
+            #         continue
+            #     rs = r.split("inout")[1].split(" ")
+            #     us = []
+            #     if ',' in rs[3]:
+            #         us = rs[3].split(',')
+            #     elif '(' in rs[3]:
+            #         us = [rs[3].split('(')[0]]
+            #     for u in us:
+            #         if rs[2][0] == '-':
+            #             if u in users:
+            #                 users.remove(u)
+            #         else:
+            #             users.add(u)
+            players = str(len(users))
+            for u in users:
+                if '...' in u:
+                    players = "8+"
+                    break
             logging.info(users)
 
             ret = os.popen("cd /root/code/osu-ahr; grep 'beatmap changed' ser.log|tail -1")
             s = ret.read()
             map_name = s.replace("\n","").split("b/")[-1]
+            maps = map_name.split(" ")
+            map_name = " ".join(maps[1:]) + " " + maps[0]
             logging.info(map_name)
 
             ret = os.popen("cd /root/code/osu-ahr; grep '!mp map' ser.log|tail -1")
@@ -2482,10 +2493,10 @@ class botHandler():
             s = ret.read()
             games = s.replace('\n','').replace(' ','')
 
-            return users, map_name, star, st, ed, games
+            return users, players, map_name, star, st, ed, games
         except:
             logging.exception("")
-            return "", "", "", "", "", ""
+            return "", "", "", "", "", "", ""
 
 
 
@@ -2502,5 +2513,5 @@ if __name__ == "__main__":
     # print(b.calMsgRank(""))
     # print(b.check_mp_start_time("105465538"))
     # print(b.check_mp_alive())
-    print(b.get_xrq_mp_base_info("105533347"))
+    print(b.get_xrq_mp_base_info("105555127"))
     # print(b.get_mp_info_from_osuahr_log())
