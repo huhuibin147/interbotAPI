@@ -1975,9 +1975,10 @@ class botHandler():
 
     def annual_sammry(self, osuid, osuname):
         
+        st = 2022
         db = interMysql.Connect('osu')
-        sql = '''
-            SELECT * FROM `recinfo` where lastdate >='2021-01-01' and lastdate <= '2022-01-01' and uid=%s
+        sql = f'''
+            SELECT * FROM `recinfo` where lastdate >='{st}-01-01' and lastdate <= '{st+1}-01-01' and uid=%s
         '''
         ret = db.query(sql, [osuid])
 
@@ -1995,8 +1996,8 @@ class botHandler():
         modNum = {}
         dayNum = {}
         flag_t_0_6 = 0
-        lastTime0_6 = datetime.datetime(year=2021, month=1, day=1, hour=0, minute=0, second=0)
-        lastTime6_24 = datetime.datetime(year=2021, month=1, day=1, hour=0, minute=0, second=0)
+        lastTime0_6 = datetime.datetime(year=st, month=1, day=1, hour=0, minute=0, second=0)
+        lastTime6_24 = datetime.datetime(year=st, month=1, day=1, hour=0, minute=0, second=0)
         lastTime0_6_d = None
         lastTime6_24_d = None
 
@@ -2019,7 +2020,7 @@ class botHandler():
                 t = datetime.datetime.strptime(m['date'], "%Y-%m-%d %H:%M:%S")
                 d = t.date()
 
-                t2 = datetime.datetime(year=2021, month=1, day=1, hour=t.hour, minute=t.minute, second=t.second)
+                t2 = datetime.datetime(year=st, month=1, day=1, hour=t.hour, minute=t.minute, second=t.second)
                 
                 dayNum[d] = dayNum.get(d, 0) + 1
                 if t.hour <= 5:
@@ -2036,7 +2037,7 @@ class botHandler():
             
         acc_avg = acc_tt / tt
 
-        s = f"{osuname}的2021年度总结\n"
+        s = f"{osuname}的{st}年度总结\n"
         s += f"上传总数：{tt}\n"
         s += f"总得分：{score_tt:,}\n"
         s += f"平均Acc：{acc_avg:.1f}%\n"
@@ -2058,8 +2059,8 @@ class botHandler():
         for k in sorted(rankNum):
             s += f"{k}:{rankNum[k]}  "
 
-        sql2 = '''
-            SELECT * FROM `user2` where time>='2021-01-01' and osuid=%s order by time limit 1
+        sql2 = f'''
+            SELECT * FROM `user2` where time>='{st}-01-01' and osuid=%s order by time limit 1
         '''
         ret2 = db.query(sql2, [osuid])
         if ret2:
