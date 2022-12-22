@@ -2017,21 +2017,20 @@ class botHandler():
                 mod = mods.getMod(m['enabled_mods'])
                 for mo in mod:
                     modNum[mo] = modNum.get(mo, 0) + 1
-                t = datetime.datetime.strptime(m['date'], "%Y-%m-%d %H:%M:%S")
+                t = r['lastdate']
                 d = t.date()
-
-                t2 = datetime.datetime(year=st, month=1, day=1, hour=t.hour, minute=t.minute, second=t.second)
                 
                 dayNum[d] = dayNum.get(d, 0) + 1
-                if t.hour <= 5:
-                    if t2.timestamp() > lastTime0_6.timestamp():
-                        lastTime0_6 = t2
-                        lastTime0_6_d = t
-                        flag_t_0_6 = 1
-                else:
-                    if t2.timestamp() > lastTime6_24.timestamp():
-                        lastTime6_24 = t2
-                        lastTime6_24_d = t
+                if t.year >= st:
+                    if t.hour <= 5:
+                        if t.timestamp() > lastTime0_6.timestamp():
+                            lastTime0_6 = t
+                            lastTime0_6_d = t
+                            flag_t_0_6 = 1
+                    else:
+                        if t.timestamp() > lastTime6_24.timestamp():
+                            lastTime6_24 = t
+                            lastTime6_24_d = t
             except:
                 logging.exception("")
             
@@ -2050,10 +2049,12 @@ class botHandler():
         s += f"最爱的mod：{modNum_s[0][0]}({modNum_s[0][1]}次)\n"
 
         lastTime = lastTime0_6_d if flag_t_0_6 else lastTime6_24_d
-        s += f"最晚的那天：{str(lastTime)}\n"
+        if lastTime:
+            s += f"最晚的那天：{str(lastTime)}\n"
 
-        dayNum_s = sorted(dayNum.items(), key=lambda x:x[1], reverse=True)
-        s += f"查的最多的一天是：{dayNum_s[0][0]}({dayNum_s[0][1]}次)\n"
+        dayNum_s = sorted(dayNum.items(), key=lambda x:(x[1],x[0]), reverse=True)
+        if len(dayNum_s) > 0:
+            s += f"查的最多的一天是：{dayNum_s[0][0]}({dayNum_s[0][1]}次)\n"
 
         s += f"总rank分布："
         for k in sorted(rankNum):
@@ -2081,7 +2082,6 @@ class botHandler():
                 s += f"今年你总共敲击了{incr_tth:,}下\n"
                 s += f"计算的时间起点：{u['time']}"
 
-        # print(s)
         return s
     
     def osu_mp(self, groupid=None):
@@ -2504,7 +2504,7 @@ class botHandler():
 if __name__ == "__main__":
     b = botHandler()
     # b.drawRctpp(osuid="11788070", osuname="interbot")
-    # b.annual_sammry(osuid = "11788070", osuname="interbot")
+    print(b.annual_sammry(osuid = "11788070", osuname="interbot"))
     # b.osu_mp("595985887")
     # print(b.check_mp_mid())
     # b.get_admins()
@@ -2514,5 +2514,5 @@ if __name__ == "__main__":
     # print(b.calMsgRank(""))
     # print(b.check_mp_start_time("105465538"))
     # print(b.check_mp_alive())
-    print(b.get_xrq_mp_base_info("105555127"))
+    # print(b.get_xrq_mp_base_info("105555127"))
     # print(b.get_mp_info_from_osuahr_log())
