@@ -282,10 +282,11 @@ class ppyHandler():
         x=[i for i in range(len(y))]
         osuname = res['username']
         pp = format(int(float(res['statistics']['pp'])), ',')
-        rank = res['statistics']['rank']
-        globalrank = format(int(rank.get('global', 0)), ',')
-        countryrank = format(int(rank.get('country', 0)), ',')
-        countryname = res['country']['name']
+        statistics = res['statistics']
+        pp = format(int(float(statistics['pp'])), ',')
+        globalrank = format(int(statistics.get('global_rank', 0)), ',')
+        countryrank = format(int(statistics.get('country_rank', 0)), ',')
+        countryname = res.get('country_code', '')
         plt.figure(figsize=(6,3))
         maxy = max(y)
         miny = min(y)
@@ -293,8 +294,8 @@ class ppyHandler():
         ys2 = maxy - (maxy - miny) / 10 * 1.8
         ys3 = maxy - (maxy - miny) / 10 * 2.6
         plt.text(30, ys3, '%s %spp' % (osuname, pp))
-        plt.text(30, ys2, '%s #%s' % (countryname, countryrank))
-        plt.text(31, ys1, '#%s' % globalrank)
+        plt.text(30, ys1, '%s #%s' % (countryname, countryrank))
+        plt.text(30, ys2, 'GLOBAL ##%s' % globalrank)
         plt.plot(x, y)
 
         ax = plt.gca()
@@ -307,16 +308,47 @@ class ppyHandler():
 
     def drawPlayCount(self, res, qq):
         data = res['monthly_playcounts']
+        osuname = res['username']
+        statistics = res['statistics']
+        pp = format(int(float(statistics['pp'])), ',')
+        globalrank = format(int(statistics.get('global_rank', 0)), ',')
+        countryrank = format(int(statistics.get('country_rank', 0)), ',')
+        countryname = res.get('country_code', '')
         dates = []
         counts = []
-        for d in data[-10:]:
-            dates.append(d["start_date"])
-            counts.append(int(d["count"]))
+        now = datetime.now()
+        st = datetime(year=now.year-1, month=now.month, day=1).date()
+        last_dt = st
+        for d in data[-12:]:
+            dd = datetime.strptime(d["start_date"], "%Y-%m-%d").date()
+            if dd < st:
+                continue
+            for _ in range(12):
+                if last_dt == dd:
+                    dates.append(dd)
+                    counts.append(int(d["count"]))
+                    next_dt = last_dt + timedelta(days=32)
+                    last_dt = datetime(year=next_dt.year, month=next_dt.month, day=1).date()
+                    break
+                else:
+                    dates.append(last_dt)
+                    counts.append(0)
+                    next_dt = last_dt + timedelta(days=32)
+                    last_dt = datetime(year=next_dt.year, month=next_dt.month, day=1).date()
             
-        xs=[datetime.strptime(d, "%Y-%m-%d").date() for d in dates]
+        xs = dates
         ys = counts
+
         # 配置横坐标
         plt.figure(figsize=(6,3))
+        maxy = max(ys)
+        ys1 = maxy / 10
+        ys2 = maxy / 10 * 1.8
+        ys3 = maxy / 10 * 2.6
+        text_x = xs[len(xs)//3]
+        plt.text(text_x, ys3, '%s %spp' % (osuname, pp))
+        plt.text(text_x, ys1, '%s #%s' % (countryname, countryrank))
+        plt.text(text_x, ys2, 'GLOBAL #%s' % globalrank)
         plt.gca().xaxis.set_major_formatter(mdates.DateFormatter("%Y-%m"))
         plt.gca().xaxis.set_major_locator(mdates.MonthLocator())
         plt.plot(xs, ys)
