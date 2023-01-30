@@ -2296,7 +2296,7 @@ class botHandler():
         for r in ret2:
             u_d[r['osuid']] = r['osuname']
 
-        rs = f"新人群S{hid}群赛 平均排名                   \n"
+        rs = f"新人群群赛 平均排名                   \n"
         for i, r in enumerate(rank_s):
             uid = r[0]
             n = round(r[1], 1)

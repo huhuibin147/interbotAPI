@@ -50,13 +50,18 @@ def get_rec_tmp():
 # A 补图1，重算
 # https://osu.ppy.sh/community/matches/100255761
 
-
+# s27
+# https://osu.ppy.sh/community/matches/106559454
+# https://osu.ppy.sh/community/matches/106559432
+# https://osu.ppy.sh/community/matches/106559393
+# https://osu.ppy.sh/community/matches/106559591
+# https://osu.ppy.sh/community/matches/106559455
 
 
 def main():
     hid = 25
     # mids = [100252592, 100252563, 100252957, 100252329, 100252448, 100252520, 100252686]
-    mids = [100255761]
+    mids = [106559454,106559432,106559393,106559591,106559455]
     admins = ['11537994', '11355787', '7003013', '9580470', '7183040', '6073139', '12398775', '24010320']
     for mid in mids:
         add_maprank(hid, mid, admins)
