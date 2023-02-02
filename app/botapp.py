@@ -723,6 +723,37 @@ def pr(**kw):
         break
     return ""
 
+@app.route('/calsmokets', methods=['POST'])
+@appTools.deco()
+def calsmokets(**kw):
+    qqid = kw['qqid']
+    x = -1
+    if kw['iargs']:
+        input0 = kw['iargs'][0]
+        args0 = input0.replace(f'[CQ:at,qq={qqid}]', '')
+        try:
+            x = float(args0)
+        except:
+            pass
+    
+    if x < 0:
+        return "请输入正确星数"
+    if x > 100:
+        x = 100
+    
+    b = botHandler.botHandler()
+    m = b.calSmokeMin(x)
+    d = 0
+    lm = m%720//60
+    if m >= 60:
+        d = m//720
+        
+    if d > 0:
+        res = f"{x:.2f}星的禁言时长为{m:.0f}分钟({d:.0f}天{lm:.0f}小时)"
+    else:
+        res = f"{x:.2f}星的禁言时长为{m:.0f}分钟({lm:.0f}小时)"
+    return res
+
 @app.route('/nbp', methods=['POST', 'GET'])
 @appTools.deco(autoOusInfoKey='osuid,osuname', rawinput=1)
 def nbp(**kw):

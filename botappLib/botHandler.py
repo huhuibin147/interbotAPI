@@ -1152,6 +1152,17 @@ class botHandler():
             db.rollback()
             logging.error(traceback.format_exc())
 
+    def calSmokeMin(self, stars):
+        ts = 0
+        if stars > 5.7:
+            if stars < 6:
+                ts += (stars - 5.7) * 1000
+            else:
+                ts += (stars - 5.7) * 2000
+        if ts < 0:
+            ts = 0
+        return ts
+
     def rctppSmoke(self, groupid, qq, kv, iswarn=0):
         """超星机制
         Args:
