@@ -2396,7 +2396,7 @@ class botHandler():
         # last_game_users = 0
         # if n > 0:
         #     last_game_users = len(res['games'][-1]['scores'])
-        s = f"房名: xinrenqun mp | auto host rotate (x114514)\n"
+        s = f"房名: xinrenqun mp | auto host rotate (密码:x114514)\n"
         s += f"总局数: {n}\n"
         s += f"当前人数: {players}\n"
         s += f"当前曲子: {map_name}\n"
