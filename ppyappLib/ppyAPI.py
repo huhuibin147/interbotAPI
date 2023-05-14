@@ -15,15 +15,15 @@ apiv2Url = 'https://osu.ppy.sh/api/v2/{endponit}'
 apiv2FailWord = 'unauthorized'
 
 ref = {
-    'recent': 'https://osu.ppy.sh/api/get_user_recent?k=%s&u={uid}&m={mode}&limit={limit}' % OSU_API_KEY,
-    'get_scores': 'https://osu.ppy.sh/api/get_scores?k=%s&u={uid}&b={bid}&limit={limit}' % OSU_API_KEY,
-    'userinfo': 'https://osu.ppy.sh/api/get_user?k=%s&u={uid}' % OSU_API_KEY,
-    'bp': 'https://osu.ppy.sh/api/get_user_best?k=%s&u={uid}&m={mode}&limit={limit}' % OSU_API_KEY,
-    'beatmap': 'https://osu.ppy.sh/api/get_beatmaps?k=%s&b={bid}' % OSU_API_KEY,
+    'recent': 'http://osu.ppy.sh/api/get_user_recent?k=%s&u={uid}&m={mode}&limit={limit}' % OSU_API_KEY,
+    'get_scores': 'http://osu.ppy.sh/api/get_scores?k=%s&u={uid}&b={bid}&limit={limit}' % OSU_API_KEY,
+    'userinfo': 'http://osu.ppy.sh/api/get_user?k=%s&u={uid}' % OSU_API_KEY,
+    'bp': 'http://osu.ppy.sh/api/get_user_best?k=%s&u={uid}&m={mode}&limit={limit}' % OSU_API_KEY,
+    'beatmap': 'http://osu.ppy.sh/api/get_beatmaps?k=%s&b={bid}' % OSU_API_KEY,
     'skill': 'http://osuskills.com/user/{osuname}',
     'skillvs': 'http://osuskills.com/user/{osuname}/vs/{vsosuname}',
-    'userpage': 'https://osu.ppy.sh/pages/include/profile-userpage.php?u={uid}',
-    'mp': 'https://osu.ppy.sh/api/get_match?k=%s&mp={mid}' % OSU_API_KEY
+    'userpage': 'http://osu.ppy.sh/pages/include/profile-userpage.php?u={uid}',
+    'mp': 'http://osu.ppy.sh/api/get_match?k=%s&mp={mid}' % OSU_API_KEY
 }
 
 
