@@ -16,6 +16,7 @@ def deco(**kw):
     # 不用使用输入代替用户名查询绑定
     rawinput = kw.get('rawinput')
     autouseatqq = kw.get('autouseatqq', True)
+    skipBindWarn = kw.get('skipBindWarn', False)
 
     def inner(func):
 
@@ -61,6 +62,8 @@ def deco(**kw):
                     if qqid != -1:
                         osuinfo = getOsuInfo(qqid)
                         if not osuinfo:
+                            if skipBindWarn:
+                                return ""
                             # return "您未绑定bot，发送!oauth，然后点击链接登录账号进行绑定(友情提示不要点别人的"
                             return "您未绑定bot\n请使用命令!setid osu用户名"
                         for k in autokeys:

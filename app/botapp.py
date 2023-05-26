@@ -686,7 +686,7 @@ def up(**kw):
     return rank_tab.upload_rec(osuid, kw["groupid"])
 
 @app.route('/uploadrec2', methods=['POST', 'GET'])
-@appTools.deco(autoOusInfoKey='osuid', rawinput=1)
+@appTools.deco(autoOusInfoKey='osuid', rawinput=1, skipBindWarn=True)
 def up2(**kw):
     osuid = kw['autoOusInfoKey']['osuid']
     rank_tab.upload_rec(osuid, kw["groupid"])
