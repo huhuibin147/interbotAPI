@@ -350,6 +350,17 @@ def hid_ranks(bid, groupid, hid=1, mods=-1):
     ret = conn.query(sql, [groupid, hid, bid, mods])
     return ret
 
+def map_ranks(bid, groupid, hid=1, mods=-1):
+    # 指定式查询 -- 未扩展
+    conn = interMysql.Connect('osu')
+    sql = '''
+        SELECT gid, bid, mods, rankjson, lastdate
+        from maprank
+        where gid = %s and hid = %s and bid = %s and mods = %s
+    '''
+    ret = conn.query(sql, [groupid, hid, bid, mods])
+    return ret
+
 def hid_mytops(uid, groupid, hid=1, mods=-1):
     # top1数量列表
     conn = interMysql.Connect('osu')

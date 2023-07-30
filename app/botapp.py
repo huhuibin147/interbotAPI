@@ -18,6 +18,7 @@ from baseappLib import baseHandler
 from draws import drawRank
 from draws import rank_tab
 from draws import draw_data
+from draws import score
 
 with open('./app/botapp.yaml', encoding='utf8') as f:
     config = yaml.load(f)
@@ -256,7 +257,7 @@ def boom_check(**kw):
 
 @app.route('/score', methods=['POST'])
 @appTools.deco(autoOusInfoKey='osuid,osuname', rawinput=1)
-def score(**kw):
+def scores(**kw):
     if not kw['iargs']:
         return ""
     bid = kw['iargs'][0]
@@ -1117,7 +1118,27 @@ def msgrankcallback(**kw):
     b.calMsgRank(send_gid)
     return ""
 
+######################################
 
+@app.route('/bdinfo', methods=['GET'])
+def bdinfo(**kw):
+    try:
+        bid = request.args.get('bid', 0)
+        mods = request.args.get('mods', -1)
+        gid = request.args.get('gid', 0)
+        hid = request.args.get('hid', 1)
+
+        ret = score.map_ranks(bid, gid, hid, mods)
+        if ret:
+            ret = ret[0]
+            ret["ranklist"] = json.loads(ret["rankjson"])
+            ret["lastdate"] =  f"{ret['lastdate']:%Y-%m-%d %H:%M:%S}"
+            del ret["rankjson"]
+        else:
+            ret = {}
+    except:
+        logging.exception("bdinfo error")
+    return json.dumps(ret)
 
 
 
