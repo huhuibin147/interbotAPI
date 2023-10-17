@@ -472,7 +472,7 @@ class msgHandler():
 
     def save_chat(self):
         c = chatHandler.chatHandler()
-        if c.check_whitelist(self.groupid, whites=[Config.XINRENQUN, Config.JINJIEQUN]):
+        if c.check_whitelist(self.groupid, whites=[Config.XINRENQUN, Config.JINJIEQUN, Config.GAOJIEQUN]):
             c.msg2Mysql(self.groupid, self.qqid, self.msg)
             c.Chat2Redis(self.groupid, self.qqid, self.msg)
     

@@ -1072,6 +1072,22 @@ def admchatcntjjq(**kw):
         logging.exception("")
         return "raise exception!"
 
+@app.route('/admchatcntgjq', methods=['POST'])
+@appTools.deco()
+def admchatcntgjq(**kw):
+    try:
+        b = botHandler.botHandler()
+        rds = interRedis.connect('osu2')
+        rs = rds.get(Config.GROUP_MEMBER_LIST.format(gid=Config.GAOJIEQUN))
+        if rs is not None:
+            b.calAdminMsgRank(kw["groupid"], json.loads(rs))
+            return ""
+        return b.groupAdminMsgCheck(Config.GAOJIEQUN, kw["groupid"])
+
+    except:
+        logging.exception("")
+        return "raise exception!"
+
 @app.route('/adminmsgrankcallback', methods=['POST'])
 @appTools.deco()
 def adminmsgrankcallback(**kw):

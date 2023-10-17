@@ -2117,7 +2117,7 @@ class botHandler():
                 mid = self.check_mp_mid()
                 if groupid and mid:
                     pushTools.pushMsgOne(groupid, "mp房间创建完成，频道为#mp_%s" % mid)
-                    return "房名: xinrenqun mp | auto host rotate \n密码: x114514"
+                    return "房名: xinrenqun mp | auto host rotate \n密码: a114514"
 
         return "房间创建结果未知..."
     
@@ -2396,7 +2396,7 @@ class botHandler():
         # last_game_users = 0
         # if n > 0:
         #     last_game_users = len(res['games'][-1]['scores'])
-        s = f"房名: xinrenqun mp | auto host rotate (密码:x114514)\n"
+        s = f"房名: xinrenqun mp | auto host rotate (密码:a114514)\n"
         s += f"总局数: {n}\n"
         s += f"当前人数: {players}\n"
         s += f"当前曲子: {map_name}\n"

@@ -40,6 +40,7 @@ PP_TOOLS_PATH = '/root/code/osu-tools-2/osu-tools/PerformanceCalculator/bin/Debu
 XINRENQUN = 595985887 # osu新人群
 JINJIEQUN = 928936255 # osu进阶群
 HOUHUAYUAN = 514661057 # osu后花园
+GAOJIEQUN = 281624271 # osu后花园
 YUKIROKIQUN = 863793664 # yukiroki群
 
 GROUPID = {
