@@ -107,7 +107,7 @@ class chatHandler():
         """概率随机回复
         """
         # 白名单检测
-        w = [Config.XINRENQUN, Config.JINJIEQUN, Config.YUKIROKIQUN]
+        w = [Config.XINRENQUN, Config.JINJIEQUN]
         if not self.check_whitelist(groupid, whites=w):
             return ""
 
