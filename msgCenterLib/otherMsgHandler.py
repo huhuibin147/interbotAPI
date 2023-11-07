@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
+import time
 import logging
 from commLib import Config
 from commLib import pushTools
 
 
+LAST_JOIN_TS = 0
 
 
 
@@ -67,8 +69,11 @@ class oMsgHandler():
     
     def group_increase(self):
         # 活动回流级别做提示
+        global LAST_JOIN_TS
         msg = "欢迎！先仔细阅读公告！有问题找管理！"
-        pushTools.pushMsgOne(self.context["group_id"], msg)
+        if time.time() - LAST_JOIN_TS > 300:
+            pushTools.pushMsgOne(self.context["group_id"], msg)
+            LAST_JOIN_TS = time.time()
 
     def group_request(self):
         user_id = self.context["user_id"]
