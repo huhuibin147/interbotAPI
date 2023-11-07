@@ -1134,6 +1134,39 @@ def msgrankcallback(**kw):
     b.calMsgRank(send_gid)
     return ""
 
+@app.route('/cmdcntxrq', methods=['POST', 'GET'])
+@appTools.deco()
+def cmdcntxrq(**kw):
+    b = botHandler.botHandler()
+    try:
+        res = b.get_group_cmd_usage_rate(Config.XINRENQUN)
+    except:
+        logging.exception("")
+        return "fail!"
+    return res
+
+@app.route('/cmdcntjjq', methods=['POST', 'GET'])
+@appTools.deco()
+def cmdcntjjq(**kw):
+    b = botHandler.botHandler()
+    try:
+        res = b.get_group_cmd_usage_rate(Config.JINJIEQUN)
+    except:
+        logging.exception("")
+        return "fail!"
+    return res
+
+@app.route('/cmdcntgjq', methods=['POST', 'GET'])
+@appTools.deco()
+def cmdcntgjq(**kw):
+    b = botHandler.botHandler()
+    try:
+        res = b.get_group_cmd_usage_rate(Config.GAOJIEQUN)
+    except:
+        logging.exception("")
+        return "fail!"
+    return res
+
 ######################################
 
 @app.route('/bdinfo', methods=['GET'])

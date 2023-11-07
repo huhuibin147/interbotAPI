@@ -2510,12 +2510,61 @@ class botHandler():
             logging.exception("")
             return "", "", "", "", "", "", ""
 
+    def get_group_cmd_usage_rate(self, gid, days=7):
+        data1 = self.get_group_cmd_cnt(gid, days)
+        data1_s = self.deal_cmd_cnt(data1)
+        
+        s = f"群({gid})bot近7天使用率统计\n"
+        for i, d in enumerate(data1_s[:100]):
+            if d[1] < 10:
+                break
+            s += f"{i+1}.{d[0]} ----- {d[1]}\n"
+
+        s = s[:-1]
+        return s
+    
+    def deal_cmd_cnt(self, data):
+        m = {}
+        for d in data:
+            cmd = d['content'].replace('！', '!').replace('\r\n', ' ').replace('\n', ' ')
+            cnt = d['cnt']
+
+            p = re.compile('![a-zA-Z]+')
+            if cmd.startswith('!get') or cmd.startswith('!set '):
+                cmd = ' '.join(cmd.split(' ')[:2])
+                p = re.compile('![a-zA-Z]+ [a-zA-Z]+')
+            else:
+                cmd = cmd.split(' ')[0]
+
+            if cmd != '!test2' or cmd != '~' or cmd != '查':
+                r = p.findall(cmd)
+                if r:
+                    cmd = r[0]    
+                    
+            m[cmd] = m.get(cmd, 0) + cnt
+        
+        del m['!']
+        cmd_s = sorted(m.items(), key=lambda x:x[1], reverse=True)
+        return cmd_s
+    
+    def get_group_cmd_cnt(self, gid, days=7):
+        db = interMysql.Connect('osu')
+        sql = f'''
+            SELECT content, count(*) cnt FROM `chat_logs` where 
+            group_number=%s and 
+            (content like '!%%' or content like '！%%' or content='~' or content='查' or content like 'where%%') and 
+            create_time>=DATE_ADD(CURDATE(),interval -{days} DAY)
+            GROUP BY content order by cnt desc;
+        '''
+        ret = db.query(sql, [gid])
+        return ret
+
 
 
 if __name__ == "__main__":
     b = botHandler()
     # b.drawRctpp(osuid="11788070", osuname="interbot")
-    print(b.annual_sammry(osuid = "11788070", osuname="interbot"))
+    # print(b.annual_sammry(osuid = "11788070", osuname="interbot"))
     # b.osu_mp("595985887")
     # print(b.check_mp_mid())
     # b.get_admins()
@@ -2527,3 +2576,4 @@ if __name__ == "__main__":
     # print(b.check_mp_alive())
     # print(b.get_xrq_mp_base_info("105555127"))
     # print(b.get_mp_info_from_osuahr_log())
+    print(b.get_group_cmd_usage_rate(Config.JINJIEQUN))
